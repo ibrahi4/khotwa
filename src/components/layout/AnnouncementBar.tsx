@@ -2,22 +2,22 @@
 
 import { useState, useEffect } from "react";
 import {
-  Sparkles, Truck, Shield, Clock, Percent, Gift,
-  Crown, Award, Star, CheckCircle2, Zap, Phone,
+  Sparkles, Truck, Shield, Crown, Award, Zap, Phone,
+  Star, TrendingUp, BadgeCheck, Timer, Flame,
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 const items = [
-  { icon: Percent, text: "خصم حصري 15% على أول طلب" },
-  { icon: Truck, text: "شحن مجاني داخل التجمع الخامس ومدينتي" },
-  { icon: Shield, text: "ضمان كامل على جميع مقتنياتك" },
-  { icon: Crown, text: "خدمة VIP لسكان الكمبوندات الراقية" },
-  { icon: Clock, text: "متاحون 24 ساعة طوال أيام الأسبوع" },
-  { icon: Gift, text: "معاينة مجانية بدون أي التزام" },
-  { icon: Award, text: "خبرة أكثر من 10 سنوات في السوق المصري" },
-  { icon: Star, text: "تقييم 4.9 من 5 من عملائنا الكرام" },
-  { icon: CheckCircle2, text: "فرق مدربة ومحترفة في نقل الأثاث الفاخر" },
-  { icon: Zap, text: "استجابة سريعة خلال دقائق من التواصل" },
+  { icon: Flame, text: "عرض حصري", highlight: "خصم 20% على أول طلب", accent: "hot" },
+  { icon: Truck, text: "شحن مجاني", highlight: "داخل التجمع ومدينتي والشيخ زايد", accent: "normal" },
+  { icon: Shield, text: "ضمان كامل", highlight: "على جميع مقتنياتك", accent: "normal" },
+  { icon: Crown, text: "خدمة VIP", highlight: "لسكان الكمبوندات الراقية", accent: "normal" },
+  { icon: Timer, text: "متاحون 24/7", highlight: "طوال أيام الأسبوع", accent: "normal" },
+  { icon: BadgeCheck, text: "معاينة مجانية", highlight: "بدون أي التزام", accent: "normal" },
+  { icon: TrendingUp, text: "خبرة", highlight: "أكثر من 10 سنوات", accent: "normal" },
+  { icon: Star, text: "تقييم", highlight: "4.9 من 5", accent: "normal" },
+  { icon: Award, text: "فرق مدربة", highlight: "على أعلى مستوى", accent: "normal" },
+  { icon: Zap, text: "استجابة سريعة", highlight: "خلال دقائق", accent: "hot" },
 ];
 
 export function AnnouncementBar() {
@@ -31,71 +31,70 @@ export function AnnouncementBar() {
     return (
       <div className="bg-[#1C1C1C] text-white h-10 flex items-center justify-center overflow-hidden">
         <div className="flex items-center gap-2 text-xs">
-          <Sparkles className="w-3.5 h-3.5 text-[#E8E3D9]" />
-          <span className="text-white/80">خطوة لنقل الأثاث - خدمة تليق بمنزلك</span>
+          <Sparkles className="w-3.5 h-3.5 text-[#E85D04]" />
+          <span>خطوة لنقل الأثاث - خدمة تليق بمنزلك</span>
         </div>
       </div>
     );
   }
 
-  // Duplicate items for seamless infinite scroll
   const scrollItems = [...items, ...items, ...items];
 
   return (
-    <div className="relative bg-gradient-to-r from-[#0F0F0F] via-[#1C1C1C] to-[#0F0F0F] text-white overflow-hidden border-b border-[#3F4F44]/30 group">
-
-      {/* Luxury shimmer overlay */}
-      <div className="absolute inset-0 pointer-events-none opacity-30">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#E8E3D9]/5 to-transparent animate-shimmer-slow" />
-      </div>
-
-      {/* Gold accent line on top */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#E8E3D9]/40 to-transparent" />
-
-      {/* Gold accent line on bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#3F4F44]/60 to-transparent" />
+    <div className="relative bg-[#1C1C1C] text-white overflow-hidden group border-b border-white/5">
 
       <div className="relative flex items-center h-10">
 
-        {/* Left fade gradient */}
-        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#0F0F0F] via-[#0F0F0F]/80 to-transparent z-10 pointer-events-none" />
+        {/* Left fade */}
+        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#1C1C1C] to-transparent z-10 pointer-events-none" />
 
-        {/* Right fade gradient */}
-        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[#0F0F0F] via-[#0F0F0F]/80 to-transparent z-10 pointer-events-none" />
+        {/* Right fade */}
+        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-48 bg-gradient-to-l from-[#1C1C1C] to-transparent z-10 pointer-events-none" />
 
-        {/* Phone number - Desktop pinned right */}
+        {/* Phone - Desktop pinned right */}
         <a
           href={`tel:${siteConfig.phone}`}
-          className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 items-center gap-1.5 text-xs font-bold text-[#E8E3D9] hover:text-white transition-colors bg-[#0F0F0F] pl-4"
+          className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 items-center gap-2 bg-[#1C1C1C] pl-6 pr-2 py-1 group/phone transition-all duration-300"
           dir="ltr"
         >
-          <Phone className="w-3.5 h-3.5" />
-          <span>{siteConfig.phone}</span>
+          <div className="flex items-center gap-2 text-xs">
+            <Phone className="w-3.5 h-3.5 text-[#E85D04]" strokeWidth={2.5} />
+            <span className="font-bold text-white group-hover/phone:text-[#E85D04] transition-colors tracking-wider">
+              {siteConfig.phone}
+            </span>
+          </div>
         </a>
 
         {/* Marquee track */}
         <div className="flex animate-marquee-rtl whitespace-nowrap group-hover:[animation-play-state:paused]">
           {scrollItems.map((item, i) => {
             const Icon = item.icon;
+            const isHot = item.accent === "hot";
+
             return (
               <div
                 key={i}
-                className="flex items-center gap-2.5 mx-6 md:mx-8 shrink-0"
+                className="flex items-center gap-2 mx-6 md:mx-10 shrink-0"
               >
-                {/* Icon in circle */}
-                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#3F4F44]/30 border border-[#E8E3D9]/20 shrink-0">
-                  <Icon className="w-3 h-3 text-[#E8E3D9]" />
+                <Icon
+                  className={`w-3.5 h-3.5 shrink-0 ${
+                    isHot ? "text-[#E85D04]" : "text-white/60"
+                  }`}
+                  strokeWidth={2}
+                />
+
+                <div className="flex items-center gap-1.5 text-xs md:text-sm">
+                  <span className="text-white/70 font-medium">{item.text}</span>
+                  <span
+                    className={`font-bold ${
+                      isHot ? "text-[#E85D04]" : "text-white"
+                    }`}
+                  >
+                    {item.highlight}
+                  </span>
                 </div>
 
-                {/* Text */}
-                <span className="text-xs md:text-sm text-white/90 font-medium tracking-wide">
-                  {item.text}
-                </span>
-
-                {/* Diamond separator */}
-                <span className="text-[#E8E3D9]/40 text-[8px] mr-4 md:mr-6">
-                  ◆
-                </span>
+                <span className="text-white/20 text-xs mr-4 md:mr-6">|</span>
               </div>
             );
           })}
@@ -104,34 +103,17 @@ export function AnnouncementBar() {
 
       <style jsx>{`
         @keyframes marquee-rtl {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(33.333%);
-          }
-        }
-
-        @keyframes shimmer-slow {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(33.333%); }
         }
 
         .animate-marquee-rtl {
-          animation: marquee-rtl 60s linear infinite;
-        }
-
-        .animate-shimmer-slow {
-          animation: shimmer-slow 8s ease-in-out infinite;
+          animation: marquee-rtl 70s linear infinite;
         }
 
         @media (max-width: 768px) {
           .animate-marquee-rtl {
-            animation-duration: 45s;
+            animation-duration: 50s;
           }
         }
       `}</style>

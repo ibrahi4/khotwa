@@ -16,23 +16,29 @@ export function VideosSection() {
   };
 
   return (
-    <section className="section-padding bg-[#1C1C1C] text-white relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10" aria-hidden="true">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#3F4F44] rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#E8E3D9] rounded-full blur-3xl" />
+    <section className="section-padding bg-gradient-to-br from-[#1C1C1C] via-[#0F0F0F] to-[#1C1C1C] text-white relative overflow-hidden">
+      {/* Decorative Orange & Gold glows */}
+      <div className="absolute inset-0 opacity-15 pointer-events-none" aria-hidden="true">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#E85D04] rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#D4AF37] rounded-full blur-3xl" />
       </div>
+
+      {/* Top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E85D04] to-transparent" />
 
       <div className="relative container-custom">
 
         <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-          <Badge className="bg-white/5 text-[#E8E3D9] border border-white/10 mb-4 px-4 py-1.5">
+          <Badge className="bg-[#E85D04]/10 text-[#E85D04] border border-[#E85D04]/30 mb-4 px-4 py-1.5 backdrop-blur">
             <Video className="w-3 h-3 ml-1.5" />
             شاهد بنفسك
           </Badge>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
             من داخل
             <br />
-            <span className="text-[#E8E3D9]">مشاريعنا الحقيقية</span>
+            <span className="text-[#E85D04] drop-shadow-[0_0_20px_rgba(232,93,4,0.4)]">
+              مشاريعنا الحقيقية
+            </span>
           </h2>
           <p className="text-base text-white/60 leading-relaxed">
             شاهد كيف نتعامل مع مقتنياتك باحترافية من البداية للنهاية
@@ -46,7 +52,7 @@ export function VideosSection() {
             return (
               <div
                 key={video.id}
-                className="group relative aspect-video overflow-hidden rounded-2xl cursor-pointer bg-gradient-to-br from-[#2A2A2A] to-[#1C1C1C] border border-white/10 hover:border-[#E8E3D9]/40 transition-all duration-300"
+                className="group relative aspect-video overflow-hidden rounded-2xl cursor-pointer bg-gradient-to-br from-[#2A2A2A] to-[#1C1C1C] border border-white/10 hover:border-[#E85D04]/60 hover:shadow-2xl hover:shadow-[#E85D04]/30 transition-all duration-300"
                 onClick={() => setSelectedVideo(video)}
               >
                 {!hasError ? (
@@ -59,15 +65,18 @@ export function VideosSection() {
                     onError={() => handleImageError(video.id)}
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#3F4F44]/30 to-[#1C1C1C]">
+                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#E85D04]/20 to-[#1C1C1C]">
                     <Film className="w-20 h-20 text-white/10" />
                   </div>
                 )}
 
-                {/* Play Button */}
+                {/* Play Button with pulse ring */}
                 <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <div className="w-16 h-16 md:w-20 md:h-20 bg-[#E8E3D9] group-hover:bg-white rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all duration-300">
-                    <Play className="w-6 h-6 md:w-8 md:h-8 text-[#1C1C1C] fill-[#1C1C1C] mr-0.5" />
+                  <div className="relative">
+                    <span className="absolute inset-0 rounded-full bg-[#E85D04] animate-ping opacity-40" />
+                    <div className="relative w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-[#E85D04] to-[#C94A00] group-hover:from-[#F97316] group-hover:to-[#E85D04] rounded-full flex items-center justify-center shadow-2xl shadow-[#E85D04]/50 group-hover:scale-110 transition-all duration-300 border-2 border-white/20">
+                      <Play className="w-6 h-6 md:w-8 md:h-8 text-white fill-white mr-0.5" />
+                    </div>
                   </div>
                 </div>
 
@@ -93,7 +102,7 @@ export function VideosSection() {
             <div className="relative">
               <button
                 onClick={() => setSelectedVideo(null)}
-                className="absolute top-4 left-4 z-20 w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur"
+                className="absolute top-4 left-4 z-20 w-10 h-10 bg-white/10 hover:bg-[#E85D04] text-white rounded-full flex items-center justify-center transition-colors backdrop-blur"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -105,7 +114,7 @@ export function VideosSection() {
               >
                 متصفحك لا يدعم تشغيل الفيديو
               </video>
-              <div className="bg-[#1C1C1C] p-5 md:p-6">
+              <div className="bg-[#1C1C1C] p-5 md:p-6 border-t border-[#E85D04]/20">
                 <h3 className="text-white font-bold text-lg mb-2">
                   {selectedVideo.title}
                 </h3>

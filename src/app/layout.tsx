@@ -30,14 +30,11 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   keywords: [
-    // Primary Keywords
     "شركة نقل أثاث",
     "نقل عفش",
     "شركة نقل عفش",
     "خطوة لنقل الأثاث",
     "شركة خطوة",
-
-    // Location-based Keywords
     "نقل أثاث القاهرة",
     "نقل أثاث الجيزة",
     "نقل أثاث التجمع الخامس",
@@ -48,40 +45,15 @@ export const metadata: Metadata = {
     "نقل أثاث القاهرة الجديدة",
     "نقل أثاث العاصمة الإدارية",
     "نقل أثاث الرحاب",
-    "نقل عفش التجمع",
-    "نقل عفش مدينتي",
-    "نقل عفش القاهرة",
-
-    // Service Keywords
     "فك وتركيب أثاث",
     "فك وتركيب تكييفات",
-    "فك وتركيب غرف نوم",
     "تغليف أثاث",
-    "تغليف عفش",
     "ونش رفع أثاث",
-    "ونش عفش",
     "نقل مقتنيات حساسة",
-    "نقل زجاج",
-    "نقل نجف",
-    "نقل تحف",
-
-    // Long-tail Keywords
     "افضل شركة نقل اثاث في مصر",
-    "افضل شركة نقل اثاث في التجمع",
-    "افضل شركة نقل اثاث في مدينتي",
     "شركة نقل اثاث كمبوندات",
     "نقل اثاث فلل",
-    "نقل اثاث شقق",
-    "اسعار نقل الاثاث",
-    "شركة نقل اثاث 24 ساعة",
     "شركة نقل اثاث موثوقة",
-    "شركة نقل اثاث بضمان",
-
-    // Brand Keywords
-    "خطوة نقل أثاث",
-    "شركة خطوة للنقل",
-    "Khotwa Moving",
-    "Khotwa Trans",
   ],
   authors: [{ name: siteConfig.name, url: siteConfig.url }],
   creator: siteConfig.name,
@@ -111,13 +83,6 @@ export const metadata: Metadata = {
         alt: siteConfig.name,
         type: "image/jpeg",
       },
-      {
-        url: "/herosection.jpeg",
-        width: 1200,
-        height: 630,
-        alt: "خطوة لنقل الأثاث - خدمة فاخرة",
-        type: "image/jpeg",
-      },
     ],
     countryName: "Egypt",
     emails: ["info@khotwa-trans.com"],
@@ -128,8 +93,6 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     images: ["/logo.jpeg"],
-    creator: "@khotwa_trans",
-    site: "@khotwa_trans",
   },
   robots: {
     index: true,
@@ -146,10 +109,6 @@ export const metadata: Metadata = {
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || "",
-    yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION || "",
-    other: {
-      "msvalidate.01": process.env.NEXT_PUBLIC_BING_VERIFICATION || "",
-    },
   },
   icons: {
     icon: [
@@ -171,16 +130,12 @@ export const metadata: Metadata = {
     "geo.placename": "Cairo",
     "geo.position": "30.0131;31.4961",
     ICBM: "30.0131, 31.4961",
-    "revisit-after": "3 days",
-    rating: "General",
-    distribution: "Global",
-    "language": "Arabic",
   },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F0ECE1" },
+    { media: "(prefers-color-scheme: light)", color: "#FAF5EE" },
     { media: "(prefers-color-scheme: dark)", color: "#1C1C1C" },
   ],
   colorScheme: "light",
@@ -200,15 +155,12 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={cairo.variable}>
       <head>
-        {/* Structured Data - Business */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(businessSchema),
           }}
         />
-
-        {/* Structured Data - Website */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -216,49 +168,23 @@ export default function RootLayout({
           }}
         />
 
-        {/* Preload Critical Resources */}
-        <link
-          rel="preload"
-          as="image"
-          href="/herosection.jpeg"
-          fetchPriority="high"
-        />
-        <link
-          rel="preload"
-          as="image"
-          href="/logo.jpeg"
-          fetchPriority="high"
-        />
+        <link rel="preload" as="image" href="/herosection.jpeg" fetchPriority="high" />
+        <link rel="preload" as="image" href="/logo.jpeg" fetchPriority="high" />
 
-        {/* DNS Prefetch */}
         <link rel="dns-prefetch" href="https://wa.me" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-
-        {/* Preconnect */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        {/* PWA Meta */}
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="خطوة" />
 
-        {/* Geo Tags for Local SEO */}
         <meta name="geo.region" content="EG-C" />
         <meta name="geo.placename" content="Cairo, Egypt" />
         <meta name="geo.position" content="30.0131;31.4961" />
-        <meta name="ICBM" content="30.0131, 31.4961" />
-
-        {/* Content Language */}
-        <meta httpEquiv="content-language" content="ar-EG" />
 
         <GoogleTagManager />
       </head>

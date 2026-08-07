@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
 import {
   Phone, MessageCircle, MapPin, Clock, Send,
-  CheckCircle2, Loader2, User, Sparkles,
+  CheckCircle2, Loader2, User,
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { services } from "@/config/services";
@@ -88,7 +88,7 @@ export default function ContactContent() {
           style: {
             background: "#1C1C1C",
             color: "#fff",
-            border: "1px solid #3F4F44",
+            border: "1px solid #E85D04",
             borderRadius: "12px",
             padding: "12px 16px",
             fontSize: "14px",
@@ -99,17 +99,18 @@ export default function ContactContent() {
 
       {/* Hero */}
       <section className="relative bg-[#1C1C1C] text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-10" aria-hidden="true">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#3F4F44] rounded-full blur-3xl" />
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#E85D04] rounded-full blur-3xl" />
         </div>
+
         <div className="relative container-custom py-16 md:py-20">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge className="bg-white/5 text-[#E8E3D9] border border-white/10 mb-5 px-4 py-1.5">
+            <Badge className="bg-white/10 text-white border border-white/20 mb-5 px-4 py-1.5">
               <MessageCircle className="w-3 h-3 ml-1.5" />
               نحن في خدمتك
             </Badge>
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-5 tracking-tight">
-              تواصل <span className="text-[#E8E3D9]">معنا</span>
+              تواصل <span className="text-[#E85D04]">معنا</span>
             </h1>
             <p className="text-base md:text-lg text-white/70 leading-relaxed">
               نحن متاحون على مدار الساعة لخدمتك. اختر الطريقة الأنسب للتواصل
@@ -127,14 +128,14 @@ export default function ContactContent() {
               onClick={() => trackPhoneCall("contact_page")}
               className="block"
             >
-              <Card className="h-full hover:border-[#3F4F44] hover:shadow-lg transition-all group cursor-pointer border-[#E5E1DA] bg-[#F5F2EC]">
+              <Card className="h-full hover:border-[#1C1C1C] hover:shadow-md transition-all group cursor-pointer border-[#E5E7EB] bg-[#FAF5EE]">
                 <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-[#1C1C1C] group-hover:bg-[#3F4F44] text-[#E8E3D9] rounded-2xl flex items-center justify-center mx-auto mb-4 transition-all">
+                  <div className="w-16 h-16 bg-[#1C1C1C] text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-all">
                     <Phone className="w-7 h-7" />
                   </div>
                   <h3 className="text-lg font-bold text-[#1C1C1C] mb-2">اتصل بنا</h3>
-                  <p className="text-[#6B6B6B] text-sm mb-3">للحجز السريع والاستفسارات</p>
-                  <p className="text-[#3F4F44] font-bold text-base" dir="ltr">
+                  <p className="text-[#64748B] text-sm mb-3">للحجز السريع والاستفسارات</p>
+                  <p className="text-[#E85D04] font-bold text-base" dir="ltr">
                     {siteConfig.phone}
                   </p>
                 </CardContent>
@@ -148,26 +149,26 @@ export default function ContactContent() {
               onClick={() => trackWhatsApp("contact_page")}
               className="block"
             >
-              <Card className="h-full hover:border-[#3F4F44] hover:shadow-lg transition-all group cursor-pointer border-[#E5E1DA] bg-[#F5F2EC]">
+              <Card className="h-full hover:border-[#1F5F3F] hover:shadow-md transition-all group cursor-pointer border-[#E5E7EB] bg-[#FAF5EE]">
                 <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-[#3F4F44] group-hover:bg-[#2E3B32] text-white rounded-2xl flex items-center justify-center mx-auto mb-4 transition-all">
+                  <div className="w-16 h-16 bg-[#1F5F3F] text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-all">
                     <MessageCircle className="w-7 h-7" />
                   </div>
                   <h3 className="text-lg font-bold text-[#1C1C1C] mb-2">واتساب</h3>
-                  <p className="text-[#6B6B6B] text-sm mb-3">رد فوري على رسائلك</p>
-                  <p className="text-[#3F4F44] font-bold text-base">تواصل عبر واتساب</p>
+                  <p className="text-[#64748B] text-sm mb-3">رد فوري على رسائلك</p>
+                  <p className="text-[#1F5F3F] font-bold text-base">تواصل عبر واتساب</p>
                 </CardContent>
               </Card>
             </a>
 
-            <Card className="h-full hover:border-[#3F4F44] hover:shadow-lg transition-all border-[#E5E1DA] bg-[#F5F2EC]">
+            <Card className="h-full hover:border-[#1C1C1C] hover:shadow-md transition-all border-[#E5E7EB] bg-[#FAF5EE]">
               <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-[#1C1C1C] text-[#E8E3D9] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-white border border-[#E5E7EB] text-[#1C1C1C] rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <MapPin className="w-7 h-7" />
                 </div>
                 <h3 className="text-lg font-bold text-[#1C1C1C] mb-2">مقرنا</h3>
-                <p className="text-[#6B6B6B] text-sm mb-3">مقرنا الرئيسي</p>
-                <p className="text-[#3F4F44] font-bold text-sm">{siteConfig.address}</p>
+                <p className="text-[#64748B] text-sm mb-3">مقرنا الرئيسي</p>
+                <p className="text-[#1C1C1C] font-bold text-sm">{siteConfig.address}</p>
               </CardContent>
             </Card>
           </div>
@@ -175,17 +176,16 @@ export default function ContactContent() {
           {/* Form + Sidebar */}
           <div className="grid lg:grid-cols-3 gap-8 lg:gap-10">
             <div className="lg:col-span-2">
-              <Card className="border-[#E5E1DA] shadow-sm">
+              <Card className="border-[#E5E7EB] shadow-sm">
                 <CardContent className="p-6 md:p-8">
                   <div className="mb-6">
-                    <Badge variant="outline" className="border-[#3F4F44] text-[#3F4F44] mb-3">
-                      <Sparkles className="w-3 h-3 ml-1.5" />
+                    <Badge variant="outline" className="border-[#E5E7EB] text-[#64748B] mb-3">
                       احصل على عرض سعر
                     </Badge>
                     <h2 className="text-2xl md:text-3xl font-black text-[#1C1C1C] mb-2 tracking-tight">
                       اطلب خدمتك الآن
                     </h2>
-                    <p className="text-[#6B6B6B] text-sm">
+                    <p className="text-[#64748B] text-sm">
                       املأ النموذج وسنتواصل معك خلال دقائق
                     </p>
                   </div>
@@ -194,10 +194,10 @@ export default function ContactContent() {
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="name" className="text-[#1C1C1C] font-semibold">
-                          الاسم <span className="text-[#DC2626]">*</span>
+                          الاسم <span className="text-[#E85D04]">*</span>
                         </Label>
                         <div className="relative">
-                          <User className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6B6B]" />
+                          <User className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64748B]" />
                           <Input
                             id="name"
                             required
@@ -206,17 +206,17 @@ export default function ContactContent() {
                               setFormData({ ...formData, name: e.target.value })
                             }
                             placeholder="اسمك الكامل"
-                            className="pr-10 h-12 border-[#E5E1DA] focus-visible:ring-[#3F4F44]"
+                            className="pr-10 h-12 border-[#E5E7EB] focus-visible:ring-[#E85D04] focus-visible:border-[#E85D04]"
                           />
                         </div>
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="phone" className="text-[#1C1C1C] font-semibold">
-                          رقم الهاتف <span className="text-[#DC2626]">*</span>
+                          رقم الهاتف <span className="text-[#E85D04]">*</span>
                         </Label>
                         <div className="relative">
-                          <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6B6B]" />
+                          <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64748B]" />
                           <Input
                             id="phone"
                             required
@@ -226,7 +226,7 @@ export default function ContactContent() {
                               setFormData({ ...formData, phone: e.target.value })
                             }
                             placeholder="01xxxxxxxxx"
-                            className="pr-10 h-12 border-[#E5E1DA] focus-visible:ring-[#3F4F44]"
+                            className="pr-10 h-12 border-[#E5E7EB] focus-visible:ring-[#E85D04] focus-visible:border-[#E85D04]"
                             dir="ltr"
                           />
                         </div>
@@ -236,7 +236,7 @@ export default function ContactContent() {
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label className="text-[#1C1C1C] font-semibold">
-                          الخدمة المطلوبة <span className="text-[#DC2626]">*</span>
+                          الخدمة المطلوبة <span className="text-[#E85D04]">*</span>
                         </Label>
                         <Select
                           value={formData.service}
@@ -244,7 +244,7 @@ export default function ContactContent() {
                             setFormData({ ...formData, service: value ?? "" })
                           }
                         >
-                          <SelectTrigger className="h-12 border-[#E5E1DA]">
+                          <SelectTrigger className="h-12 border-[#E5E7EB]">
                             <SelectValue placeholder="اختر الخدمة" />
                           </SelectTrigger>
                           <SelectContent>
@@ -259,7 +259,7 @@ export default function ContactContent() {
 
                       <div className="space-y-2">
                         <Label className="text-[#1C1C1C] font-semibold">
-                          المنطقة <span className="text-[#DC2626]">*</span>
+                          المنطقة <span className="text-[#E85D04]">*</span>
                         </Label>
                         <Select
                           value={formData.area}
@@ -267,7 +267,7 @@ export default function ContactContent() {
                             setFormData({ ...formData, area: value ?? "" })
                           }
                         >
-                          <SelectTrigger className="h-12 border-[#E5E1DA]">
+                          <SelectTrigger className="h-12 border-[#E5E7EB]">
                             <SelectValue placeholder="اختر منطقتك" />
                           </SelectTrigger>
                           <SelectContent>
@@ -294,7 +294,7 @@ export default function ContactContent() {
                         }
                         placeholder="اخبرنا عن تفاصيل المنقولات (عدد الغرف، الدور، أي تفاصيل مهمة...)"
                         rows={4}
-                        className="resize-none border-[#E5E1DA] focus-visible:ring-[#3F4F44]"
+                        className="resize-none border-[#E5E7EB] focus-visible:ring-[#E85D04] focus-visible:border-[#E85D04]"
                       />
                     </div>
 
@@ -302,7 +302,7 @@ export default function ContactContent() {
                       type="submit"
                       size="lg"
                       disabled={loading}
-                      className="w-full bg-[#3F4F44] hover:bg-[#2E3B32] text-white font-bold h-14 text-base shadow-lg"
+                      className="w-full bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-14 text-base shadow-md border-0"
                     >
                       {loading ? (
                         <>
@@ -317,7 +317,7 @@ export default function ContactContent() {
                       )}
                     </Button>
 
-                    <p className="text-xs text-center text-[#6B6B6B]">
+                    <p className="text-xs text-center text-[#64748B]">
                       بإرسال النموذج، أنت توافق على التواصل معك عبر واتساب أو الهاتف
                     </p>
                   </form>
@@ -327,10 +327,10 @@ export default function ContactContent() {
 
             {/* Sidebar */}
             <div className="space-y-5">
-              <Card className="bg-[#1C1C1C] border-0 text-white">
-                <CardContent className="p-6">
+              <Card className="bg-[#1C1C1C] border-0 text-white relative overflow-hidden">
+                <CardContent className="p-6 relative">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-[#3F4F44] rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
                       <Clock className="w-6 h-6 text-white" />
                     </div>
                     <div>
@@ -341,17 +341,17 @@ export default function ContactContent() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between bg-white/5 p-3 rounded-xl">
                       <span className="text-white/70">السبت - الخميس</span>
-                      <span className="font-bold text-[#E8E3D9]">24 ساعة</span>
+                      <span className="font-bold text-[#E85D04]">24 ساعة</span>
                     </div>
                     <div className="flex justify-between bg-white/5 p-3 rounded-xl">
                       <span className="text-white/70">الجمعة</span>
-                      <span className="font-bold text-[#E8E3D9]">24 ساعة</span>
+                      <span className="font-bold text-[#E85D04]">24 ساعة</span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-[#E5E1DA] bg-white">
+              <Card className="border-[#E5E7EB] bg-white">
                 <CardContent className="p-6">
                   <h3 className="font-bold text-lg text-[#1C1C1C] mb-4">لماذا خطوة؟</h3>
                   <div className="space-y-3">
@@ -363,7 +363,7 @@ export default function ContactContent() {
                       "أسعار شفافة بدون رسوم خفية",
                     ].map((item, i) => (
                       <div key={i} className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-[#3F4F44]/10 text-[#3F4F44] rounded-lg flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 bg-[#F5F5F5] text-[#1C1C1C] rounded-lg flex items-center justify-center shrink-0">
                           <CheckCircle2 className="w-4 h-4" />
                         </div>
                         <span className="text-sm text-[#1C1C1C]">{item}</span>
@@ -373,14 +373,14 @@ export default function ContactContent() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-[#3F4F44] border-0 text-white">
+              <Card className="bg-[#E85D04] border-0 text-white">
                 <CardContent className="p-6 text-center">
                   <Phone className="w-10 h-10 mx-auto mb-3" />
                   <h3 className="font-bold text-lg mb-2">للحجز السريع</h3>
                   <p className="text-white/90 text-sm mb-4">اتصل الآن</p>
                   <Button
                     asChild
-                    className="w-full bg-[#E8E3D9] text-[#1C1C1C] hover:bg-[#D4CCB8] font-bold h-12"
+                    className="w-full bg-white text-[#E85D04] hover:bg-[#FAF5EE] font-bold h-12"
                   >
                     <a
                       href={`tel:${siteConfig.phone}`}
