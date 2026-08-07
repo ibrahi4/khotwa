@@ -7,7 +7,7 @@ export const siteConfig = {
   phone: "01091857418",
   phoneIntl: "+201091857418",
   whatsapp: "201091857418",
-  email: "info@khatwamoving.com",
+  email: "koutwaa722@gmail.com",
   address: "التجمع الخامس - القاهرة الجديدة - مصر",
   addressEn: "Fifth Settlement, New Cairo, Egypt",
   city: "القاهرة الجديدة",
