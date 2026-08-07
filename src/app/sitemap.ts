@@ -7,7 +7,7 @@ import { blogPosts } from "@/config/blog";
 export default function sitemap(): MetadataRoute.Sitemap {
   const currentDate = new Date();
 
-  // Static Pages - أولوية عالية
+  // ========== Static Pages ==========
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: siteConfig.url,
@@ -37,19 +37,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${siteConfig.url}/about`,
       lastModified: currentDate,
       changeFrequency: "monthly",
-      priority: 0.8,
+      priority: 0.85,
     },
     {
       url: `${siteConfig.url}/blog`,
       lastModified: currentDate,
-      changeFrequency: "weekly",
+      changeFrequency: "daily",
       priority: 0.85,
     },
     {
       url: `${siteConfig.url}/faq`,
       lastModified: currentDate,
       changeFrequency: "monthly",
-      priority: 0.75,
+      priority: 0.8,
     },
     {
       url: `${siteConfig.url}/privacy`,
@@ -65,7 +65,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // Service Pages - أولوية عالية جداً
+  // ========== Service Pages ==========
   const servicePages: MetadataRoute.Sitemap = services.map((s) => ({
     url: `${siteConfig.url}/services/${s.slug}`,
     lastModified: currentDate,
@@ -73,21 +73,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }));
 
-  // Area Pages - VIP لها أولوية أعلى
+  // ========== Area Pages (VIP get higher priority) ==========
   const vipSlugs = vipAreas.map((a) => a.slug);
   const areaPages: MetadataRoute.Sitemap = areas.map((a) => ({
     url: `${siteConfig.url}/areas/${a.slug}`,
     lastModified: currentDate,
     changeFrequency: "weekly" as const,
-    priority: vipSlugs.includes(a.slug) ? 0.95 : 0.8,
+    priority: vipSlugs.includes(a.slug) ? 0.95 : 0.85,
   }));
 
-  // Blog Posts
+  // ========== Blog Posts ==========
   const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
     url: `${siteConfig.url}/blog/${post.slug}`,
     lastModified: new Date(post.publishedAt),
     changeFrequency: "monthly" as const,
-    priority: 0.7,
+    priority: 0.75,
   }));
 
   return [...staticPages, ...servicePages, ...areaPages, ...blogPages];

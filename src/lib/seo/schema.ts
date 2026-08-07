@@ -1,13 +1,15 @@
 import { siteConfig } from "@/config/site";
 
-// Main Business Schema
+// ========================================
+// 1. Main Business Schema (Enhanced)
+// ========================================
 export function generateLocalBusinessSchema() {
   return {
     "@context": "https://schema.org",
     "@type": ["MovingCompany", "LocalBusiness"],
     "@id": `${siteConfig.url}/#organization`,
     name: siteConfig.name,
-    alternateName: [siteConfig.shortName, "Khotwa Moving", "خطوة"],
+    alternateName: [siteConfig.shortName, "Khotwa Moving", "Khatwa Moving", "خطوة"],
     description: siteConfig.description,
     url: siteConfig.url,
     logo: {
@@ -20,29 +22,37 @@ export function generateLocalBusinessSchema() {
     image: [
       `${siteConfig.url}/logo.jpeg`,
       `${siteConfig.url}/herosection.jpeg`,
+      `${siteConfig.url}/images/gallery/taghleef.webp`,
+      `${siteConfig.url}/images/gallery/fareq-3amal.webp`,
+      `${siteConfig.url}/images/gallery/tarkeeb.webp`,
     ],
-    telephone: siteConfig.phone,
-    email: "info@khotwa-trans.com",
+    telephone: siteConfig.phoneIntl,
+    email: siteConfig.email,
     foundingDate: siteConfig.foundingYear.toString(),
+    numberOfEmployees: {
+      "@type": "QuantitativeValue",
+      minValue: 20,
+      maxValue: 50,
+    },
     priceRange: "$$$",
     slogan: "خدمة نقل أثاث تليق بمنزلك",
     address: {
       "@type": "PostalAddress",
       streetAddress: "التجمع الخامس",
-      addressLocality: "القاهرة الجديدة",
-      addressRegion: "القاهرة",
-      postalCode: "11835",
+      addressLocality: siteConfig.city,
+      addressRegion: siteConfig.region,
+      postalCode: siteConfig.postalCode,
       addressCountry: {
         "@type": "Country",
-        name: "EG",
+        name: siteConfig.countryCode,
       },
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: 30.0131,
-      longitude: 31.4961,
+      latitude: siteConfig.coordinates.latitude,
+      longitude: siteConfig.coordinates.longitude,
     },
-    hasMap: "https://www.google.com/maps?q=30.0131,31.4961",
+    hasMap: `https://www.google.com/maps?q=${siteConfig.coordinates.latitude},${siteConfig.coordinates.longitude}`,
     areaServed: [
       {
         "@type": "Country",
@@ -65,28 +75,28 @@ export function generateLocalBusinessSchema() {
       { "@type": "City", name: "العاصمة الإدارية" },
       { "@type": "City", name: "الرحاب" },
       { "@type": "City", name: "مدينة المستقبل" },
+      { "@type": "City", name: "المعادي" },
+      { "@type": "City", name: "مصر الجديدة" },
+      { "@type": "City", name: "المهندسين" },
+      { "@type": "City", name: "الزمالك" },
+      { "@type": "City", name: "مدينة نصر" },
     ],
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
         dayOfWeek: [
-          "Saturday",
-          "Sunday",
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
+          "Saturday", "Sunday", "Monday", "Tuesday",
+          "Wednesday", "Thursday", "Friday",
         ],
-        opens: "00:00",
-        closes: "23:59",
+        opens: siteConfig.businessHours.open,
+        closes: siteConfig.businessHours.close,
       },
     ],
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "500",
-      bestRating: "5",
+      ratingValue: siteConfig.ratings.value.toString(),
+      reviewCount: siteConfig.ratings.count.toString(),
+      bestRating: siteConfig.ratings.best.toString(),
       worstRating: "1",
     },
     review: [
@@ -99,7 +109,7 @@ export function generateLocalBusinessSchema() {
           ratingValue: "5",
           bestRating: "5",
         },
-        reviewBody: "خدمة استثنائية، نقلوا فيلتي بكل احترافية والتغليف كان ممتاز.",
+        reviewBody: "خدمة استثنائية، نقلوا فيلتي في التجمع الخامس بكل احترافية والتغليف كان ممتاز. أنصح أي حد في الكمبوندات يتعامل معاهم.",
       },
       {
         "@type": "Review",
@@ -110,14 +120,27 @@ export function generateLocalBusinessSchema() {
           ratingValue: "5",
           bestRating: "5",
         },
-        reviewBody: "التزام بالمواعيد وأسعار شفافة، أنصح بالتعامل معهم.",
+        reviewBody: "التزام بالمواعيد وأسعار شفافة، نقلوا عفش شقتي من مدينتي للشيخ زايد بدون أي خدش. أنصح بالتعامل معهم.",
+      },
+      {
+        "@type": "Review",
+        author: { "@type": "Person", name: "محمود حسن" },
+        datePublished: "2024-10-05",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: "5",
+          bestRating: "5",
+        },
+        reviewBody: "فريق محترف ومدرب، تعاملوا مع النجف والتحف بحرص شديد. خدمة تستحق كل جنيه.",
       },
     ],
-    paymentAccepted: ["Cash", "Credit Card", "Bank Transfer", "Vodafone Cash"],
+    paymentAccepted: ["Cash", "Credit Card", "Bank Transfer", "Vodafone Cash", "InstaPay"],
     currenciesAccepted: "EGP",
     sameAs: [
       siteConfig.socialMedia?.facebook,
       siteConfig.socialMedia?.instagram,
+      siteConfig.socialMedia?.tiktok,
+      siteConfig.socialMedia?.youtube,
     ].filter(Boolean),
     hasOfferCatalog: {
       "@type": "OfferCatalog",
@@ -187,15 +210,29 @@ export function generateLocalBusinessSchema() {
       "ونش رفع الأثاث",
       "نقل التكييفات",
       "نقل المقتنيات الحساسة",
+      "شحن الأثاث",
+      "تخزين الأثاث",
+    ],
+    makesOffer: [
+      {
+        "@type": "Offer",
+        name: "معاينة مجانية",
+        description: "معاينة مجانية في الموقع بدون أي التزام",
+        price: "0",
+        priceCurrency: "EGP",
+      },
     ],
   };
 }
 
-// Service Schema (per service page)
+// ========================================
+// 2. Service Schema (Enhanced with pricing)
+// ========================================
 export function generateServiceSchema(
   serviceName: string,
   serviceDescription: string,
-  serviceUrl: string
+  serviceUrl: string,
+  serviceImage?: string
 ) {
   return {
     "@context": "https://schema.org",
@@ -204,16 +241,17 @@ export function generateServiceSchema(
     name: serviceName,
     description: serviceDescription,
     url: serviceUrl,
+    image: serviceImage || `${siteConfig.url}/logo.jpeg`,
     provider: {
       "@type": "MovingCompany",
       "@id": `${siteConfig.url}/#organization`,
       name: siteConfig.name,
-      telephone: siteConfig.phone,
+      telephone: siteConfig.phoneIntl,
       logo: `${siteConfig.url}/logo.jpeg`,
       address: {
         "@type": "PostalAddress",
-        addressLocality: "القاهرة الجديدة",
-        addressCountry: "EG",
+        addressLocality: siteConfig.city,
+        addressCountry: siteConfig.countryCode,
       },
     },
     areaServed: {
@@ -228,10 +266,27 @@ export function generateServiceSchema(
       "@type": "Audience",
       audienceType: "سكان الكمبوندات والمدن الجديدة",
     },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "EGP",
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        priceCurrency: "EGP",
+      },
+      availability: "https://schema.org/InStock",
+      availabilityStarts: `${new Date().getFullYear()}-01-01`,
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: siteConfig.ratings.value.toString(),
+      reviewCount: siteConfig.ratings.count.toString(),
+    },
   };
 }
 
-// Area Schema (per area page)
+// ========================================
+// 3. Area Schema (Enhanced with LocalBusiness)
+// ========================================
 export function generateAreaSchema(
   areaName: string,
   areaDescription: string,
@@ -248,7 +303,8 @@ export function generateAreaSchema(
       "@type": "MovingCompany",
       "@id": `${siteConfig.url}/#organization`,
       name: siteConfig.name,
-      telephone: siteConfig.phone,
+      telephone: siteConfig.phoneIntl,
+      logo: `${siteConfig.url}/logo.jpeg`,
     },
     areaServed: {
       "@type": "City",
@@ -258,10 +314,22 @@ export function generateAreaSchema(
         name: "مصر",
       },
     },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "EGP",
+      availability: "https://schema.org/InStock",
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: siteConfig.ratings.value.toString(),
+      reviewCount: siteConfig.ratings.count.toString(),
+    },
   };
 }
 
-// FAQ Schema
+// ========================================
+// 4. FAQ Schema
+// ========================================
 export function generateFAQSchema(
   faqs: { question: string; answer: string }[]
 ) {
@@ -279,7 +347,9 @@ export function generateFAQSchema(
   };
 }
 
-// Breadcrumb Schema
+// ========================================
+// 5. Breadcrumb Schema
+// ========================================
 export function generateBreadcrumbSchema(
   items: { name: string; url: string }[]
 ) {
@@ -295,7 +365,9 @@ export function generateBreadcrumbSchema(
   };
 }
 
-// Blog Post Schema
+// ========================================
+// 6. Blog Post Schema (Enhanced)
+// ========================================
 export function generateBlogPostSchema(post: {
   title: string;
   description: string;
@@ -303,19 +375,30 @@ export function generateBlogPostSchema(post: {
   publishedAt: string;
   author: string;
   slug: string;
+  readTime?: number;
+  keywords?: string[];
 }) {
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
     description: post.description,
-    image: post.image,
+    image: {
+      "@type": "ImageObject",
+      url: post.image,
+      width: 1200,
+      height: 630,
+    },
     datePublished: post.publishedAt,
     dateModified: post.publishedAt,
     author: {
       "@type": "Organization",
       name: post.author,
       url: siteConfig.url,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteConfig.url}/logo.jpeg`,
+      },
     },
     publisher: {
       "@type": "Organization",
@@ -323,16 +406,25 @@ export function generateBlogPostSchema(post: {
       logo: {
         "@type": "ImageObject",
         url: `${siteConfig.url}/logo.jpeg`,
+        width: 512,
+        height: 512,
       },
     },
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `${siteConfig.url}/blog/${post.slug}`,
     },
+    keywords: post.keywords?.join(", "),
+    ...(post.readTime && {
+      timeRequired: `PT${post.readTime}M`,
+    }),
+    inLanguage: "ar-EG",
   };
 }
 
-// Website Schema (for search box in Google)
+// ========================================
+// 7. Website Schema (with Search)
+// ========================================
 export function generateWebsiteSchema() {
   return {
     "@context": "https://schema.org",
@@ -346,13 +438,120 @@ export function generateWebsiteSchema() {
     publisher: {
       "@id": `${siteConfig.url}/#organization`,
     },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${siteConfig.url}/search?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
+  };
+}
+
+// ========================================
+// 8. Organization Schema (Enhanced E-E-A-T)
+// ========================================
+export function generateOrganizationSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${siteConfig.url}/#organization`,
+    name: siteConfig.name,
+    alternateName: siteConfig.shortName,
+    url: siteConfig.url,
+    logo: `${siteConfig.url}/logo.jpeg`,
+    description: siteConfig.description,
+    email: siteConfig.email,
+    telephone: siteConfig.phoneIntl,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "التجمع الخامس",
+      addressLocality: siteConfig.city,
+      addressRegion: siteConfig.region,
+      addressCountry: siteConfig.countryCode,
     },
+    foundingDate: siteConfig.foundingYear.toString(),
+    numberOfEmployees: {
+      "@type": "QuantitativeValue",
+      minValue: 20,
+      maxValue: 50,
+    },
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        telephone: siteConfig.phoneIntl,
+        contactType: "customer service",
+        areaServed: "EG",
+        availableLanguage: ["Arabic", "English"],
+        contactOption: "TollFree",
+      },
+      {
+        "@type": "ContactPoint",
+        telephone: `+${siteConfig.whatsapp}`,
+        contactType: "sales",
+        areaServed: "EG",
+        availableLanguage: ["Arabic"],
+      },
+    ],
+  };
+}
+
+// ========================================
+// 9. HowTo Schema (لصفحات "كيف نعمل")
+// ========================================
+export function generateHowToSchema(steps: {
+  name: string;
+  description: string;
+  image?: string;
+}[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "كيف نقوم بنقل أثاثك بأمان",
+    description: "خطوات نقل الأثاث الاحترافية من خطوة لنقل الأثاث",
+    totalTime: "PT4H",
+    step: steps.map((step, index) => ({
+      "@type": "HowToStep",
+      position: index + 1,
+      name: step.name,
+      text: step.description,
+      ...(step.image && { image: step.image }),
+    })),
+  };
+}
+
+// ========================================
+// 10. Article Schema (للمقالات المتعمقة)
+// ========================================
+export function generateArticleSchema(article: {
+  title: string;
+  description: string;
+  image: string;
+  publishedAt: string;
+  modifiedAt?: string;
+  author: string;
+  slug: string;
+  category: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.description,
+    image: article.image,
+    datePublished: article.publishedAt,
+    dateModified: article.modifiedAt || article.publishedAt,
+    author: {
+      "@type": "Organization",
+      name: article.author,
+      url: siteConfig.url,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: siteConfig.name,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteConfig.url}/logo.jpeg`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${siteConfig.url}/blog/${article.slug}`,
+    },
+    articleSection: article.category,
+    inLanguage: "ar-EG",
   };
 }

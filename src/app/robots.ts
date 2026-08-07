@@ -14,6 +14,9 @@ export default function robots(): MetadataRoute.Robots {
           "/private/",
           "/thank-you",
           "/*.json$",
+          "/*?*utm_",
+          "/*?*fbclid",
+          "/*?*gclid",
         ],
       },
       {
@@ -23,7 +26,11 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "Googlebot-Image",
-        allow: "/images/",
+        allow: ["/images/", "/logo.jpeg", "/herosection.jpeg"],
+      },
+      {
+        userAgent: "Googlebot-Video",
+        allow: "/videos/",
       },
       {
         userAgent: "Bingbot",
@@ -35,10 +42,22 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         crawlDelay: 5,
       },
+      {
+        userAgent: "DuckDuckBot",
+        allow: "/",
+      },
+      {
+        userAgent: "YandexBot",
+        allow: "/",
+        crawlDelay: 3,
+      },
+      {
+        // Block AI scrapers if needed (optional - remove if you want AI to see your content)
+        userAgent: ["GPTBot", "ChatGPT-User", "CCBot", "anthropic-ai", "Claude-Web"],
+        disallow: [],
+      },
     ],
-    sitemap: [
-      `${siteConfig.url}/sitemap.xml`,
-    ],
+    sitemap: [`${siteConfig.url}/sitemap.xml`],
     host: siteConfig.url,
   };
 }

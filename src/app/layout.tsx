@@ -9,7 +9,6 @@ import {
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingActions } from "@/components/layout/FloatingActions";
-import { MobileStickyBar } from "@/components/layout/MobileStickyBar";
 import { GoogleAnalytics, GoogleTagManager } from "@/components/analytics/GoogleAnalytics";
 
 const cairo = Cairo({
@@ -34,6 +33,9 @@ export const metadata: Metadata = {
     "نقل عفش",
     "شركة نقل عفش",
     "خطوة لنقل الأثاث",
+    "خطوة موفينج",
+    "khatwa moving",
+    "khotwa",
     "شركة خطوة",
     "نقل أثاث القاهرة",
     "نقل أثاث الجيزة",
@@ -85,8 +87,8 @@ export const metadata: Metadata = {
       },
     ],
     countryName: "Egypt",
-    emails: ["info@khotwa-trans.com"],
-    phoneNumbers: [siteConfig.phone],
+    emails: [siteConfig.email],
+    phoneNumbers: [siteConfig.phoneIntl],
   },
   twitter: {
     card: "summary_large_image",
@@ -128,8 +130,8 @@ export const metadata: Metadata = {
   other: {
     "geo.region": "EG-C",
     "geo.placename": "Cairo",
-    "geo.position": "30.0131;31.4961",
-    ICBM: "30.0131, 31.4961",
+    "geo.position": `${siteConfig.coordinates.latitude};${siteConfig.coordinates.longitude}`,
+    ICBM: `${siteConfig.coordinates.latitude}, ${siteConfig.coordinates.longitude}`,
   },
 };
 
@@ -184,7 +186,7 @@ export default function RootLayout({
 
         <meta name="geo.region" content="EG-C" />
         <meta name="geo.placename" content="Cairo, Egypt" />
-        <meta name="geo.position" content="30.0131;31.4961" />
+        <meta name="geo.position" content={`${siteConfig.coordinates.latitude};${siteConfig.coordinates.longitude}`} />
 
         <GoogleTagManager />
       </head>
@@ -194,7 +196,6 @@ export default function RootLayout({
         <main>{children}</main>
         <Footer />
         <FloatingActions />
-        <MobileStickyBar />
       </body>
     </html>
   );
