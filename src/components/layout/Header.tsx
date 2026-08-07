@@ -151,18 +151,7 @@ export function Header() {
             </div>
 
             <div className="flex lg:hidden items-center gap-2">
-              <Button
-                asChild
-                size="icon"
-                className="bg-[#E85D04] hover:bg-[#D14D00] text-white h-9 w-9 rounded-lg"
-              >
-                <a
-                  href={`tel:${siteConfig.phone}`}
-                  onClick={() => trackPhoneCall("header_mobile")}
-                >
-                  <Phone className="w-4 h-4" />
-                </a>
-              </Button>
+             
 
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger className="inline-flex items-center justify-center h-9 w-9 rounded-lg text-[#1C1C1C] hover:bg-[#F5F5F5] transition-colors">
