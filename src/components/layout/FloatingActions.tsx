@@ -8,12 +8,27 @@ import { WhatsAppWidget } from "@/components/shared/WhatsAppWidget";
 export function FloatingActions() {
   const [mounted, setMounted] = useState(false);
   const [showWidget, setShowWidget] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [showPulse, setShowPulse] = useState(true);
 
   useEffect(() => {
     setMounted(true);
+
+    // Show buttons ONLY after user scrolls past 600px (past hero section)
+    const handleScroll = () => {
+      setIsVisible(window.scrollY > 600);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    // Stop pulse after 10 seconds
     const timer = setTimeout(() => setShowPulse(false), 10000);
-    return () => clearTimeout(timer);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(timer);
+    };
   }, []);
 
   if (!mounted) return null;
@@ -22,7 +37,13 @@ export function FloatingActions() {
     <>
       <WhatsAppWidget open={showWidget} onClose={() => setShowWidget(false)} />
 
-      <div className="fixed bottom-4 md:bottom-6 left-0 right-0 z-40 pointer-events-none">
+      <div
+        className={`fixed bottom-4 md:bottom-6 left-0 right-0 z-40 pointer-events-none transition-all duration-500 ${
+          isVisible
+            ? "translate-y-0 opacity-100"
+            : "translate-y-20 opacity-0 pointer-events-none"
+        }`}
+      >
         <div className="container-custom flex items-end justify-between">
 
           {/* LEFT - Call Button */}
@@ -31,7 +52,7 @@ export function FloatingActions() {
             className="pointer-events-auto group relative"
             aria-label="اتصل بنا"
           >
-            {showPulse && (
+            {showPulse && isVisible && (
               <>
                 <span className="absolute inset-0 rounded-full bg-[#E85D04] opacity-40 animate-ping" />
                 <span className="absolute inset-0 rounded-full bg-[#E85D04] opacity-20 animate-ping" style={{ animationDelay: "0.5s" }} />
@@ -47,14 +68,15 @@ export function FloatingActions() {
             onClick={() => setShowWidget(true)}
             className="pointer-events-auto group relative"
             aria-label="واتساب"
+            type="button"
           >
-            {showPulse && !showWidget && (
+            {showPulse && !showWidget && isVisible && (
               <>
                 <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-40 animate-ping" />
                 <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-20 animate-ping" style={{ animationDelay: "0.5s" }} />
               </>
             )}
-            {showPulse && !showWidget && (
+            {showPulse && !showWidget && isVisible && (
               <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#E85D04] rounded-full flex items-center justify-center text-white text-[10px] font-black shadow-lg z-10 animate-bounce">
                 1
               </div>
