@@ -413,7 +413,7 @@ function ReviewForm({
           </Label>
           <Select
             value={formData.location}
-            onValueChange={(v) => setFormData({ ...formData, location: v })}
+            onValueChange={(v) => setFormData({ ...formData, location: v || "" })}
             required
           >
             <SelectTrigger className="h-11">
@@ -439,7 +439,7 @@ function ReviewForm({
         </Label>
         <Select
           value={formData.service}
-          onValueChange={(v) => setFormData({ ...formData, service: v })}
+          onValueChange={(v) => setFormData({ ...formData, service: v || "" })}
           required
         >
           <SelectTrigger className="h-11">
@@ -681,7 +681,7 @@ export function TestimonialsSection() {
             ))}
           </div>
 
-          <Select value={sort} onValueChange={(v: SortType) => setSort(v)}>
+          <Select value={sort} onValueChange={(v) => v && setSort(v as SortType)}>
             <SelectTrigger className="w-40 h-9 text-xs bg-white">
               <SelectValue />
             </SelectTrigger>
