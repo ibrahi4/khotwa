@@ -1,224 +1,256 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Phone, ShieldCheck, Award, Gem, Crown, Sparkles,
-} from "lucide-react";
+import { Phone, Flame, Gift, ArrowLeft, Sparkles, PartyPopper } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
-type Proposition = {
-  icon: React.ElementType;
-  title: string;
-  subtitle: string;
-  gradient: string;
-};
+// ============ Countdown Hook ============
+function useCountdown(targetDate: Date) {
+  const calculate = () => {
+    const diff = targetDate.getTime() - new Date().getTime();
+    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, ended: true };
 
-const propositions: Proposition[] = [
-  {
-    icon: ShieldCheck,
-    title: "تأمين شامل على مقتنياتك",
-    subtitle: "بضمان مكتوب يغطي القيمة الفعلية",
-    gradient: "from-[#E85D04] via-[#B8460A] to-[#8B2E00]",
-  },
-  {
-    icon: Crown,
-    title: "خدمة كونسيرج متكاملة",
-    subtitle: "لسكان الكمبوندات الفاخرة والفلل",
-    gradient: "from-[#8B4513] via-[#A0522D] to-[#E85D04]",
-  },
-  {
-    icon: Gem,
-    title: "تعامل بحرص المُقتني",
-    subtitle: "خبراء في نقل التحف والأنتيك والمقتنيات النادرة",
-    gradient: "from-[#D14D00] via-[#E85D04] to-[#FF7A1F]",
-  },
-  {
-    icon: Award,
-    title: "معايير النقل الدولية",
-    subtitle: "بمواد تغليف مستوردة وتقنيات احترافية",
-    gradient: "from-[#5D2E0C] via-[#8B4513] to-[#E85D04]",
-  },
-  {
-    icon: Sparkles,
-    title: "من المعاينة إلى التسليم",
-    subtitle: "تجربة نقل استثنائية بأدق التفاصيل",
-    gradient: "from-[#E85D04] via-[#FF7A1F] to-[#D14D00]",
-  },
-];
+    return {
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((diff / (1000 * 60)) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+      ended: false,
+    };
+  };
+
+  const [time, setTime] = useState(calculate());
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(calculate()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return time;
+}
 
 export function AnnouncementBar() {
   const [mounted, setMounted] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Countdown ends in 7 days from now (adjust as needed)
+  const [targetDate] = useState(() => {
+    const date = new Date();
+    date.setDate(date.getDate() + 7);
+    date.setHours(23, 59, 59, 999);
+    return date;
+  });
+
+  const countdown = useCountdown(targetDate);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % propositions.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [mounted]);
-
   if (!mounted) {
     return (
-      <div className="bg-gradient-to-r from-[#E85D04] via-[#D14D00] to-[#8B4513] text-white h-11 flex items-center justify-center overflow-hidden">
+      <div className="bg-gradient-to-r from-[#8B2E00] via-[#E85D04] to-[#8B2E00] text-white h-12 flex items-center justify-center overflow-hidden">
         <div className="flex items-center gap-2 text-xs">
-          <Crown className="w-3.5 h-3.5" />
-          <span className="font-bold tracking-wide">خطوة - خدمة نقل استثنائية</span>
+          <Gift className="w-4 h-4" />
+          <span className="font-black tracking-wide">احتفالاً بمرور 10 سنوات - خصم 20% لفترة محدودة</span>
         </div>
       </div>
     );
   }
 
-  const prop = propositions[currentIndex];
-  const Icon = prop.icon;
+  const pad = (n: number) => n.toString().padStart(2, "0");
 
   return (
     <div className="relative overflow-hidden">
-      {/* Animated gradient background - changes with message */}
-      <div
-        key={`bg-${currentIndex}`}
-        className={`absolute inset-0 bg-gradient-to-r ${prop.gradient} bg-[length:200%_200%] animate-gradient-flow transition-all duration-1000`}
-      />
+      {/* Multi-layer animated background */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#5D1F00] via-[#E85D04] to-[#5D1F00] bg-[length:200%_200%] animate-gradient-flow" />
 
-      {/* Warm overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/30" />
-
-      {/* Diagonal luxury pattern */}
+      {/* Diagonal shine pattern */}
       <div
-        className="absolute inset-0 opacity-10 pointer-events-none"
+        className="absolute inset-0 opacity-20 pointer-events-none"
         style={{
-          backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(245,230,211,0.15) 12px, rgba(245,230,211,0.15) 13px)`,
+          backgroundImage: `repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(255,255,255,0.1) 20px, rgba(255,255,255,0.1) 21px)`,
         }}
       />
 
-      {/* Shine effect */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shine" />
+      {/* Radial glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-full bg-gradient-radial from-[#FFA500]/20 via-transparent to-transparent" />
       </div>
 
-      {/* Top glow line */}
+      {/* Shine sweep */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent animate-shine-sweep" />
+      </div>
+
+      {/* Top glow border */}
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFF3E0] to-transparent" />
 
-      {/* Bottom accent */}
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-black/40 to-transparent" />
+      {/* Bottom shadow */}
+      <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-b from-black/40 to-transparent" />
 
-      {/* Floating particles */}
-      <div className="absolute top-2 left-[15%] pointer-events-none hidden md:block">
-        <Sparkles className="w-3 h-3 text-white/50 animate-pulse" />
-      </div>
-      <div className="absolute bottom-2 right-[25%] pointer-events-none hidden md:block">
-        <Sparkles className="w-2.5 h-2.5 text-white/40 animate-pulse" style={{ animationDelay: "1.5s" }} />
-      </div>
-      <div className="absolute top-2 right-[45%] pointer-events-none hidden lg:block">
-        <Sparkles className="w-2 h-2 text-white/30 animate-pulse" style={{ animationDelay: "2.5s" }} />
+      {/* Floating sparkles */}
+      <div className="absolute inset-0 pointer-events-none">
+        <Sparkles className="absolute top-1 left-[10%] w-3 h-3 text-white/60 animate-pulse" />
+        <Sparkles className="absolute bottom-1 right-[15%] w-2.5 h-2.5 text-white/50 animate-pulse" style={{ animationDelay: "0.7s" }} />
+        <Sparkles className="absolute top-2 right-[40%] w-2 h-2 text-white/40 animate-pulse" style={{ animationDelay: "1.4s" }} />
+        <Sparkles className="absolute bottom-1 left-[35%] w-2.5 h-2.5 text-white/50 animate-pulse hidden md:block" style={{ animationDelay: "2.1s" }} />
       </div>
 
       <div className="relative container-custom">
-        <div className="flex items-center justify-between h-11 md:h-12 gap-4 md:gap-6">
+        <div className="flex items-center justify-between h-12 md:h-14 gap-2 md:gap-4">
 
-          {/* ============ LEFT: Premium Brand Mark ============ */}
-          <div className="flex items-center gap-2.5 shrink-0">
+          {/* ============ LEFT: Anniversary Badge ============ */}
+          <div className="flex items-center gap-2 md:gap-3 shrink-0">
             <div className="relative">
-              {/* Rotating ring */}
-              <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-spin-slow" />
-              <div className="relative w-6 h-6 flex items-center justify-center">
-                <Crown className="w-3 h-3 text-white drop-shadow-md" strokeWidth={2.5} />
+              <div className="absolute inset-0 bg-white rounded-full blur-md opacity-60 animate-pulse" />
+              <div className="relative w-8 h-8 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center shadow-xl border-2 border-[#FFD700]">
+                <PartyPopper className="w-4 h-4 md:w-5 md:h-5 text-[#E85D04]" strokeWidth={2.5} />
               </div>
             </div>
             <div className="hidden sm:flex flex-col leading-none">
-              <span className="text-[9px] font-black text-white tracking-[0.3em] uppercase drop-shadow-md">
-                Premium
+              <span className="text-[9px] font-black text-[#FFF3E0]/90 tracking-[0.25em] uppercase">
+                Anniversary
               </span>
-              <span className="text-[8px] text-white/80 tracking-widest uppercase mt-0.5">
-                Moving Service
+              <span className="text-sm md:text-base font-black text-white tracking-tight mt-0.5 drop-shadow-md">
+                10 سنوات
               </span>
             </div>
           </div>
 
           {/* Elegant divider */}
-          <div className="hidden sm:flex items-center gap-1 shrink-0">
-            <span className="w-1 h-1 rounded-full bg-white/60" />
-            <span className="w-8 h-px bg-gradient-to-r from-white/50 to-transparent" />
-          </div>
+          <div className="hidden md:block w-px h-8 bg-white/30 shrink-0" />
 
-          {/* ============ CENTER: Value Proposition ============ */}
-          <div className="flex-1 flex items-center justify-center min-w-0 overflow-hidden">
-            <div
-              key={currentIndex}
-              className="flex items-center gap-3 animate-luxury-fade"
-            >
-              {/* Icon with luxury frame */}
+          {/* ============ CENTER: Offer Message ============ */}
+          <div className="flex-1 flex items-center justify-center min-w-0">
+            <div className="flex items-center gap-2 md:gap-3">
+              {/* Fire icon animated */}
               <div className="relative shrink-0">
-                <div className="absolute inset-0 bg-white/30 rounded-full blur-md animate-pulse" />
-                <div className="relative w-7 h-7 md:w-8 md:h-8 bg-white/20 backdrop-blur-sm border-2 border-white/40 rounded-full flex items-center justify-center shadow-lg">
-                  <Icon className="w-3.5 h-3.5 md:w-4 md:h-4 text-white drop-shadow-md" strokeWidth={2.5} />
-                </div>
+                <div className="absolute inset-0 bg-[#FFD700] rounded-full blur-lg opacity-50 animate-pulse" />
+                <Flame className="relative w-4 h-4 md:w-5 md:h-5 text-[#FFD700] drop-shadow-lg animate-fire" strokeWidth={2.5} />
               </div>
 
-              {/* Text */}
-              <div className="flex items-baseline gap-2 min-w-0">
-                <span className="text-xs md:text-sm font-black text-white tracking-wide truncate drop-shadow-md">
-                  {prop.title}
+              <div className="flex items-baseline gap-1.5 md:gap-2 flex-wrap justify-center">
+                <span className="text-xs md:text-sm font-bold text-white/95 tracking-wide">
+                  عرض حصري
                 </span>
-                <span className="hidden md:inline-flex items-center gap-2">
-                  <span className="w-1 h-1 rounded-full bg-white/60" />
-                  <span className="text-xs text-white/90 font-medium italic tracking-wide truncate">
-                    {prop.subtitle}
-                  </span>
+
+                {/* Discount Badge - Eye-catching */}
+                <div className="relative">
+                  <div className="absolute inset-0 bg-[#FFD700] rounded-md blur-md opacity-60 animate-pulse" />
+                  <div className="relative bg-gradient-to-br from-[#FFF3E0] via-white to-[#FFD700] px-2 md:px-3 py-0.5 md:py-1 rounded-md shadow-lg">
+                    <span className="text-sm md:text-lg font-black text-[#8B2E00] tracking-tight" style={{ fontFeatureSettings: "'tnum'" }}>
+                      خصم 20%
+                    </span>
+                  </div>
+                </div>
+
+                <span className="text-xs md:text-sm font-bold text-white/95 tracking-wide hidden sm:inline">
+                  احتفالاً بمرورنا 10 سنوات
                 </span>
               </div>
             </div>
           </div>
 
           {/* Elegant divider */}
-          <div className="hidden md:flex items-center gap-1 shrink-0">
-            <span className="w-8 h-px bg-gradient-to-l from-white/50 to-transparent" />
-            <span className="w-1 h-1 rounded-full bg-white/60" />
+          <div className="hidden lg:block w-px h-8 bg-white/30 shrink-0" />
+
+          {/* ============ COUNTDOWN TIMER ============ */}
+          <div className="hidden lg:flex items-center gap-2 shrink-0">
+            <span className="text-[10px] font-black text-white/90 uppercase tracking-wider">
+              ينتهي خلال:
+            </span>
+            <div className="flex items-center gap-1" dir="ltr">
+              {/* Days */}
+              <div className="flex flex-col items-center">
+                <div className="bg-[#1C1C1C] px-2 py-1 rounded-md shadow-inner min-w-[32px] text-center border border-white/20">
+                  <span className="text-sm font-black text-white tabular-nums leading-none">
+                    {pad(countdown.days)}
+                  </span>
+                </div>
+                <span className="text-[7px] text-white/70 font-bold uppercase mt-0.5">Days</span>
+              </div>
+
+              <span className="text-white/60 font-black text-sm pb-3">:</span>
+
+              {/* Hours */}
+              <div className="flex flex-col items-center">
+                <div className="bg-[#1C1C1C] px-2 py-1 rounded-md shadow-inner min-w-[32px] text-center border border-white/20">
+                  <span className="text-sm font-black text-white tabular-nums leading-none">
+                    {pad(countdown.hours)}
+                  </span>
+                </div>
+                <span className="text-[7px] text-white/70 font-bold uppercase mt-0.5">Hrs</span>
+              </div>
+
+              <span className="text-white/60 font-black text-sm pb-3">:</span>
+
+              {/* Minutes */}
+              <div className="flex flex-col items-center">
+                <div className="bg-[#1C1C1C] px-2 py-1 rounded-md shadow-inner min-w-[32px] text-center border border-white/20">
+                  <span className="text-sm font-black text-white tabular-nums leading-none">
+                    {pad(countdown.minutes)}
+                  </span>
+                </div>
+                <span className="text-[7px] text-white/70 font-bold uppercase mt-0.5">Min</span>
+              </div>
+
+              <span className="text-white/60 font-black text-sm pb-3">:</span>
+
+              {/* Seconds - animated */}
+              <div className="flex flex-col items-center">
+                <div className="bg-[#FFD700] px-2 py-1 rounded-md shadow-inner min-w-[32px] text-center border border-white animate-pulse">
+                  <span className="text-sm font-black text-[#8B2E00] tabular-nums leading-none">
+                    {pad(countdown.seconds)}
+                  </span>
+                </div>
+                <span className="text-[7px] text-[#FFD700] font-bold uppercase mt-0.5">Sec</span>
+              </div>
+            </div>
           </div>
 
-          {/* ============ RIGHT: Luxury Direct Line ============ */}
+          {/* Elegant divider */}
+          <div className="hidden md:block w-px h-8 bg-white/30 shrink-0" />
+
+          {/* ============ RIGHT: CTA Button ============ */}
           <a
             href={`tel:${siteConfig.phone}`}
-            className="hidden md:flex items-center gap-3 shrink-0 group"
+            className="hidden md:flex items-center gap-2 shrink-0 bg-white hover:bg-[#FFF3E0] text-[#8B2E00] font-black px-3 md:px-4 py-1.5 md:py-2 rounded-md shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95 transition-all group"
             dir="ltr"
-            aria-label="خط الحجز المباشر"
           >
-            <div className="flex flex-col items-end leading-none">
-              <span className="text-[8px] font-black text-white tracking-[0.25em] uppercase drop-shadow-md">
-                Direct Line
-              </span>
-              <span className="text-xs font-black text-white group-hover:text-[#FFF3E0] transition-colors tracking-wider mt-0.5 drop-shadow-md">
-                {siteConfig.phone}
-              </span>
-            </div>
-            <div className="relative">
-              <div className="absolute inset-0 bg-white rounded-full blur-md opacity-40 group-hover:opacity-70 transition-opacity" />
-              <div className="relative w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <Phone className="w-3 h-3 text-[#E85D04]" strokeWidth={2.5} />
-              </div>
-            </div>
+            <Phone className="w-3.5 h-3.5" strokeWidth={2.5} />
+            <span className="text-xs tracking-wider">احجز الآن</span>
+            <ArrowLeft className="w-3 h-3 group-hover:-translate-x-0.5 transition-transform" />
           </a>
 
-          {/* ============ MOBILE: Compact CTA ============ */}
-          <a
-            href={`tel:${siteConfig.phone}`}
-            className="md:hidden flex items-center gap-2 shrink-0"
-            aria-label="اتصل بنا"
-          >
-            <span className="text-[9px] font-black text-white tracking-widest uppercase drop-shadow-md">
-              Call
-            </span>
-            <div className="relative">
-              <div className="absolute inset-0 bg-white rounded-full blur-md opacity-50" />
-              <div className="relative w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <Phone className="w-3.5 h-3.5 text-[#E85D04]" strokeWidth={2.5} />
-              </div>
+          {/* ============ MOBILE: Countdown Compact + CTA ============ */}
+          <div className="md:hidden flex items-center gap-2 shrink-0">
+            {/* Mobile timer - compact */}
+            <div className="flex items-center gap-0.5 bg-[#1C1C1C]/80 px-1.5 py-1 rounded border border-white/20" dir="ltr">
+              <span className="text-[10px] font-black text-white tabular-nums leading-none">
+                {pad(countdown.days)}
+              </span>
+              <span className="text-[8px] text-white/60">d</span>
+              <span className="text-white/40 text-[8px] mx-0.5">:</span>
+              <span className="text-[10px] font-black text-white tabular-nums leading-none">
+                {pad(countdown.hours)}
+              </span>
+              <span className="text-[8px] text-white/60">h</span>
+              <span className="text-white/40 text-[8px] mx-0.5">:</span>
+              <span className="text-[10px] font-black text-[#FFD700] tabular-nums leading-none animate-pulse">
+                {pad(countdown.minutes)}
+              </span>
+              <span className="text-[8px] text-[#FFD700]">m</span>
             </div>
-          </a>
+
+            {/* Mobile call button */}
+            <a
+              href={`tel:${siteConfig.phone}`}
+              className="flex items-center justify-center w-8 h-8 bg-white rounded-full shadow-lg active:scale-90 transition-transform"
+              aria-label="اتصل بنا"
+            >
+              <Phone className="w-4 h-4 text-[#E85D04]" strokeWidth={2.5} />
+            </a>
+          </div>
         </div>
       </div>
 
@@ -228,39 +260,27 @@ export function AnnouncementBar() {
           50% { background-position: 100% 50%; }
         }
         .animate-gradient-flow {
-          animation: gradient-flow 6s ease-in-out infinite;
+          animation: gradient-flow 8s ease-in-out infinite;
         }
 
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        .animate-spin-slow {
-          animation: spin-slow 8s linear infinite;
-        }
-
-        @keyframes luxury-fade {
-          0% {
-            opacity: 0;
-            transform: translateY(6px) scale(0.98);
-            filter: blur(3px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0);
-          }
-        }
-        .animate-luxury-fade {
-          animation: luxury-fade 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        @keyframes shine {
+        @keyframes shine-sweep {
           0% { transform: translateX(-100%) skewX(-12deg); }
           100% { transform: translateX(200%) skewX(-12deg); }
         }
-        .animate-shine {
-          animation: shine 4s ease-in-out infinite;
+        .animate-shine-sweep {
+          animation: shine-sweep 4s ease-in-out infinite;
+        }
+
+        @keyframes fire {
+          0%, 100% { transform: scale(1) rotate(-2deg); }
+          50% { transform: scale(1.15) rotate(2deg); }
+        }
+        .animate-fire {
+          animation: fire 1.5s ease-in-out infinite;
+        }
+
+        .bg-gradient-radial {
+          background: radial-gradient(circle, var(--tw-gradient-stops));
         }
       `}</style>
     </div>
