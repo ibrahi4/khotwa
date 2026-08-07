@@ -20,7 +20,7 @@ export function FloatingActions() {
 
   return (
     <>
-      <WhatsAppWidget isOpen={showWidget} onClose={() => setShowWidget(false)} />
+      <WhatsAppWidget open={showWidget} onClose={() => setShowWidget(false)} />
 
       <div className="fixed bottom-4 md:bottom-6 left-0 right-0 z-40 pointer-events-none">
         <div className="container-custom flex items-end justify-between">
