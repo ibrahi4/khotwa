@@ -4,9 +4,9 @@ export const siteConfig = {
   description:
     "خطوة لنقل الأثاث - أفضل شركة نقل أثاث في مصر متخصصة في التجمع الخامس، مدينتي، الشيخ زايد، 6 أكتوبر، والقاهرة الجديدة. خدمة احترافية 24/7 مع فرق مدربة، تغليف احترافي، ونش رفع، وضمان كامل على المقتنيات. اتصل الآن للحصول على عرض سعر مجاني.",
   url: "https://khatwamoving.com",
-  phone: "01091857418",
-  phoneIntl: "+201091857418",
-  whatsapp: "201091857418",
+  phone: "01042532253",
+  phoneIntl: "+201042532253",
+  whatsapp: "201042532253",
   email: "koutwaa722@gmail.com",
   address: "التجمع الخامس - القاهرة الجديدة - مصر",
   addressEn: "Fifth Settlement, New Cairo, Egypt",
