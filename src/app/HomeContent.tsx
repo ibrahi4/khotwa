@@ -6,8 +6,8 @@ import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import {
   Phone, MessageCircle, ArrowLeft, CheckCircle2, Shield,
-  Clock, Users, Truck, MapPin, Star, Award, Sparkles,
-  Wrench, Wind, Box, ArrowUpToLine, Gem, Crown,
+  Clock, Users, Truck, MapPin, Star, Award, Crown,
+  Wrench, Wind, Box, ArrowUpToLine, Gem,
 } from "lucide-react";
 import { services } from "@/config/services";
 import { featuredAreas } from "@/config/areas";
@@ -17,19 +17,29 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+// ✅ Lazy load below-fold sections
 const GallerySection = dynamic(
   () => import("@/components/features/GallerySection").then(m => ({ default: m.GallerySection })),
-  { loading: () => <div className="h-96 bg-[#FAF5EE] animate-pulse" /> }
+  {
+    loading: () => <div className="h-96 bg-[#FAF5EE]" />,
+    ssr: false,
+  }
 );
 
 const VideosSection = dynamic(
   () => import("@/components/features/VideosSection").then(m => ({ default: m.VideosSection })),
-  { loading: () => <div className="h-96 bg-white animate-pulse" /> }
+  {
+    loading: () => <div className="h-96 bg-white" />,
+    ssr: false,
+  }
 );
 
 const TestimonialsSection = dynamic(
   () => import("@/components/features/TestimonialsSection").then(m => ({ default: m.TestimonialsSection })),
-  { loading: () => <div className="h-96 bg-[#FAF5EE] animate-pulse" /> }
+  {
+    loading: () => <div className="h-96 bg-[#FAF5EE]" />,
+    ssr: false,
+  }
 );
 
 const serviceIcons: Record<string, React.ElementType> = {
@@ -50,7 +60,7 @@ export default function HomeContent() {
 
   return (
     <>
-      {/* HERO */}
+      {/* HERO - LCP Optimized */}
       <section className="relative bg-[#1C1C1C] text-white overflow-hidden min-h-[92vh] flex items-center">
         <div className="absolute inset-0">
           <Image
@@ -58,7 +68,8 @@ export default function HomeContent() {
             alt="خطوة لنقل الأثاث"
             fill
             priority
-            quality={90}
+            fetchPriority="high"
+            quality={70}
             className="object-cover object-center"
             sizes="100vw"
           />
@@ -80,6 +91,7 @@ export default function HomeContent() {
               </span>
             </div>
 
+            {/* ✅ H1 - Critical for LCP */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] mb-6 tracking-tight text-white">
               انتقل لبيتك الجديد
               <br />
@@ -95,7 +107,7 @@ export default function HomeContent() {
               <Button
                 asChild
                 size="lg"
-                className="bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-14 px-8 text-base shadow-lg transition-all duration-200 hover:scale-[1.02] border-0"
+                className="bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-14 px-8 text-base shadow-lg border-0"
               >
                 <a href={`tel:${siteConfig.phone}`}>
                   <Phone className="w-4 h-4 ml-2" />
@@ -146,9 +158,9 @@ export default function HomeContent() {
             ].map((f, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 md:gap-4 bg-white p-4 md:p-5 rounded-2xl border border-[#E5E7EB] hover:border-[#1C1C1C] hover:shadow-md transition-all duration-300 group"
+                className="flex items-center gap-3 md:gap-4 bg-white p-4 md:p-5 rounded-2xl border border-[#E5E7EB] hover:border-[#1C1C1C] hover:shadow-md transition-all group"
               >
-                <div className="w-11 h-11 md:w-12 md:h-12 bg-[#F5F5F5] group-hover:bg-[#1C1C1C] text-[#1C1C1C] group-hover:text-white rounded-xl flex items-center justify-center shrink-0 transition-all duration-300">
+                <div className="w-11 h-11 md:w-12 md:h-12 bg-[#F5F5F5] group-hover:bg-[#1C1C1C] text-[#1C1C1C] group-hover:text-white rounded-xl flex items-center justify-center shrink-0 transition-colors">
                   <f.icon className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
                 <div className="min-w-0">
@@ -183,20 +195,20 @@ export default function HomeContent() {
 
               return (
                 <Link key={s.slug} href={`/services/${s.slug}`} className="block group">
-                  <div className="relative h-[440px] rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all duration-500 bg-[#1C1C1C]">
+                  <div className="relative h-[440px] rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-shadow duration-300 bg-[#1C1C1C]">
                     {bg && (
                       <Image
                         src={bg.src}
                         alt={bg.alt}
                         fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        loading={i < 3 ? "eager" : "lazy"}
-                        quality={80}
+                        loading="lazy"
+                        quality={70}
                       />
                     )}
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C] via-[#1C1C1C]/60 to-[#1C1C1C]/20 group-hover:from-[#1C1C1C] group-hover:via-[#1C1C1C]/50 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C] via-[#1C1C1C]/60 to-[#1C1C1C]/20" />
 
                     <div className="absolute top-5 left-5 z-10">
                       <div className="w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl flex items-center justify-center">
@@ -260,7 +272,7 @@ export default function HomeContent() {
                   { title: "أسطول حديث من السيارات المجهزة", desc: "نقل آمن وسريع" },
                   { title: "أسعار شفافة ومنافسة", desc: "بدون رسوم خفية أو مفاجآت" },
                 ].map((item, i) => (
-                  <div key={i} className="flex gap-3 bg-white p-4 md:p-5 rounded-2xl border border-[#E5E7EB] hover:border-[#1C1C1C] transition-all">
+                  <div key={i} className="flex gap-3 bg-white p-4 md:p-5 rounded-2xl border border-[#E5E7EB] hover:border-[#1C1C1C] transition-colors">
                     <div className="w-10 h-10 bg-[#F5F5F5] text-[#1C1C1C] rounded-xl flex items-center justify-center shrink-0">
                       <CheckCircle2 className="w-5 h-5" />
                     </div>
@@ -335,13 +347,13 @@ export default function HomeContent() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {featuredAreas.map((area) => (
               <Link key={area.slug} href={`/areas/${area.slug}`}>
-                <Card className="hover:border-[#1C1C1C] hover:shadow-md transition-all duration-300 group cursor-pointer border-[#E5E7EB] relative overflow-hidden bg-[#FAF5EE] hover:bg-white">
+                <Card className="hover:border-[#1C1C1C] hover:shadow-md transition-all group cursor-pointer border-[#E5E7EB] relative overflow-hidden bg-[#FAF5EE] hover:bg-white">
                   <Badge className="absolute top-2 left-2 bg-[#1C1C1C] text-white border-0 text-[10px] z-10">
                     <Crown className="w-2.5 h-2.5 ml-0.5" />
                     VIP
                   </Badge>
                   <CardContent className="p-5 md:p-6 text-center">
-                    <div className="w-12 h-12 md:w-14 md:h-14 bg-white group-hover:bg-[#1C1C1C] text-[#1C1C1C] group-hover:text-white rounded-2xl flex items-center justify-center mx-auto mb-3 transition-all duration-300 border border-[#E5E7EB] group-hover:border-[#1C1C1C]">
+                    <div className="w-12 h-12 md:w-14 md:h-14 bg-white group-hover:bg-[#1C1C1C] text-[#1C1C1C] group-hover:text-white rounded-2xl flex items-center justify-center mx-auto mb-3 transition-colors border border-[#E5E7EB] group-hover:border-[#1C1C1C]">
                       <MapPin className="w-5 h-5 md:w-6 md:h-6" />
                     </div>
                     <div className="font-bold text-sm md:text-base text-[#1C1C1C]">
