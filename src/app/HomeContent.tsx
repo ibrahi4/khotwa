@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { useState, useEffect } from "react";
 import {
   Phone, MessageCircle, ArrowLeft, CheckCircle2, Shield,
   Clock, Users, Truck, MapPin, Star, Award, Crown,
@@ -17,29 +16,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-// ✅ Lazy load below-fold sections
 const GallerySection = dynamic(
   () => import("@/components/features/GallerySection").then(m => ({ default: m.GallerySection })),
-  {
-    loading: () => <div className="h-96 bg-[#FAF5EE]" />,
-    ssr: false,
-  }
+  { loading: () => <div className="h-96 bg-[#FAF5EE]" /> }
 );
 
 const VideosSection = dynamic(
   () => import("@/components/features/VideosSection").then(m => ({ default: m.VideosSection })),
-  {
-    loading: () => <div className="h-96 bg-white" />,
-    ssr: false,
-  }
+  { loading: () => <div className="h-96 bg-white" /> }
 );
 
 const TestimonialsSection = dynamic(
   () => import("@/components/features/TestimonialsSection").then(m => ({ default: m.TestimonialsSection })),
-  {
-    loading: () => <div className="h-96 bg-[#FAF5EE]" />,
-    ssr: false,
-  }
+  { loading: () => <div className="h-96 bg-[#FAF5EE]" /> }
 );
 
 const serviceIcons: Record<string, React.ElementType> = {
@@ -52,15 +41,9 @@ const serviceIcons: Record<string, React.ElementType> = {
 };
 
 export default function HomeContent() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
     <>
-      {/* HERO - LCP Optimized */}
+      {/* HERO */}
       <section className="relative bg-[#1C1C1C] text-white overflow-hidden min-h-[92vh] flex items-center">
         <div className="absolute inset-0">
           <Image
@@ -68,8 +51,7 @@ export default function HomeContent() {
             alt="خطوة لنقل الأثاث"
             fill
             priority
-            fetchPriority="high"
-            quality={70}
+            quality={75}
             className="object-cover object-center"
             sizes="100vw"
           />
@@ -81,9 +63,6 @@ export default function HomeContent() {
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 mb-6">
               <span className="relative flex h-2 w-2">
-                {mounted && (
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E85D04] opacity-75" />
-                )}
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[#E85D04]" />
               </span>
               <span className="text-xs font-semibold text-white/90 tracking-wide">
@@ -91,7 +70,6 @@ export default function HomeContent() {
               </span>
             </div>
 
-            {/* ✅ H1 - Critical for LCP */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] mb-6 tracking-tight text-white">
               انتقل لبيتك الجديد
               <br />
@@ -158,7 +136,7 @@ export default function HomeContent() {
             ].map((f, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 md:gap-4 bg-white p-4 md:p-5 rounded-2xl border border-[#E5E7EB] hover:border-[#1C1C1C] hover:shadow-md transition-all group"
+                className="flex items-center gap-3 md:gap-4 bg-white p-4 md:p-5 rounded-2xl border border-[#E5E7EB] hover:border-[#1C1C1C] hover:shadow-md transition-colors group"
               >
                 <div className="w-11 h-11 md:w-12 md:h-12 bg-[#F5F5F5] group-hover:bg-[#1C1C1C] text-[#1C1C1C] group-hover:text-white rounded-xl flex items-center justify-center shrink-0 transition-colors">
                   <f.icon className="w-5 h-5 md:w-6 md:h-6" />
@@ -204,7 +182,7 @@ export default function HomeContent() {
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         loading="lazy"
-                        quality={70}
+                        quality={75}
                       />
                     )}
 
@@ -347,7 +325,7 @@ export default function HomeContent() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {featuredAreas.map((area) => (
               <Link key={area.slug} href={`/areas/${area.slug}`}>
-                <Card className="hover:border-[#1C1C1C] hover:shadow-md transition-all group cursor-pointer border-[#E5E7EB] relative overflow-hidden bg-[#FAF5EE] hover:bg-white">
+                <Card className="hover:border-[#1C1C1C] hover:shadow-md transition-colors group cursor-pointer border-[#E5E7EB] relative overflow-hidden bg-[#FAF5EE] hover:bg-white">
                   <Badge className="absolute top-2 left-2 bg-[#1C1C1C] text-white border-0 text-[10px] z-10">
                     <Crown className="w-2.5 h-2.5 ml-0.5" />
                     VIP
