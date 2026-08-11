@@ -18,7 +18,7 @@ export function buildMetadata({
   title,
   description,
   path = "",
-  image = "/logo.jpeg",
+  image = "/logo.webp",
   keywords,
   noIndex = false,
   type = "website",
