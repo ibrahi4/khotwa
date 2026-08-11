@@ -23,7 +23,7 @@ export function Footer() {
               <div className="flex items-center gap-3">
                 <div className="relative w-14 h-14 rounded-full overflow-hidden ring-2 ring-white/10 shrink-0">
                   <Image
-                    src="/logo.jpeg"
+                    src="/logo.webp"
                     alt={siteConfig.name}
                     fill
                     className="object-cover"

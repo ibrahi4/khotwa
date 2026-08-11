@@ -147,7 +147,7 @@ export function WhatsAppWidget({ open, onClose }: WhatsAppWidgetProps) {
               <div className="relative shrink-0">
                 <div className="w-14 h-14 bg-white rounded-full p-1 shadow-lg overflow-hidden">
                   <Image
-                    src="/logo.jpeg"
+                    src="/logo.webp"
                     alt="خطوة"
                     width={56}
                     height={56}

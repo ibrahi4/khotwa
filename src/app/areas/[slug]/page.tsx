@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import {
   Phone, MessageCircle, ArrowLeft, MapPin, Building2,
   CheckCircle2, Crown, Sparkles, Shield, Award, Users, Clock,
-  Star, TrendingUp, Truck, Wrench, Wind, Box, ArrowUpToLine, Gem,
+  Star, Truck, Wrench, Wind, Box, ArrowUpToLine, Gem,
   Target, Zap, HeartHandshake,
 } from "lucide-react";
 import { areas, getAreaBySlug, getRelatedAreas } from "@/config/areas";
@@ -85,15 +85,14 @@ export default async function AreaPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      {/* ========== HERO WITH BG IMAGE ========== */}
       <section className="relative bg-[#1C1C1C] text-white overflow-hidden min-h-[75vh] flex items-center">
         <div className="absolute inset-0">
           <Image
-            src="/herosection.jpeg"
+            src="/herosection.webp"
             alt={`نقل عفش ${area.name}`}
             fill
             priority
-            quality={85}
+            quality={75}
             className="object-cover object-center"
             sizes="100vw"
           />
@@ -102,48 +101,31 @@ export default async function AreaPage({ params }: Props) {
         </div>
 
         <div className="relative container-custom py-16 md:py-20 w-full">
-          {/* Breadcrumb */}
           <nav aria-label="breadcrumb" className="mb-6">
-            <ol className="flex items-center gap-2 text-sm text-white/70">
-              <li>
-                <Link href="/" className="hover:text-[#E85D04] transition-colors">
-                  الرئيسية
-                </Link>
-              </li>
+            <ol className="flex items-center gap-2 text-sm text-white/70 flex-wrap">
+              <li><Link href="/" className="hover:text-[#E85D04] transition-colors">الرئيسية</Link></li>
               <li><ArrowLeft className="w-3 h-3" /></li>
-              <li>
-                <Link href="/areas" className="hover:text-[#E85D04] transition-colors">
-                  مناطق الخدمة
-                </Link>
-              </li>
+              <li><Link href="/areas" className="hover:text-[#E85D04] transition-colors">مناطق الخدمة</Link></li>
               <li><ArrowLeft className="w-3 h-3" /></li>
               <li className="text-white font-semibold">{area.name}</li>
             </ol>
           </nav>
 
           <div className="max-w-3xl">
-            {/* VIP Badge */}
-            {area.isVip && (
+            {area.isVip ? (
               <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#E85D04] to-[#D14D00] px-4 py-1.5 mb-6 shadow-lg shadow-[#E85D04]/30">
                 <Crown className="w-4 h-4 text-white" />
-                <span className="text-xs font-black text-white tracking-wide">
-                  خدمة VIP - منطقة مميّزة
-                </span>
+                <span className="text-xs font-black text-white tracking-wide">خدمة VIP - منطقة مميّزة</span>
               </div>
-            )}
-
-            {!area.isVip && (
+            ) : (
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur border border-white/20 px-4 py-1.5 mb-6">
                 <MapPin className="w-4 h-4 text-[#E85D04]" />
-                <span className="text-xs font-semibold text-white/90 tracking-wide">
-                  خدمة متاحة الآن في {area.name}
-                </span>
+                <span className="text-xs font-semibold text-white/90 tracking-wide">خدمة متاحة الآن في {area.name}</span>
               </div>
             )}
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] mb-6 tracking-tight">
-              نقل عفش
-              <br />
+              نقل عفش<br />
               <span className="text-[#E85D04]">{area.name}</span>
             </h1>
 
@@ -151,7 +133,6 @@ export default async function AreaPage({ params }: Props) {
               {area.description || area.metaDescription}
             </p>
 
-            {/* Trust Badges */}
             <div className="flex flex-wrap items-center gap-2 mb-8">
               {[
                 { icon: Shield, text: "ضمان كامل" },
@@ -159,54 +140,35 @@ export default async function AreaPage({ params }: Props) {
                 { icon: Award, text: "10+ سنوات" },
                 { icon: Star, text: "4.9/5" },
               ].map((b, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-1.5 bg-white/10 backdrop-blur border border-white/20 rounded-full px-3 py-1.5"
-                >
+                <div key={i} className="flex items-center gap-1.5 bg-white/10 backdrop-blur border border-white/20 rounded-full px-3 py-1.5">
                   <b.icon className="w-3.5 h-3.5 text-[#E85D04]" />
                   <span className="text-xs font-semibold text-white">{b.text}</span>
                 </div>
               ))}
             </div>
 
-            {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <a
-                href={`tel:${siteConfig.phone}`}
-                className="inline-flex items-center justify-center gap-2 bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-14 px-8 rounded-md shadow-lg shadow-[#E85D04]/30 transition-all hover:scale-[1.02] text-base"
-              >
+              <a href={`tel:${siteConfig.phone}`} className="inline-flex items-center justify-center gap-2 bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-14 px-8 rounded-md shadow-lg shadow-[#E85D04]/30 transition-all hover:scale-[1.02] text-base">
                 <Phone className="w-4 h-4" />
                 احجز موعدك الآن
               </a>
-              <a
-                href={`https://wa.me/${siteConfig.whatsapp}?text=استفسار عن نقل عفش ${area.name}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white h-14 px-8 rounded-md backdrop-blur text-base"
-              >
+              <a href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(`استفسار عن نقل عفش ${area.name}`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white h-14 px-8 rounded-md backdrop-blur text-base">
                 <MessageCircle className="w-4 h-4" />
                 تواصل واتساب
               </a>
             </div>
 
-            {/* Stats Row */}
             <div className="grid grid-cols-3 gap-6 pt-8 mt-8 border-t border-white/10 max-w-lg">
               <div>
-                <div className="text-2xl md:text-3xl font-black text-white mb-1">
-                  +10
-                </div>
+                <div className="text-2xl md:text-3xl font-black text-white mb-1">+10</div>
                 <div className="text-xs text-white/50 font-medium">سنوات خبرة</div>
               </div>
               <div>
-                <div className="text-2xl md:text-3xl font-black text-white mb-1">
-                  500+
-                </div>
+                <div className="text-2xl md:text-3xl font-black text-white mb-1">500+</div>
                 <div className="text-xs text-white/50 font-medium">عميل راضٍ</div>
               </div>
               <div>
-                <div className="text-2xl md:text-3xl font-black text-white mb-1">
-                  24/7
-                </div>
+                <div className="text-2xl md:text-3xl font-black text-white mb-1">24/7</div>
                 <div className="text-xs text-white/50 font-medium">خدمة مستمرة</div>
               </div>
             </div>
@@ -214,7 +176,6 @@ export default async function AreaPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ========== FEATURES BAR ========== */}
       <section className="bg-[#FAF5EE] border-b border-[#E5E7EB]">
         <div className="container-custom py-10 md:py-12">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -224,10 +185,7 @@ export default async function AreaPage({ params }: Props) {
               { icon: Users, title: "فرق مدربة", desc: "متخصصون محترفون" },
               { icon: HeartHandshake, title: "أسعار شفافة", desc: "بدون رسوم خفية" },
             ].map((f, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 md:gap-4 bg-white p-4 md:p-5 rounded-2xl border border-[#E5E7EB] hover:border-[#E85D04] hover:shadow-md transition-all group"
-              >
+              <div key={i} className="flex items-center gap-3 md:gap-4 bg-white p-4 md:p-5 rounded-2xl border border-[#E5E7EB] hover:border-[#E85D04] hover:shadow-md transition-all group">
                 <div className="w-11 h-11 md:w-12 md:h-12 bg-[#FAF5EE] group-hover:bg-[#E85D04] text-[#1C1C1C] group-hover:text-white rounded-xl flex items-center justify-center shrink-0 transition-all">
                   <f.icon className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
@@ -241,7 +199,6 @@ export default async function AreaPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ========== ABOUT SECTION ========== */}
       {area.longDescription && (
         <section className="section-padding bg-white">
           <div className="container-custom">
@@ -259,7 +216,6 @@ export default async function AreaPage({ params }: Props) {
                 </p>
               </div>
 
-              {/* Side Card */}
               <div className="lg:sticky lg:top-28">
                 <Card className="bg-[#1C1C1C] border-0 text-white overflow-hidden relative">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-[#E85D04]/10 rounded-full blur-3xl" />
@@ -272,19 +228,11 @@ export default async function AreaPage({ params }: Props) {
                       معاينة مجانية في {area.name} وعرض سعر شفاف بدون أي التزام
                     </p>
                     <div className="space-y-2">
-                      <a
-                        href={`tel:${siteConfig.phone}`}
-                        className="flex items-center justify-center gap-2 bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-11 px-4 rounded-md text-sm w-full"
-                      >
+                      <a href={`tel:${siteConfig.phone}`} className="flex items-center justify-center gap-2 bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-11 px-4 rounded-md text-sm w-full">
                         <Phone className="w-4 h-4" />
                         اتصل الآن
                       </a>
-                      <a
-                        href={`https://wa.me/${siteConfig.whatsapp}?text=استفسار عن نقل عفش ${area.name}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white h-11 px-4 rounded-md text-sm w-full"
-                      >
+                      <a href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(`استفسار عن نقل عفش ${area.name}`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white h-11 px-4 rounded-md text-sm w-full">
                         <MessageCircle className="w-4 h-4" />
                         واتساب
                       </a>
@@ -303,7 +251,6 @@ export default async function AreaPage({ params }: Props) {
         </section>
       )}
 
-      {/* ========== SERVICES IN THIS AREA ========== */}
       <section className="section-padding bg-[#FAF5EE]">
         <div className="container-custom">
           <div className="text-center max-w-2xl mx-auto mb-12">
@@ -348,7 +295,6 @@ export default async function AreaPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ========== COMPOUNDS (Premium Look) ========== */}
       {area.compounds && area.compounds.length > 0 && (
         <section className="section-padding bg-white">
           <div className="container-custom">
@@ -360,17 +306,11 @@ export default async function AreaPage({ params }: Props) {
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-[#1C1C1C] mb-4 tracking-tight">
                 نخدم أشهر كمبوندات {area.name}
               </h2>
-              <p className="text-base text-[#64748B]">
-                خبرة واسعة في التعامل مع جميع الكمبوندات الفاخرة
-              </p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {area.compounds.map((c, i) => (
-                <div
-                  key={i}
-                  className="group relative bg-gradient-to-br from-[#FAF5EE] to-white border border-[#E5E7EB] hover:border-[#E85D04] rounded-2xl p-4 md:p-5 transition-all hover:shadow-lg hover:-translate-y-1"
-                >
+                <div key={i} className="group relative bg-gradient-to-br from-[#FAF5EE] to-white border border-[#E5E7EB] hover:border-[#E85D04] rounded-2xl p-4 md:p-5 transition-all hover:shadow-lg hover:-translate-y-1">
                   <div className="w-10 h-10 md:w-12 md:h-12 bg-white group-hover:bg-[#E85D04] rounded-xl flex items-center justify-center mb-3 border border-[#E5E7EB] group-hover:border-[#E85D04] transition-all shadow-sm">
                     <Building2 className="w-5 h-5 md:w-6 md:h-6 text-[#E85D04] group-hover:text-white transition-colors" />
                   </div>
@@ -388,7 +328,6 @@ export default async function AreaPage({ params }: Props) {
         </section>
       )}
 
-      {/* ========== NEIGHBORHOODS ========== */}
       {area.neighborhoods && area.neighborhoods.length > 0 && (
         <section className="section-padding bg-[#FAF5EE]">
           <div className="container-custom">
@@ -404,10 +343,7 @@ export default async function AreaPage({ params }: Props) {
 
             <div className="flex flex-wrap justify-center gap-2 md:gap-3 max-w-4xl mx-auto">
               {area.neighborhoods.map((n, i) => (
-                <div
-                  key={i}
-                  className="inline-flex items-center gap-2 bg-white border border-[#E5E7EB] hover:border-[#E85D04] hover:bg-[#E85D04] hover:text-white text-[#1C1C1C] px-4 py-2 md:px-5 md:py-2.5 rounded-full text-sm font-semibold transition-all cursor-default group"
-                >
+                <div key={i} className="inline-flex items-center gap-2 bg-white border border-[#E5E7EB] hover:border-[#E85D04] hover:bg-[#E85D04] hover:text-white text-[#1C1C1C] px-4 py-2 md:px-5 md:py-2.5 rounded-full text-sm font-semibold transition-all cursor-default group">
                   <MapPin className="w-3.5 h-3.5 text-[#E85D04] group-hover:text-white" />
                   <span>{n}</span>
                 </div>
@@ -417,7 +353,6 @@ export default async function AreaPage({ params }: Props) {
         </section>
       )}
 
-      {/* ========== HIGHLIGHTS / WHY US ========== */}
       {(area.highlights || area.whyChooseUs) && (
         <section className="section-padding bg-[#1C1C1C] text-white relative overflow-hidden">
           <div className="absolute inset-0 opacity-5">
@@ -439,10 +374,7 @@ export default async function AreaPage({ params }: Props) {
             {area.whyChooseUs && area.whyChooseUs.length > 0 ? (
               <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
                 {area.whyChooseUs.map((item, i) => (
-                  <div
-                    key={i}
-                    className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-[#E85D04]/50 hover:bg-white/10 transition-all group"
-                  >
+                  <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-[#E85D04]/50 hover:bg-white/10 transition-all group">
                     <div className="w-14 h-14 bg-[#E85D04] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                       <Award className="w-7 h-7 text-white" />
                     </div>
@@ -454,10 +386,7 @@ export default async function AreaPage({ params }: Props) {
             ) : area.highlights && (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
                 {area.highlights.map((h, i) => (
-                  <div
-                    key={i}
-                    className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-[#E85D04]/50 transition-all"
-                  >
+                  <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-[#E85D04]/50 transition-all">
                     <div className="w-12 h-12 bg-[#E85D04] rounded-2xl flex items-center justify-center mb-4">
                       <CheckCircle2 className="w-6 h-6 text-white" />
                     </div>
@@ -470,7 +399,6 @@ export default async function AreaPage({ params }: Props) {
         </section>
       )}
 
-      {/* ========== FAQs ========== */}
       {area.faqs && area.faqs.length > 0 && (
         <section className="section-padding bg-white">
           <div className="container-custom">
@@ -507,7 +435,6 @@ export default async function AreaPage({ params }: Props) {
         </section>
       )}
 
-      {/* ========== RELATED AREAS ========== */}
       {related.length > 0 && (
         <section className="section-padding bg-[#FAF5EE]">
           <div className="container-custom">
@@ -547,7 +474,6 @@ export default async function AreaPage({ params }: Props) {
         </section>
       )}
 
-      {/* ========== FINAL CTA ========== */}
       <section className="relative bg-[#1C1C1C] text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#E85D04] rounded-full blur-3xl" />
@@ -561,8 +487,7 @@ export default async function AreaPage({ params }: Props) {
             </Badge>
 
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight tracking-tight">
-              جاهزون لخدمتك في
-              <br />
+              جاهزون لخدمتك في<br />
               <span className="text-[#E85D04]">{area.name}</span>
             </h2>
             <p className="text-base md:text-lg text-white/60 mb-10 max-w-2xl mx-auto leading-relaxed">
@@ -570,19 +495,11 @@ export default async function AreaPage({ params }: Props) {
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-3">
-              <a
-                href={`tel:${siteConfig.phone}`}
-                className="inline-flex items-center justify-center gap-2 bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-14 px-8 rounded-md shadow-lg shadow-[#E85D04]/30 text-base"
-              >
+              <a href={`tel:${siteConfig.phone}`} className="inline-flex items-center justify-center gap-2 bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-14 px-8 rounded-md shadow-lg shadow-[#E85D04]/30 text-base">
                 <Phone className="w-4 h-4" />
                 اتصل: {siteConfig.phone}
               </a>
-              <a
-                href={`https://wa.me/${siteConfig.whatsapp}?text=استفسار عن نقل عفش ${area.name}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white h-14 px-8 rounded-md backdrop-blur text-base"
-              >
+              <a href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(`استفسار عن نقل عفش ${area.name}`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white h-14 px-8 rounded-md backdrop-blur text-base">
                 <MessageCircle className="w-4 h-4" />
                 تواصل واتساب
               </a>

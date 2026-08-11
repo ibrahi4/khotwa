@@ -26,7 +26,7 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "Googlebot-Image",
-        allow: ["/images/", "/logo.jpeg", "/herosection.jpeg"],
+        allow: ["/images/", "/logo.webp", "/herosection.webp"],
       },
       {
         userAgent: "Googlebot-Video",
@@ -52,7 +52,6 @@ export default function robots(): MetadataRoute.Robots {
         crawlDelay: 3,
       },
       {
-        // Block AI scrapers if needed (optional - remove if you want AI to see your content)
         userAgent: ["GPTBot", "ChatGPT-User", "CCBot", "anthropic-ai", "Claude-Web"],
         disallow: [],
       },

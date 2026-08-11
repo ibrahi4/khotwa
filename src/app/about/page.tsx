@@ -89,7 +89,7 @@ export default function AboutPage() {
             <div className="relative">
               <div className="relative aspect-square rounded-3xl overflow-hidden shadow-xl">
                 <Image
-                  src="/herosection.jpeg"
+                  src="/herosection.webp"
                   alt="خطوة لنقل الأثاث"
                   fill
                   className="object-cover"

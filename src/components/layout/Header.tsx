@@ -47,7 +47,7 @@ export function Header() {
         )}
       >
         <Image
-          src="/logo.jpeg"
+          src="/logo.webp"
           alt={siteConfig.name}
           fill
           className="object-cover"
@@ -167,7 +167,7 @@ export function Header() {
                     <div className="flex items-center gap-3 mb-3">
                       <div className="relative w-11 h-11 rounded-full overflow-hidden ring-2 ring-white/20 shrink-0">
                         <Image
-                          src="/logo.jpeg"
+                          src="/logo.webp"
                           alt={siteConfig.name}
                           fill
                           className="object-cover"

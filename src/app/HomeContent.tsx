@@ -54,7 +54,7 @@ export default function HomeContent() {
       <section className="relative bg-[#1C1C1C] text-white overflow-hidden min-h-[92vh] flex items-center">
         <div className="absolute inset-0">
           <Image
-            src="/herosection.jpeg"
+            src="/herosection.webp"
             alt="خطوة لنقل الأثاث"
             fill
             priority

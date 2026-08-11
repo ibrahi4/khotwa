@@ -72,7 +72,7 @@ export function Logo({
       )}
     >
       <Image
-        src="/logo.jpeg"
+        src="/logo.webp"
         alt={siteConfig.name}
         fill
         className="object-cover"

@@ -12,10 +12,10 @@ import { FloatingActions } from "@/components/layout/FloatingActions";
 import { GoogleAnalytics, GoogleTagManager } from "@/components/analytics/GoogleAnalytics";
 
 const cairo = Cairo({
-  subsets: ["arabic", "latin"],
+  subsets: ["arabic"],
   display: "swap",
   preload: true,
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "700", "900"],
   variable: "--font-cairo",
   fallback: ["system-ui", "Arial", "sans-serif"],
   adjustFontFallback: true,
@@ -29,33 +29,15 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   keywords: [
-    "شركة نقل أثاث",
-    "نقل عفش",
-    "شركة نقل عفش",
-    "خطوة لنقل الأثاث",
-    "خطوة موفينج",
-    "khatwa moving",
-    "khotwa",
-    "شركة خطوة",
-    "نقل أثاث القاهرة",
-    "نقل أثاث الجيزة",
-    "نقل أثاث التجمع الخامس",
-    "نقل أثاث التجمع",
-    "نقل أثاث مدينتي",
-    "نقل أثاث الشيخ زايد",
-    "نقل أثاث 6 أكتوبر",
-    "نقل أثاث القاهرة الجديدة",
-    "نقل أثاث العاصمة الإدارية",
-    "نقل أثاث الرحاب",
-    "فك وتركيب أثاث",
-    "فك وتركيب تكييفات",
-    "تغليف أثاث",
-    "ونش رفع أثاث",
-    "نقل مقتنيات حساسة",
-    "افضل شركة نقل اثاث في مصر",
-    "شركة نقل اثاث كمبوندات",
-    "نقل اثاث فلل",
-    "شركة نقل اثاث موثوقة",
+    "شركة نقل أثاث", "نقل عفش", "شركة نقل عفش", "خطوة لنقل الأثاث",
+    "خطوة موفينج", "khatwa moving", "khotwa", "شركة خطوة",
+    "نقل أثاث القاهرة", "نقل أثاث الجيزة", "نقل أثاث التجمع الخامس",
+    "نقل أثاث مدينتي", "نقل أثاث الشيخ زايد", "نقل أثاث 6 أكتوبر",
+    "نقل أثاث القاهرة الجديدة", "نقل أثاث العاصمة الإدارية",
+    "نقل أثاث الرحاب", "فك وتركيب أثاث", "فك وتركيب تكييفات",
+    "تغليف أثاث", "ونش رفع أثاث", "نقل مقتنيات حساسة",
+    "افضل شركة نقل اثاث في مصر", "شركة نقل اثاث كمبوندات",
+    "نقل اثاث فلل", "شركة نقل اثاث موثوقة",
   ],
   authors: [{ name: siteConfig.name, url: siteConfig.url }],
   creator: siteConfig.name,
@@ -66,9 +48,7 @@ export const metadata: Metadata = {
   formatDetection: { email: false, address: false, telephone: false },
   alternates: {
     canonical: siteConfig.url,
-    languages: {
-      "ar-EG": siteConfig.url,
-    },
+    languages: { "ar-EG": siteConfig.url },
   },
   openGraph: {
     type: "website",
@@ -79,11 +59,11 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: [
       {
-        url: "/logo.jpeg",
+        url: "/logo.webp",
         width: 1200,
         height: 630,
         alt: siteConfig.name,
-        type: "image/jpeg",
+        type: "image/webp",
       },
     ],
     countryName: "Egypt",
@@ -94,7 +74,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
-    images: ["/logo.jpeg"],
+    images: ["/logo.webp"],
   },
   robots: {
     index: true,
@@ -115,9 +95,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.png", type: "image/png", sizes: "32x32" },
-      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
-      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+      { url: "/icon1.png", type: "image/png", sizes: "32x32" },
     ],
     apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
     shortcut: "/favicon.ico",
@@ -159,25 +137,24 @@ export default function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(businessSchema),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(businessSchema) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(websiteSchema),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
 
-        <link rel="preload" as="image" href="/herosection.jpeg" fetchPriority="high" />
-        <link rel="preload" as="image" href="/logo.jpeg" fetchPriority="high" />
+        <link
+          rel="preload"
+          as="image"
+          href="/herosection.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
 
         <link rel="dns-prefetch" href="https://wa.me" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -186,7 +163,10 @@ export default function RootLayout({
 
         <meta name="geo.region" content="EG-C" />
         <meta name="geo.placename" content="Cairo, Egypt" />
-        <meta name="geo.position" content={`${siteConfig.coordinates.latitude};${siteConfig.coordinates.longitude}`} />
+        <meta
+          name="geo.position"
+          content={`${siteConfig.coordinates.latitude};${siteConfig.coordinates.longitude}`}
+        />
 
         <GoogleTagManager />
       </head>

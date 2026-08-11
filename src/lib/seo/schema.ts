@@ -8,7 +8,7 @@ const WEBSITE_ID = `${siteConfig.url}/#website`;
 
 const LOGO_OBJECT = {
   "@type": "ImageObject" as const,
-  url: `${siteConfig.url}/logo.jpeg`,
+  url: `${siteConfig.url}/logo.webp`,
   width: 512,
   height: 512,
   caption: siteConfig.name,
@@ -20,7 +20,7 @@ const PROVIDER_REFERENCE = {
   name: siteConfig.name,
   telephone: siteConfig.phoneIntl,
   url: siteConfig.url,
-  logo: `${siteConfig.url}/logo.jpeg`,
+  logo: `${siteConfig.url}/logo.webp`,
 };
 
 const POSTAL_ADDRESS = {
@@ -57,8 +57,8 @@ export function generateLocalBusinessSchema() {
     url: siteConfig.url,
     logo: LOGO_OBJECT,
     image: [
-      `${siteConfig.url}/logo.jpeg`,
-      `${siteConfig.url}/herosection.jpeg`,
+      `${siteConfig.url}/logo.webp`,
+      `${siteConfig.url}/herosection.webp`,
       `${siteConfig.url}/images/gallery/taghleef.webp`,
       `${siteConfig.url}/images/gallery/fareq-3amal.webp`,
       `${siteConfig.url}/images/gallery/tarkeeb.webp`,
@@ -241,7 +241,7 @@ export function generateServiceSchema(
     name: serviceName,
     description: serviceDescription,
     url: serviceUrl,
-    image: serviceImage || `${siteConfig.url}/logo.jpeg`,
+    image: serviceImage || `${siteConfig.url}/logo.webp`,
     provider: PROVIDER_REFERENCE,
     areaServed: {
       "@type": "Country",
@@ -368,7 +368,7 @@ export function generateBlogPostSchema(post: {
       url: siteConfig.url,
       logo: {
         "@type": "ImageObject",
-        url: `${siteConfig.url}/logo.jpeg`,
+        url: `${siteConfig.url}/logo.webp`,
       },
     },
     publisher: {
@@ -376,7 +376,7 @@ export function generateBlogPostSchema(post: {
       name: siteConfig.name,
       logo: {
         "@type": "ImageObject",
-        url: `${siteConfig.url}/logo.jpeg`,
+        url: `${siteConfig.url}/logo.webp`,
         width: 512,
         height: 512,
       },
@@ -423,7 +423,7 @@ export function generateOrganizationSchema() {
     name: siteConfig.name,
     alternateName: siteConfig.shortName,
     url: siteConfig.url,
-    logo: `${siteConfig.url}/logo.jpeg`,
+    logo: `${siteConfig.url}/logo.webp`,
     description: siteConfig.description,
     email: siteConfig.email,
     telephone: siteConfig.phoneIntl,
@@ -507,7 +507,7 @@ export function generateArticleSchema(article: {
       name: siteConfig.name,
       logo: {
         "@type": "ImageObject",
-        url: `${siteConfig.url}/logo.jpeg`,
+        url: `${siteConfig.url}/logo.webp`,
       },
     },
     mainEntityOfPage: {
