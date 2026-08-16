@@ -13,10 +13,6 @@ export default function robots(): MetadataRoute.Robots {
           "/admin/",
           "/private/",
           "/thank-you",
-          "/*.json$",
-          "/*?*utm_",
-          "/*?*fbclid",
-          "/*?*gclid",
         ],
       },
       {
@@ -26,7 +22,7 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "Googlebot-Image",
-        allow: ["/images/", "/logo.webp", "/herosection.webp"],
+        allow: "/images/",
       },
       {
         userAgent: "Googlebot-Video",
@@ -38,11 +34,6 @@ export default function robots(): MetadataRoute.Robots {
         crawlDelay: 2,
       },
       {
-        userAgent: "Slurp",
-        allow: "/",
-        crawlDelay: 5,
-      },
-      {
         userAgent: "DuckDuckBot",
         allow: "/",
       },
@@ -51,12 +42,8 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         crawlDelay: 3,
       },
-      {
-        userAgent: ["GPTBot", "ChatGPT-User", "CCBot", "anthropic-ai", "Claude-Web"],
-        disallow: [],
-      },
     ],
-    sitemap: [`${siteConfig.url}/sitemap.xml`],
+    sitemap: `${siteConfig.url}/sitemap.xml`,
     host: siteConfig.url,
   };
 }
