@@ -90,7 +90,7 @@ const sections = [
 export default function PrivacyPage() {
   return (
     <>
-      <section className="relative bg-[#1C1C1C] text-white overflow-hidden">
+      <section className="relative bg-white text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10" aria-hidden="true">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#3F4F44] rounded-full blur-3xl" />
         </div>
@@ -135,10 +135,10 @@ export default function PrivacyPage() {
                       <section.icon className="w-6 h-6" />
                     </div>
                     <div className="flex-1 pt-1.5">
-                      <h2 className="text-xl md:text-2xl font-black text-[#1C1C1C] mb-3">
+                      <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-3">
                         {section.title}
                       </h2>
-                      <p className="text-[#1C1C1C]/70 leading-relaxed text-sm md:text-base">
+                      <p className="text-slate-900/70 leading-relaxed text-sm md:text-base">
                         {section.content}
                       </p>
                       {section.list && (
@@ -146,7 +146,7 @@ export default function PrivacyPage() {
                           {section.list.map((item, idx) => (
                             <li
                               key={idx}
-                              className="flex items-start gap-3 text-sm md:text-base text-[#1C1C1C]/70"
+                              className="flex items-start gap-3 text-sm md:text-base text-slate-900/70"
                             >
                               <span className="w-1.5 h-1.5 bg-[#3F4F44] rounded-full mt-2.5 shrink-0" />
                               <span>{item}</span>
@@ -165,7 +165,7 @@ export default function PrivacyPage() {
 
       <section className="bg-[#F5F2EC] py-12 md:py-16">
         <div className="container-custom max-w-3xl">
-          <Card className="bg-[#1C1C1C] border-0 text-white overflow-hidden relative">
+          <Card className="bg-white border-0 text-white overflow-hidden relative">
             <div className="absolute inset-0 opacity-10" aria-hidden="true">
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#3F4F44] rounded-full blur-3xl" />
             </div>
@@ -180,7 +180,7 @@ export default function PrivacyPage() {
                 <Button
                   asChild
                   size="lg"
-                  className="bg-[#E8E3D9] hover:bg-[#D4CCB8] text-[#1C1C1C] h-12 px-8"
+                  className="bg-[#E8E3D9] hover:bg-[#D4CCB8] text-slate-900 h-12 px-8"
                 >
                   <a href={`tel:${siteConfig.phone}`}>
                     <Phone className="w-4 h-4 ml-2" />

@@ -21,22 +21,22 @@ export default function ThankYouPage() {
             <Logo size="lg" href={null} />
           </div>
 
-          <div className="w-24 h-24 bg-[#E85D04] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+          <div className="w-24 h-24 bg-[#0F766E] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
             <CheckCircle2 className="w-12 h-12 text-white" strokeWidth={2.5} />
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-black text-[#1C1C1C] mb-4 tracking-tight">
-            تم استلام طلبك <span className="text-[#E85D04]">بنجاح</span>
+          <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">
+            تم استلام طلبك <span className="text-[#0F766E]">بنجاح</span>
           </h1>
 
           <p className="text-base md:text-lg text-[#64748B] leading-relaxed mb-8">
-            شكراً لاختيارك <strong className="text-[#1C1C1C]">{siteConfig.name}</strong>
+            شكراً لاختيارك <strong className="text-slate-900">{siteConfig.name}</strong>
             <br />
             سيتواصل معك أحد ممثلي خدمة العملاء خلال دقائق على الواتساب
           </p>
 
           <div className="bg-[#FAF5EE] rounded-2xl p-6 mb-8 text-right border border-[#E5E7EB]">
-            <h3 className="font-bold text-[#1C1C1C] mb-4 text-center">ماذا يحدث الآن؟</h3>
+            <h3 className="font-bold text-slate-900 mb-4 text-center">ماذا يحدث الآن؟</h3>
             <div className="space-y-3">
               {[
                 "سيتم مراجعة طلبك خلال دقائق",
@@ -45,10 +45,10 @@ export default function ThankYouPage() {
                 "نحدد موعد المعاينة أو النقل حسب رغبتك",
               ].map((step, i) => (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="w-7 h-7 bg-[#1C1C1C] text-white rounded-full flex items-center justify-center font-bold text-sm shrink-0">
+                  <div className="w-7 h-7 bg-white text-white rounded-full flex items-center justify-center font-bold text-sm shrink-0">
                     {i + 1}
                   </div>
-                  <span className="text-sm md:text-base text-[#1C1C1C]/80">{step}</span>
+                  <span className="text-sm md:text-base text-slate-900/80">{step}</span>
                 </div>
               ))}
             </div>
@@ -57,7 +57,7 @@ export default function ThankYouPage() {
           <div className="border-t border-[#E5E7EB] pt-6">
             <p className="text-sm text-[#64748B] mb-4">للتواصل العاجل أو الاستفسار:</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Button asChild className="bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-12">
+              <Button asChild className="bg-[#0F766E] hover:bg-[#0D5F5A] text-white font-bold h-12">
                 <a href={`tel:${siteConfig.phone}`} dir="ltr">
                   <Phone className="w-4 h-4 ml-2" />
                   {siteConfig.phone}
@@ -75,7 +75,7 @@ export default function ThankYouPage() {
               </Button>
             </div>
 
-            <Button asChild variant="ghost" className="mt-4 text-[#64748B] hover:text-[#1C1C1C]">
+            <Button asChild variant="ghost" className="mt-4 text-[#64748B] hover:text-slate-900">
               <Link href="/">
                 <Home className="w-4 h-4 ml-2" />
                 العودة للصفحة الرئيسية

@@ -32,7 +32,7 @@ export default function ServicesPage() {
   return (
     <>
       {/* HERO WITH IMAGE */}
-      <section className="relative bg-[#1C1C1C] text-white overflow-hidden min-h-[70vh] flex items-center">
+      <section className="relative bg-white text-white overflow-hidden min-h-[70vh] flex items-center">
         <div className="absolute inset-0">
           <Image
             src="/images/services/hero-main.webp"
@@ -43,15 +43,15 @@ export default function ServicesPage() {
             className="object-cover object-center"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-l from-[#1C1C1C]/95 via-[#1C1C1C]/75 to-[#1C1C1C]/50" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-l from-teal-900/95 via-teal-900/75 to-teal-900/50" />
+          <div className="absolute inset-0 bg-gradient-to-t from-teal-900 via-transparent to-transparent" />
         </div>
 
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E85D04] to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#0F766E] to-transparent" />
 
         <div className="relative container-custom py-16 md:py-24 w-full">
           <div className="max-w-3xl">
-            <Badge className="bg-[#E85D04]/10 text-[#E85D04] border border-[#E85D04]/30 mb-5 px-4 py-1.5 backdrop-blur">
+            <Badge className="bg-[#0F766E]/10 text-[#0F766E] border border-[#0F766E]/30 mb-5 px-4 py-1.5 backdrop-blur">
               <Sparkles className="w-3 h-3 ml-1.5" />
               خدماتنا
             </Badge>
@@ -59,7 +59,7 @@ export default function ServicesPage() {
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 tracking-tight leading-[1.1] drop-shadow-2xl">
               حلول متكاملة
               <br />
-              <span className="text-[#E85D04] drop-shadow-[0_0_30px_rgba(232,93,4,0.5)]">
+              <span className="text-[#0F766E] drop-shadow-[0_0_30px_rgba(232,93,4,0.5)]">
                 لنقل الأثاث
               </span>
             </h1>
@@ -73,7 +73,7 @@ export default function ServicesPage() {
               <Button
                 asChild
                 size="lg"
-                className="bg-gradient-to-r from-[#E85D04] to-[#C94A00] hover:from-[#F97316] hover:to-[#E85D04] text-white font-bold h-14 px-8 shadow-2xl shadow-[#E85D04]/40 border-0 text-base"
+                className="bg-gradient-to-r from-[#0F766E] to-[#C94A00] hover:from-[#F97316] hover:to-[#0F766E] text-white font-bold h-14 px-8 shadow-2xl shadow-[#0F766E]/40 border-0 text-base"
               >
                 <a href={`tel:${siteConfig.phone}`}>
                   <Phone className="w-4 h-4 ml-2" />
@@ -100,7 +100,7 @@ export default function ServicesPage() {
                 { value: "24/7", label: "خدمة مستمرة" },
               ].map((stat, i) => (
                 <div key={i}>
-                  <div className="text-2xl md:text-3xl font-black text-[#E85D04] mb-1 drop-shadow-[0_0_15px_rgba(232,93,4,0.4)]">
+                  <div className="text-2xl md:text-3xl font-black text-[#0F766E] mb-1 drop-shadow-[0_0_15px_rgba(232,93,4,0.4)]">
                     {stat.value}
                   </div>
                   <div className="text-xs text-white/50 font-medium">{stat.label}</div>
@@ -121,7 +121,7 @@ export default function ServicesPage() {
 
               return (
                 <Link key={s.slug} href={`/services/${s.slug}`} className="block group">
-                  <div className="relative h-[440px] rounded-3xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-[#E85D04]/25 transition-all duration-500 bg-[#1C1C1C]">
+                  <div className="relative h-[440px] rounded-3xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-[#0F766E]/25 transition-all duration-500 bg-white">
 
                     {bg && (
                       <Image
@@ -135,8 +135,8 @@ export default function ServicesPage() {
                       />
                     )}
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C] via-[#1C1C1C]/60 to-[#1C1C1C]/20 group-hover:from-[#1C1C1C] group-hover:via-[#1C1C1C]/50 transition-all duration-500" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#E85D04]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-teal-900 via-teal-900/60 to-teal-900/20 group-hover:from-teal-900 group-hover:via-teal-900/50 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F766E]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                     <div className="absolute top-5 left-5 z-10">
                       <div className="w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl flex items-center justify-center">
@@ -145,15 +145,15 @@ export default function ServicesPage() {
                     </div>
 
                     <div className="absolute top-5 right-5 z-10">
-                      <div className="w-14 h-14 bg-gradient-to-br from-[#E85D04] to-[#C94A00] group-hover:from-white group-hover:to-white rounded-2xl flex items-center justify-center shadow-2xl shadow-[#E85D04]/40 transition-all duration-500">
-                        <Icon className="w-6 h-6 text-white group-hover:text-[#E85D04] transition-colors duration-500" />
+                      <div className="w-14 h-14 bg-gradient-to-br from-[#0F766E] to-[#C94A00] group-hover:from-white group-hover:to-white rounded-2xl flex items-center justify-center shadow-2xl shadow-[#0F766E]/40 transition-all duration-500">
+                        <Icon className="w-6 h-6 text-white group-hover:text-[#0F766E] transition-colors duration-500" />
                       </div>
                     </div>
 
                     <div className="absolute bottom-0 right-0 left-0 p-6 md:p-7 z-10">
-                      <div className="w-12 h-1 bg-[#E85D04] mb-4 group-hover:w-24 transition-all duration-500 rounded-full shadow-lg shadow-[#E85D04]/50" />
+                      <div className="w-12 h-1 bg-[#0F766E] mb-4 group-hover:w-24 transition-all duration-500 rounded-full shadow-lg shadow-[#0F766E]/50" />
 
-                      <h2 className="text-2xl md:text-3xl font-black text-white mb-3 leading-tight group-hover:text-[#E85D04] transition-colors duration-500 tracking-tight">
+                      <h2 className="text-2xl md:text-3xl font-black text-white mb-3 leading-tight group-hover:text-[#0F766E] transition-colors duration-500 tracking-tight">
                         {s.name}
                       </h2>
 
@@ -162,19 +162,19 @@ export default function ServicesPage() {
                       </p>
 
                       <div className="flex items-center justify-between pt-4 border-t border-white/20">
-                        <span className="text-white font-bold text-sm flex items-center gap-2 group-hover:text-[#E85D04] transition-colors">
+                        <span className="text-white font-bold text-sm flex items-center gap-2 group-hover:text-[#0F766E] transition-colors">
                           اكتشف الخدمة
                           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-2 transition-transform duration-300" />
                         </span>
 
                         <div className="flex items-center gap-1 text-xs text-white/70">
-                          <Star className="w-3 h-3 fill-[#E85D04] text-[#E85D04]" />
+                          <Star className="w-3 h-3 fill-[#0F766E] text-[#0F766E]" />
                           <span>خدمة مميزة</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="absolute inset-0 rounded-3xl ring-2 ring-[#E85D04]/0 group-hover:ring-[#E85D04]/60 transition-all duration-500 pointer-events-none" />
+                    <div className="absolute inset-0 rounded-3xl ring-2 ring-[#0F766E]/0 group-hover:ring-[#0F766E]/60 transition-all duration-500 pointer-events-none" />
                   </div>
                 </Link>
               );
@@ -186,15 +186,15 @@ export default function ServicesPage() {
       {/* CTA */}
       <section className="bg-[#FAF5EE] py-12 md:py-16">
         <div className="container-custom">
-          <Card className="bg-gradient-to-br from-[#1C1C1C] via-[#0F0F0F] to-[#1C1C1C] border-0 text-white overflow-hidden relative">
+          <Card className="bg-gradient-to-br from-teal-900 via-[#0F0F0F] to-teal-900 border-0 text-white overflow-hidden relative">
             <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-[#E85D04] rounded-full blur-3xl" />
+              <div className="absolute top-0 right-0 w-96 h-96 bg-[#0F766E] rounded-full blur-3xl" />
             </div>
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E85D04] to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#0F766E] to-transparent" />
 
             <CardContent className="p-8 md:p-12 text-center relative">
               <h2 className="text-2xl md:text-4xl font-black mb-4 tracking-tight">
-                تحتاج خدمة <span className="text-[#E85D04] drop-shadow-[0_0_20px_rgba(232,93,4,0.4)]">مخصصة؟</span>
+                تحتاج خدمة <span className="text-[#0F766E] drop-shadow-[0_0_20px_rgba(232,93,4,0.4)]">مخصصة؟</span>
               </h2>
               <p className="text-white/60 mb-8 max-w-xl mx-auto">
                 تواصل معنا الآن للحصول على استشارة مجانية وعرض سعر يناسب احتياجاتك
@@ -203,7 +203,7 @@ export default function ServicesPage() {
                 <Button
                   asChild
                   size="lg"
-                  className="bg-gradient-to-r from-[#E85D04] to-[#C94A00] hover:from-[#F97316] hover:to-[#E85D04] text-white h-12 px-8 shadow-xl shadow-[#E85D04]/40 border-0"
+                  className="bg-gradient-to-r from-[#0F766E] to-[#C94A00] hover:from-[#F97316] hover:to-[#0F766E] text-white h-12 px-8 shadow-xl shadow-[#0F766E]/40 border-0"
                 >
                   <a href={`tel:${siteConfig.phone}`}>
                     <Phone className="w-4 h-4 ml-2" />

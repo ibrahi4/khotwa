@@ -119,7 +119,7 @@ ${formData.message ? `*تفاصيل إضافية:* ${formData.message}` : ""}
         <DialogTitle className="sr-only">احصل على عرض سعر</DialogTitle>
 
         {/* Header */}
-        <div className="relative bg-[#1C1C1C] text-white p-6 md:p-7">
+        <div className="relative bg-white text-white p-6 md:p-7">
           <div className="absolute inset-0 opacity-20" aria-hidden="true">
             <div className="absolute top-0 right-0 w-48 h-48 bg-[#3F4F44] rounded-full blur-3xl" />
           </div>
@@ -141,7 +141,7 @@ ${formData.message ? `*تفاصيل إضافية:* ${formData.message}` : ""}
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 md:p-7 space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="dialog-name" className="text-[#1C1C1C] font-semibold text-sm">
+            <Label htmlFor="dialog-name" className="text-slate-900 font-semibold text-sm">
               الاسم <span className="text-[#DC2626]">*</span>
             </Label>
             <div className="relative">
@@ -158,7 +158,7 @@ ${formData.message ? `*تفاصيل إضافية:* ${formData.message}` : ""}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="dialog-phone" className="text-[#1C1C1C] font-semibold text-sm">
+            <Label htmlFor="dialog-phone" className="text-slate-900 font-semibold text-sm">
               رقم الهاتف <span className="text-[#DC2626]">*</span>
             </Label>
             <div className="relative">
@@ -178,7 +178,7 @@ ${formData.message ? `*تفاصيل إضافية:* ${formData.message}` : ""}
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label className="text-[#1C1C1C] font-semibold text-sm">
+              <Label className="text-slate-900 font-semibold text-sm">
                 الخدمة <span className="text-[#DC2626]">*</span>
               </Label>
               <Select
@@ -201,7 +201,7 @@ ${formData.message ? `*تفاصيل إضافية:* ${formData.message}` : ""}
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[#1C1C1C] font-semibold text-sm">
+              <Label className="text-slate-900 font-semibold text-sm">
                 المنطقة <span className="text-[#DC2626]">*</span>
               </Label>
               <Select
@@ -226,7 +226,7 @@ ${formData.message ? `*تفاصيل إضافية:* ${formData.message}` : ""}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="dialog-message" className="text-[#1C1C1C] font-semibold text-sm">
+            <Label htmlFor="dialog-message" className="text-slate-900 font-semibold text-sm">
               تفاصيل إضافية <span className="text-[#6B6B6B] font-normal">(اختياري)</span>
             </Label>
             <Textarea
@@ -251,7 +251,7 @@ ${formData.message ? `*تفاصيل إضافية:* ${formData.message}` : ""}
                 className="flex items-center justify-center gap-1 bg-[#F5F2EC] border border-[#E5E1DA] rounded-lg py-2 px-2"
               >
                 <CheckCircle2 className="w-3 h-3 text-[#3F4F44] shrink-0" />
-                <span className="text-[10px] font-semibold text-[#1C1C1C]">
+                <span className="text-[10px] font-semibold text-slate-900">
                   {item}
                 </span>
               </div>

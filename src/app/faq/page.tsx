@@ -218,7 +218,7 @@ export default function FAQPage() {
       />
 
       {/* Hero */}
-      <section className="relative bg-[#1C1C1C] text-white overflow-hidden">
+      <section className="relative bg-white text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10" aria-hidden="true">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#3F4F44] rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#E8E3D9] rounded-full blur-3xl" />
@@ -273,11 +273,11 @@ export default function FAQPage() {
             {faqCategories.map((category, catIndex) => (
               <div key={catIndex}>
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-14 h-14 bg-[#1C1C1C] text-[#E8E3D9] rounded-2xl flex items-center justify-center shadow-lg shrink-0">
+                  <div className="w-14 h-14 bg-white text-[#E8E3D9] rounded-2xl flex items-center justify-center shadow-lg shrink-0">
                     <category.icon className="w-6 h-6" />
                   </div>
                   <div>
-                    <h2 className="text-2xl md:text-3xl font-black text-[#1C1C1C] tracking-tight">
+                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
                       {category.title}
                     </h2>
                     <p className="text-sm text-[#6B6B6B] mt-1">
@@ -293,7 +293,7 @@ export default function FAQPage() {
                       value={`cat-${catIndex}-item-${i}`}
                       className="bg-[#F5F2EC] rounded-2xl border border-[#E5E1DA] px-5 hover:border-[#3F4F44] transition-colors"
                     >
-                      <AccordionTrigger className="text-right font-bold text-[#1C1C1C] hover:text-[#3F4F44] py-5 text-sm md:text-base">
+                      <AccordionTrigger className="text-right font-bold text-slate-900 hover:text-[#3F4F44] py-5 text-sm md:text-base">
                         {faq.question}
                       </AccordionTrigger>
                       <AccordionContent className="text-[#6B6B6B] leading-relaxed pb-5 text-sm md:text-base">
@@ -309,7 +309,7 @@ export default function FAQPage() {
       </section>
 
       {/* Contact CTA */}
-      <section className="relative bg-[#1C1C1C] text-white overflow-hidden">
+      <section className="relative bg-white text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10" aria-hidden="true">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#3F4F44] rounded-full blur-3xl" />
         </div>
@@ -332,7 +332,7 @@ export default function FAQPage() {
             <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
               <a
                 href={`tel:${siteConfig.phone}`}
-                className="bg-[#E8E3D9] hover:bg-[#D4CCB8] text-[#1C1C1C] p-6 rounded-2xl transition-all hover:shadow-xl group"
+                className="bg-[#E8E3D9] hover:bg-[#D4CCB8] text-slate-900 p-6 rounded-2xl transition-all hover:shadow-xl group"
               >
                 <Phone className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
                 <div className="font-bold text-lg mb-1">اتصل بنا</div>

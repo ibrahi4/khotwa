@@ -1,244 +1,394 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Menu, Phone, MessageCircle } from "lucide-react";
-import { mainNav } from "@/config/navigation";
+import {
+  Menu, X, Phone, MessageCircle, ChevronLeft, ChevronDown,
+  Home, Info, Wrench, MapPin, HelpCircle, BookOpen,
+  Truck, Wind, Box, ArrowUpToLine, Gem, Image as ImageIcon,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { services } from "@/config/services";
+import { featuredAreas } from "@/config/areas";
 import { siteConfig } from "@/config/site";
 import { AnnouncementBar } from "./AnnouncementBar";
-import { QuoteDialog } from "@/components/shared/QuoteDialog";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
-import { trackPhoneCall, trackWhatsApp, trackQuoteRequest } from "@/lib/analytics/events";
+import { trackPhoneCall, trackWhatsApp } from "@/lib/analytics/events";
+
+const serviceIcons: Record<string, React.ElementType> = {
+  "naql-athath": Truck,
+  "fak-tarkeeb-athath": Wrench,
+  "fak-tarkeeb-takyifat": Wind,
+  "taghleef-athath": Box,
+  "wensh-raf3-athath": ArrowUpToLine,
+  "naql-moqtaniat-hassasa": Gem,
+};
+
+const primaryNav = [
+  { label: "الرئيسية", href: "/", icon: Home },
+  { label: "من نحن", href: "/about", icon: Info },
+];
+
+const helpNav = [
+  { label: "المدونة", href: "/blog", icon: BookOpen, desc: "مقالات ونصائح" },
+  { label: "الأسئلة الشائعة", href: "/faq", icon: HelpCircle, desc: "إجابات سريعة" },
+];
 
 export function Header() {
-  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
-    setMounted(true);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    setIsOpen(false);
+    setMobileOpen(false);
+    setOpenMenu(null);
   }, [pathname]);
 
-  const BrandLogo = ({ isMobile = false }: { isMobile?: boolean }) => (
-    <Link
-      href="/"
-      className="flex items-center gap-2.5 shrink-0 group"
-      aria-label={siteConfig.name}
-    >
-      <div
-        className={cn(
-          "relative rounded-full overflow-hidden shrink-0 ring-2 ring-[#E5E7EB] group-hover:ring-[#E85D04] transition-all duration-300",
-          isMobile ? "w-10 h-10" : "w-12 h-12"
-        )}
-      >
-        <Image
-          src="/logo.webp"
-          alt={siteConfig.name}
-          fill
-          className="object-cover"
-          priority
-          sizes={isMobile ? "40px" : "48px"}
-        />
-      </div>
-      <div className="flex flex-col leading-none">
-        <span
-          className={cn(
-            "font-black tracking-tight text-[#1C1C1C]",
-            isMobile ? "text-base" : "text-lg"
-          )}
-        >
-          خطوة
-        </span>
-        <span
-          className={cn(
-            "font-medium text-[#64748B] mt-0.5",
-            isMobile ? "text-[10px]" : "text-[11px]"
-          )}
-        >
-          لنقل الأثاث
-        </span>
-      </div>
-    </Link>
-  );
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
   return (
     <>
       <AnnouncementBar />
 
       <header
-        className={cn(
-          "sticky top-0 z-50 bg-white transition-all duration-300",
+        className={`sticky top-0 z-50 transition-all duration-300 ${
           mounted && scrolled
-            ? "shadow-sm border-b border-[#E5E7EB]"
-            : "border-b border-[#E5E7EB]"
-        )}
+            ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-green-100"
+            : "bg-white border-b border-green-50"
+        }`}
       >
         <div className="container-custom">
-          <div className="flex items-center justify-between h-16 lg:h-[72px]">
+          <div className="flex items-center justify-between h-18 lg:h-20 gap-4">
+            {/* Logo */}
+            <Link
+              href="/"
+              className="group flex items-center gap-2.5 shrink-0"
+              aria-label={siteConfig.name}
+            >
+              <div className="relative w-12 h-12 rounded-xl overflow-hidden ring-2 ring-green-100 group-hover:ring-green-300 shadow-sm shadow-green-700/10 transition-all duration-300">
+                <Image
+                  src="/logo.webp"
+                  alt={siteConfig.name}
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="48px"
+                />
+              </div>
+              <div className="flex flex-col leading-tight">
+                <span className="font-black text-lg text-green-950">
+                  {siteConfig.shortName}
+                </span>
+                <span className="text-[10px] font-semibold tracking-wide text-green-600">
+                  لنقل الأثاث
+                </span>
+              </div>
+            </Link>
 
-            <div className="hidden lg:block">
-              <BrandLogo />
-            </div>
-            <div className="lg:hidden">
-              <BrandLogo isMobile />
-            </div>
+            {/* Desktop Nav */}
+            <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
+              {primaryNav.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive(item.href)
+                      ? "text-green-700 bg-green-50"
+                      : "text-slate-600 hover:text-green-700 hover:bg-green-50/60"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
 
-            <nav className="hidden lg:flex items-center gap-1">
-              {mainNav.map((item) => {
-                const active = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "relative px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200",
-                      active
-                        ? "text-[#1C1C1C]"
-                        : "text-[#64748B] hover:text-[#1C1C1C]"
-                    )}
-                  >
-                    {item.label}
-                    {active && (
-                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#E85D04] rounded-full" />
-                    )}
-                  </Link>
-                );
-              })}
+              {/* Services Mega Menu */}
+              <div
+                className="relative"
+                onMouseEnter={() => setOpenMenu("services")}
+                onMouseLeave={() => setOpenMenu(null)}
+              >
+                <button
+                  className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive("/services")
+                      ? "text-green-700 bg-green-50"
+                      : "text-slate-600 hover:text-green-700 hover:bg-green-50/60"
+                  }`}
+                >
+                  خدماتنا
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openMenu === "services" ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {openMenu === "services" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full right-0 mt-1 w-[540px] bg-white rounded-2xl shadow-xl border border-green-100 p-4"
+                    >
+                      <div className="grid grid-cols-2 gap-1.5">
+                        {services.map((s) => {
+                          const Icon = serviceIcons[s.slug] || Truck;
+                          return (
+                            <Link
+                              key={s.slug}
+                              href={`/services/${s.slug}`}
+                              className="flex items-start gap-3 p-3 rounded-xl hover:bg-green-50 transition-colors group"
+                            >
+                              <div className="w-9 h-9 bg-green-50 text-green-600 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                                <Icon className="w-4 h-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="text-sm font-bold text-green-950">{s.name}</div>
+                                <div className="text-xs text-slate-500 line-clamp-1 mt-0.5">{s.shortDescription}</div>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-green-100">
+                        <Link
+                          href="/services"
+                          className="flex items-center justify-between px-3 py-2 rounded-lg bg-green-50 hover:bg-green-100 transition-colors text-sm font-semibold text-green-700"
+                        >
+                          <span>عرض كل الخدمات</span>
+                          <ChevronLeft className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Areas Menu */}
+              <div
+                className="relative"
+                onMouseEnter={() => setOpenMenu("areas")}
+                onMouseLeave={() => setOpenMenu(null)}
+              >
+                <button
+                  className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive("/areas")
+                      ? "text-green-700 bg-green-50"
+                      : "text-slate-600 hover:text-green-700 hover:bg-green-50/60"
+                  }`}
+                >
+                  المناطق
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openMenu === "areas" ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {openMenu === "areas" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full right-0 mt-1 w-64 bg-white rounded-2xl shadow-xl border border-green-100 p-3"
+                    >
+                      <div className="space-y-0.5">
+                        {featuredAreas.map((area) => (
+                          <Link
+                            key={area.slug}
+                            href={`/areas/${area.slug}`}
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50 transition-colors text-sm text-slate-600 hover:text-green-700"
+                          >
+                            <MapPin className="w-3.5 h-3.5 text-green-500" />
+                            <span>{area.name}</span>
+                          </Link>
+                        ))}
+                      </div>
+                      <div className="mt-2 pt-2 border-t border-green-100">
+                        <Link
+                          href="/areas"
+                          className="flex items-center justify-between px-3 py-2 rounded-lg bg-green-50 hover:bg-green-100 transition-colors text-sm font-semibold text-green-700"
+                        >
+                          <span>كل المناطق</span>
+                          <ChevronLeft className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* More Menu */}
+              <div
+                className="relative"
+                onMouseEnter={() => setOpenMenu("help")}
+                onMouseLeave={() => setOpenMenu(null)}
+              >
+                <button
+                  className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive("/blog") || isActive("/faq")
+                      ? "text-green-700 bg-green-50"
+                      : "text-slate-600 hover:text-green-700 hover:bg-green-50/60"
+                  }`}
+                >
+                  المزيد
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openMenu === "help" ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {openMenu === "help" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full right-0 mt-1 w-64 bg-white rounded-2xl shadow-xl border border-green-100 p-3"
+                    >
+                      {helpNav.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-green-50 transition-colors group"
+                          >
+                            <div className="w-8 h-8 bg-green-50 text-green-600 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="text-sm font-bold text-green-950">{item.label}</div>
+                              <div className="text-xs text-slate-500">{item.desc}</div>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <Link
+                href="/contact"
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive("/contact")
+                    ? "text-green-700 bg-green-50"
+                    : "text-slate-600 hover:text-green-700 hover:bg-green-50/60"
+                }`}
+              >
+                تواصل معنا
+              </Link>
             </nav>
 
-            <div className="hidden lg:flex items-center gap-2">
-              <Button
-                asChild
-                variant="outline"
-                className="border-[#E5E7EB] text-[#1C1C1C] hover:bg-[#1C1C1C] hover:text-white hover:border-[#1C1C1C] bg-white h-10 px-4 text-sm font-semibold transition-all duration-200"
+            {/* Desktop CTA */}
+            <div className="hidden lg:flex items-center gap-2 shrink-0">
+              <a
+                href={`tel:${siteConfig.phone}`}
+                onClick={() => trackPhoneCall("header_desktop")}
+                className="flex items-center gap-1.5 px-3 h-9 rounded-lg border border-green-200 text-green-700 hover:bg-green-50 text-sm font-semibold transition-colors"
+                dir="ltr"
               >
-                <a
-                  href={`tel:${siteConfig.phone}`}
-                  onClick={() => trackPhoneCall("header_desktop")}
-                >
-                  <Phone className="w-3.5 h-3.5 ml-1.5" />
-                  اتصل الآن
-                </a>
-              </Button>
-
-              <QuoteDialog
-                source="header_desktop"
-                trigger={
-                  <span
-                    role="button"
-                    tabIndex={0}
-                    className="inline-flex items-center justify-center gap-1.5 bg-[#E85D04] hover:bg-[#D14D00] text-white h-10 px-5 text-sm font-bold rounded-lg transition-all duration-200 cursor-pointer select-none shadow-sm"
-                  >
-                    طلب عرض سعر
-                  </span>
-                }
-              />
+                <Phone className="w-4 h-4" />
+                <span>{siteConfig.phone}</span>
+              </a>
+              <a
+                href={`https://wa.me/${siteConfig.whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackWhatsApp("header_desktop")}
+                className="flex items-center gap-1.5 px-3 h-9 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-semibold transition-colors"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>واتساب</span>
+              </a>
             </div>
 
-            <div className="flex lg:hidden items-center gap-2">
-             
-
-              <Sheet open={isOpen} onOpenChange={setIsOpen}>
-                <SheetTrigger className="inline-flex items-center justify-center h-9 w-9 rounded-lg text-[#1C1C1C] hover:bg-[#F5F5F5] transition-colors">
-                  <Menu className="w-5 h-5" />
-                </SheetTrigger>
-                <SheetContent
-                  side="right"
-                  className="w-[280px] sm:w-[320px] p-0 border-l border-[#E5E7EB] flex flex-col"
-                >
-                  <SheetTitle className="sr-only">القائمة الرئيسية</SheetTitle>
-
-                  <div className="bg-[#1C1C1C] text-white p-5 shrink-0">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="relative w-11 h-11 rounded-full overflow-hidden ring-2 ring-white/20 shrink-0">
-                        <Image
-                          src="/logo.webp"
-                          alt={siteConfig.name}
-                          fill
-                          className="object-cover"
-                          sizes="44px"
-                        />
-                      </div>
-                      <div className="leading-none">
-                        <div className="font-black text-base tracking-tight">خطوة</div>
-                        <div className="text-[11px] text-white/60 mt-0.5">لنقل الأثاث</div>
-                      </div>
-                    </div>
-                    <p className="text-xs text-white/50 leading-relaxed">
-                      خدمة نقل أثاث احترافية في التجمع ومدينتي والشيخ زايد
-                    </p>
-                  </div>
-
-                  <nav className="p-3 flex flex-col gap-0.5 bg-white flex-1 overflow-y-auto">
-                    {mainNav.map((item) => {
-                      const active = pathname === item.href;
-                      return (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          onClick={() => setIsOpen(false)}
-                          className={cn(
-                            "px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200",
-                            active
-                              ? "bg-[#FAF5EE] text-[#1C1C1C] border-r-2 border-[#E85D04]"
-                              : "text-[#64748B] hover:bg-[#F5F5F5] hover:text-[#1C1C1C]"
-                          )}
-                        >
-                          {item.label}
-                        </Link>
-                      );
-                    })}
-                  </nav>
-
-                  <div className="p-3 border-t border-[#E5E7EB] bg-white space-y-2 shrink-0">
-                    <Button
-                      asChild
-                      className="w-full bg-[#1C1C1C] hover:bg-[#2A2A2A] text-white h-11 text-sm"
-                    >
-                      <a
-                        href={`tel:${siteConfig.phone}`}
-                        onClick={() => trackPhoneCall("header_mobile")}
-                      >
-                        <Phone className="w-4 h-4 ml-2" />
-                        اتصل الآن
-                      </a>
-                    </Button>
-                    <Button
-                      asChild
-                      className="w-full bg-[#E85D04] hover:bg-[#D14D00] text-white h-11 text-sm"
-                    >
-                      <a
-                        href={`https://wa.me/${siteConfig.whatsapp}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => trackWhatsApp("header_mobile")}
-                      >
-                        <MessageCircle className="w-4 h-4 ml-2" />
-                        واتساب
-                      </a>
-                    </Button>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
-
+            {/* Mobile Toggle */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="lg:hidden p-2 rounded-lg hover:bg-green-50 transition-colors"
+              aria-label={mobileOpen ? "إغلاق القائمة" : "فتح القائمة"}
+            >
+              {mobileOpen ? <X className="w-6 h-6 text-slate-700" /> : <Menu className="w-6 h-6 text-slate-700" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="lg:hidden overflow-hidden border-t border-green-100 bg-white max-h-[calc(100vh-72px)] overflow-y-auto"
+            >
+              <nav className="container-custom py-4 space-y-1">
+                {[
+                  { label: "الرئيسية", href: "/", icon: Home },
+                  { label: "من نحن", href: "/about", icon: Info },
+                  { label: "خدماتنا", href: "/services", icon: Wrench },
+                  { label: "المناطق", href: "/areas", icon: MapPin },
+                  { label: "المدونة", href: "/blog", icon: BookOpen },
+                  { label: "الأسئلة الشائعة", href: "/faq", icon: HelpCircle },
+                  { label: "تواصل معنا", href: "/contact", icon: Phone },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium ${
+                        isActive(item.href) ? "bg-green-50 text-green-700" : "text-slate-600"
+                      }`}
+                    >
+                      <span className="flex items-center gap-3">
+                        <Icon className="w-5 h-5" />
+                        {item.label}
+                      </span>
+                      <ChevronLeft className="w-4 h-4 opacity-40" />
+                    </Link>
+                  );
+                })}
+
+                <div className="pt-4 border-t border-green-100 space-y-2">
+                  <Button className="w-full bg-green-700 hover:bg-green-800 text-white gap-2" asChild>
+                    <a
+                      href={`tel:${siteConfig.phone}`}
+                      onClick={() => trackPhoneCall("header_mobile")}
+                    >
+                      <Phone className="w-4 h-4" />
+                      اتصل دلوقتي
+                    </a>
+                  </Button>
+                  <Button className="w-full bg-green-500 hover:bg-green-600 text-white gap-2" asChild>
+                    <a
+                      href={`https://wa.me/${siteConfig.whatsapp}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => trackWhatsApp("header_mobile")}
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      واتساب
+                    </a>
+                  </Button>
+                </div>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
     </>
   );

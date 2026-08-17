@@ -23,7 +23,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-orange: #E85D04;
+  --color-orange: #0F766E;
   --color-orange-dark: #C94A00;
   --color-orange-light: #F97316;
 
@@ -52,7 +52,7 @@
   --card-foreground: #1C1C1C;
   --popover: #FFFFFF;
   --popover-foreground: #1C1C1C;
-  --primary: #E85D04;
+  --primary: #0F766E;
   --primary-foreground: #FFFFFF;
   --secondary: #F5F5F5;
   --secondary-foreground: #1C1C1C;
@@ -63,7 +63,7 @@
   --destructive: #DC2626;
   --border: #E5E7EB;
   --input: #E5E7EB;
-  --ring: #E85D04;
+  --ring: #0F766E;
 }
 
 * {
@@ -154,7 +154,7 @@ button {
 .line-clamp-5 { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
 
 *:focus-visible {
-  outline: 2px solid #E85D04;
+  outline: 2px solid #0F766E;
   outline-offset: 2px;
   border-radius: 4px;
 }

@@ -21,7 +21,7 @@ export default function BlogPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative bg-[#1C1C1C] text-white overflow-hidden">
+      <section className="relative bg-white text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10" aria-hidden="true">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#3F4F44] rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#E8E3D9] rounded-full blur-3xl" />
@@ -53,7 +53,7 @@ export default function BlogPage() {
               <Sparkles className="w-3 h-3 ml-1.5" />
               المقال المميز
             </Badge>
-            <h2 className="text-2xl md:text-3xl font-black text-[#1C1C1C] tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
               أحدث المقالات
             </h2>
           </div>
@@ -70,7 +70,7 @@ export default function BlogPage() {
                     sizes="(max-width: 1024px) 100vw, 50vw"
                   />
                   <div className="absolute top-4 right-4">
-                    <Badge className="bg-[#1C1C1C] text-[#E8E3D9] border-0">
+                    <Badge className="bg-white text-[#E8E3D9] border-0">
                       {blogCategories.find((c) => c.slug === featuredPost.category)?.name}
                     </Badge>
                   </div>
@@ -90,7 +90,7 @@ export default function BlogPage() {
                       {featuredPost.readTime} دقائق قراءة
                     </span>
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-black text-[#1C1C1C] mb-4 leading-tight group-hover:text-[#3F4F44] transition-colors tracking-tight">
+                  <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-4 leading-tight group-hover:text-[#3F4F44] transition-colors tracking-tight">
                     {featuredPost.title}
                   </h3>
                   <p className="text-[#6B6B6B] leading-relaxed mb-6">
@@ -114,7 +114,7 @@ export default function BlogPage() {
             {blogCategories.map((cat) => (
               <div
                 key={cat.slug}
-                className="bg-white border border-[#E5E1DA] hover:border-[#3F4F44] text-[#1C1C1C] px-5 py-2.5 rounded-full font-semibold text-sm hover:shadow-md transition-all cursor-pointer"
+                className="bg-white border border-[#E5E1DA] hover:border-[#3F4F44] text-slate-900 px-5 py-2.5 rounded-full font-semibold text-sm hover:shadow-md transition-all cursor-pointer"
               >
                 {cat.name}
               </div>
@@ -127,7 +127,7 @@ export default function BlogPage() {
       <section className="section-padding bg-white">
         <div className="container-custom">
           <div className="mb-10">
-            <h2 className="text-2xl md:text-3xl font-black text-[#1C1C1C] mb-2 tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-2 tracking-tight">
               جميع المقالات
             </h2>
             <p className="text-[#6B6B6B]">{blogPosts.length} مقال احترافي في خدمتك</p>
@@ -148,7 +148,7 @@ export default function BlogPage() {
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                       <div className="absolute top-3 right-3">
-                        <Badge className="bg-[#1C1C1C] text-[#E8E3D9] border-0 text-xs">
+                        <Badge className="bg-white text-[#E8E3D9] border-0 text-xs">
                           {category?.name}
                         </Badge>
                       </div>
@@ -167,7 +167,7 @@ export default function BlogPage() {
                           {post.readTime} د
                         </span>
                       </div>
-                      <h3 className="text-lg font-bold text-[#1C1C1C] mb-3 leading-tight group-hover:text-[#3F4F44] transition-colors line-clamp-2">
+                      <h3 className="text-lg font-bold text-slate-900 mb-3 leading-tight group-hover:text-[#3F4F44] transition-colors line-clamp-2">
                         {post.title}
                       </h3>
                       <p className="text-sm text-[#6B6B6B] leading-relaxed line-clamp-3 mb-4">
@@ -189,7 +189,7 @@ export default function BlogPage() {
       {/* CTA */}
       <section className="bg-[#F5F2EC] py-12 md:py-16">
         <div className="container-custom">
-          <Card className="bg-[#1C1C1C] border-0 text-white overflow-hidden relative">
+          <Card className="bg-white border-0 text-white overflow-hidden relative">
             <div className="absolute inset-0 opacity-10" aria-hidden="true">
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#3F4F44] rounded-full blur-3xl" />
             </div>
@@ -205,7 +205,7 @@ export default function BlogPage() {
               <Button
                 asChild
                 size="lg"
-                className="bg-[#E8E3D9] hover:bg-[#D4CCB8] text-[#1C1C1C] h-12 px-8"
+                className="bg-[#E8E3D9] hover:bg-[#D4CCB8] text-slate-900 h-12 px-8"
               >
                 <Link href="/contact">
                   تواصل معنا الآن

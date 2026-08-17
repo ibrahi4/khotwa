@@ -1,207 +1,129 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Sparkles, Shield, Crown, Award, Zap, Phone,
-  Star, TrendingUp, BadgeCheck, Timer, Flame, Truck,
-} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Shield, Star, Clock, Award, PackageCheck, Phone, Sparkles } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
-const items = [
-  { icon: Flame, text: "عرض حصري", highlight: "خصم 20% على أول طلب", accent: "hot" },
-  { icon: Shield, text: "ضمان كامل", highlight: "على جميع مقتنياتك", accent: "normal" },
-  { icon: Crown, text: "خدمة VIP", highlight: "لسكان الكمبوندات الراقية", accent: "gold" },
-  { icon: Timer, text: "متاحون 24/7", highlight: "طوال أيام الأسبوع", accent: "normal" },
-  { icon: BadgeCheck, text: "معاينة مجانية", highlight: "بدون أي التزام", accent: "green" },
-  { icon: TrendingUp, text: "خبرة", highlight: "أكثر من 10 سنوات", accent: "normal" },
-  { icon: Star, text: "تقييم", highlight: "4.9 من 5", accent: "gold" },
-  { icon: Award, text: "فرق مدربة", highlight: "على أعلى مستوى", accent: "normal" },
-  { icon: Zap, text: "استجابة سريعة", highlight: "خلال دقائق", accent: "hot" },
-  { icon: Truck, text: "أسطول حديث", highlight: "سيارات مجهزة بالكامل", accent: "normal" },
+const messages = [
+  {
+    icon: Shield,
+    text: "ضمان شامل على جميع مقتنياتك أثناء النقل",
+  },
+  {
+    icon: Star,
+    text: "تقييم 4.9 من 5 - أكثر من 500 عميل يثقون بنا",
+  },
+  {
+    icon: Clock,
+    text: "خدمة متاحة على مدار الساعة - 24 ساعة / 7 أيام",
+  },
+  {
+    icon: PackageCheck,
+    text: "تغليف احترافي بمواد عالمية لحماية كاملة",
+  },
+  {
+    icon: Award,
+    text: "خبرة أكثر من 10 سنوات في نقل الأثاث الفاخر",
+  },
+  {
+    icon: Sparkles,
+    text: "معاينة مجانية وعرض سعر شفاف بدون أي التزام",
+  },
 ];
 
-const accentStyles = {
-  hot: {
-    icon: "text-[#E85D04]",
-    text: "text-[#E85D04]",
-    glow: "drop-shadow-[0_0_8px_rgba(232,93,4,0.6)]",
-  },
-  gold: {
-    icon: "text-[#FFB800]",
-    text: "text-[#FFB800]",
-    glow: "drop-shadow-[0_0_8px_rgba(255,184,0,0.5)]",
-  },
-  green: {
-    icon: "text-[#10B981]",
-    text: "text-[#10B981]",
-    glow: "drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]",
-  },
-  normal: {
-    icon: "text-white/70",
-    text: "text-white",
-    glow: "",
-  },
-};
+const ROTATION_MS = 4500;
 
 export function AnnouncementBar() {
   const [mounted, setMounted] = useState(false);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!mounted) return;
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % messages.length);
+    }, ROTATION_MS);
+    return () => clearInterval(timer);
+  }, [mounted]);
+
   if (!mounted) {
     return (
-      <div className="bg-gradient-to-r from-[#0F0F0F] via-[#1C1C1C] to-[#0F0F0F] text-white h-11 flex items-center justify-center overflow-hidden border-b border-[#E85D04]/20">
-        <div className="flex items-center gap-2 text-xs">
-          <Sparkles className="w-3.5 h-3.5 text-[#E85D04]" />
-          <span className="font-semibold">خطوة لنقل الأثاث - خدمة تليق بمنزلك</span>
-        </div>
-      </div>
+      <div className="h-10 bg-green-950 border-b border-green-800/40" aria-hidden="true" />
     );
   }
 
-  const scrollItems = [...items, ...items, ...items];
+  const current = messages[index];
+  const Icon = current.icon;
 
   return (
-    <div className="relative overflow-hidden group">
-      {/* ============ Multi-layer Background ============ */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0F0F0F] via-[#1C1C1C] to-[#0F0F0F]" />
-
-      {/* Animated gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#E85D04]/8 to-transparent bg-[length:200%_100%] animate-shimmer-slow" />
-
-      {/* Top accent line - glowing */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#E85D04] to-transparent opacity-80" />
-
-      {/* Bottom accent line */}
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#E85D04]/50 to-transparent" />
-
-      {/* Subtle dot pattern */}
+    <div
+      className="relative overflow-hidden bg-gradient-to-l from-green-950 via-green-900 to-green-950 border-b border-green-800/40"
+      role="banner"
+      aria-label="شريط الإعلانات"
+    >
+      {/* Subtle top accent line */}
       <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: `radial-gradient(circle, white 1px, transparent 1px)`,
-          backgroundSize: `20px 20px`,
-        }}
+        className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-green-500/40 to-transparent"
+        aria-hidden="true"
       />
 
-      <div className="relative flex items-center h-11">
+      <div className="container-custom">
+        <div className="flex items-center justify-between gap-4 h-10">
+          {/* Left: Rotating Messages */}
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="flex items-center gap-2.5"
+              >
+                <div className="shrink-0 w-6 h-6 rounded-full bg-green-500/15 border border-green-500/25 flex items-center justify-center">
+                  <Icon className="w-3 h-3 text-green-400" aria-hidden="true" />
+                </div>
+                <p className="text-xs md:text-sm text-white/90 font-medium truncate">
+                  {current.text}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
-        {/* ============ Left Fade ============ */}
-        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#0F0F0F] via-[#0F0F0F]/80 to-transparent z-10 pointer-events-none" />
-
-        {/* ============ Right Fade ============ */}
-        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-52 bg-gradient-to-l from-[#0F0F0F] via-[#0F0F0F]/80 to-transparent z-10 pointer-events-none" />
-
-        {/* ============ Phone Badge - Desktop ============ */}
-        <a
-          href={`tel:${siteConfig.phone}`}
-          className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 items-center gap-2.5 bg-gradient-to-l from-[#E85D04] to-[#D14D00] hover:from-[#F97316] hover:to-[#E85D04] px-4 py-1.5 rounded-full shadow-lg shadow-[#E85D04]/40 hover:shadow-xl hover:shadow-[#E85D04]/60 hover:scale-105 active:scale-95 transition-all duration-300 group/phone"
-          dir="ltr"
-        >
-          {/* Pulsing ring */}
-          <span className="absolute inset-0 rounded-full bg-[#E85D04] animate-ping opacity-30" />
-
-          <div className="relative flex items-center gap-2">
-            <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center shadow-md">
-              <Phone className="w-3 h-3 text-[#E85D04]" strokeWidth={3} />
+          {/* Right: Phone Number (always visible) */}
+          <a
+            href={`tel:${siteConfig.phone}`}
+            className="shrink-0 flex items-center gap-2 text-white hover:text-green-300 transition-colors group"
+            dir="ltr"
+            aria-label={`اتصل بنا على ${siteConfig.phone}`}
+          >
+            <div className="relative">
+              <span className="absolute inset-0 rounded-full bg-green-500/40 animate-ping opacity-60" aria-hidden="true" />
+              <div className="relative w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+                <Phone className="w-3 h-3 text-white" aria-hidden="true" />
+              </div>
             </div>
-            <span className="font-black text-white text-xs tracking-wider">
+            <span className="hidden sm:inline text-xs md:text-sm font-bold tabular-nums">
               {siteConfig.phone}
             </span>
-          </div>
-        </a>
-
-        {/* ============ Mobile Phone Icon ============ */}
-        <a
-          href={`tel:${siteConfig.phone}`}
-          className="md:hidden absolute right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-gradient-to-br from-[#E85D04] to-[#D14D00] rounded-full flex items-center justify-center shadow-lg shadow-[#E85D04]/40 active:scale-90 transition-transform"
-          aria-label="اتصل الآن"
-        >
-          <span className="absolute inset-0 rounded-full bg-[#E85D04] animate-ping opacity-40" />
-          <Phone className="relative w-4 h-4 text-white" strokeWidth={2.5} />
-        </a>
-
-        {/* ============ Marquee Track ============ */}
-        <div className="flex animate-marquee-rtl whitespace-nowrap group-hover:[animation-play-state:paused] will-change-transform">
-          {scrollItems.map((item, i) => {
-            const Icon = item.icon;
-            const style = accentStyles[item.accent as keyof typeof accentStyles];
-
-            return (
-              <div
-                key={i}
-                className="flex items-center gap-2.5 mx-5 md:mx-8 shrink-0"
-              >
-                {/* Icon with optional glow */}
-                <div className={`shrink-0 ${style.glow}`}>
-                  <Icon
-                    className={`w-4 h-4 ${style.icon} transition-colors`}
-                    strokeWidth={2.2}
-                  />
-                </div>
-
-                {/* Text */}
-                <div className="flex items-center gap-1.5 text-xs md:text-[13px]">
-                  <span className="text-white/60 font-medium">
-                    {item.text}
-                  </span>
-                  <span className={`font-black ${style.text} ${style.glow} transition-all`}>
-                    {item.highlight}
-                  </span>
-                </div>
-
-                {/* Separator - Diamond */}
-                <div className="mr-4 md:mr-6 flex items-center">
-                  <span className="w-1 h-1 bg-[#E85D04]/40 rotate-45" />
-                </div>
-              </div>
-            );
-          })}
+          </a>
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes marquee-rtl {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(33.333%);
-          }
-        }
-
-        @keyframes shimmer-slow {
-          0%, 100% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-        }
-
-        .animate-marquee-rtl {
-          animation: marquee-rtl 60s linear infinite;
-        }
-
-        .animate-shimmer-slow {
-          animation: shimmer-slow 8s ease-in-out infinite;
-        }
-
-        @media (max-width: 768px) {
-          .animate-marquee-rtl {
-            animation-duration: 40s;
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .animate-marquee-rtl,
-          .animate-shimmer-slow {
-            animation: none;
-          }
-        }
-      `}</style>
+      {/* Progress bar at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-green-800/30" aria-hidden="true">
+        <motion.div
+          key={index}
+          className="h-full bg-gradient-to-r from-green-400 to-emerald-400"
+          initial={{ width: "0%" }}
+          animate={{ width: "100%" }}
+          transition={{ duration: ROTATION_MS / 1000, ease: "linear" }}
+        />
+      </div>
     </div>
   );
 }

@@ -183,10 +183,10 @@ export function WhatsAppWidget({ open, onClose }: WhatsAppWidgetProps) {
             {/* Welcome */}
             <div className="flex justify-start">
               <div className="max-w-[85%] bg-white rounded-2xl rounded-tr-md shadow-sm p-3">
-                <p className="text-sm text-[#1C1C1C] leading-relaxed">
+                <p className="text-sm text-slate-900 leading-relaxed">
                   <span className="font-bold text-[#25D366]">مرحباً بك في خطوة! 👋</span>
                 </p>
-                <p className="text-sm text-[#1C1C1C] mt-1 leading-relaxed">
+                <p className="text-sm text-slate-900 mt-1 leading-relaxed">
                   فريقنا جاهز لخدمتك على مدار الساعة. اختر أحد الاستفسارات السريعة أو اكتب رسالتك.
                 </p>
                 <div className="flex items-center gap-1 mt-2 text-[10px] text-[#64748B]">
@@ -225,10 +225,10 @@ export function WhatsAppWidget({ open, onClose }: WhatsAppWidgetProps) {
                       type="button"
                       className="w-full flex items-center gap-3 bg-white hover:bg-[#F0F2F5] active:bg-[#E5E7EB] rounded-2xl p-3 shadow-sm transition-all group text-right"
                     >
-                      <div className="w-9 h-9 bg-[#E85D04]/10 group-hover:bg-[#E85D04] rounded-xl flex items-center justify-center shrink-0 transition-colors">
-                        <Icon className="w-4 h-4 text-[#E85D04] group-hover:text-white transition-colors" />
+                      <div className="w-9 h-9 bg-[#0F766E]/10 group-hover:bg-[#0F766E] rounded-xl flex items-center justify-center shrink-0 transition-colors">
+                        <Icon className="w-4 h-4 text-[#0F766E] group-hover:text-white transition-colors" />
                       </div>
-                      <span className="text-sm font-semibold text-[#1C1C1C] flex-1">
+                      <span className="text-sm font-semibold text-slate-900 flex-1">
                         {qm.label}
                       </span>
                       <Send className="w-4 h-4 text-[#25D366] opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -247,7 +247,7 @@ export function WhatsAppWidget({ open, onClose }: WhatsAppWidgetProps) {
                 value={customMessage}
                 onChange={(e) => setCustomMessage(e.target.value)}
                 placeholder="اكتب رسالتك هنا..."
-                className="flex-1 bg-white rounded-full px-4 py-2.5 text-sm text-[#1C1C1C] placeholder-[#64748B] outline-none focus:ring-2 focus:ring-[#25D366]/20"
+                className="flex-1 bg-white rounded-full px-4 py-2.5 text-sm text-slate-900 placeholder-[#64748B] outline-none focus:ring-2 focus:ring-[#25D366]/20"
               />
               <button
                 type="submit"
@@ -261,7 +261,7 @@ export function WhatsAppWidget({ open, onClose }: WhatsAppWidgetProps) {
 
             <a
               href={`tel:${siteConfig.phone}`}
-              className="flex items-center justify-center gap-2 mt-2 py-2 bg-[#E85D04]/10 hover:bg-[#E85D04]/20 text-[#E85D04] font-bold text-sm rounded-full transition-colors"
+              className="flex items-center justify-center gap-2 mt-2 py-2 bg-[#0F766E]/10 hover:bg-[#0F766E]/20 text-[#0F766E] font-bold text-sm rounded-full transition-colors"
             >
               <Phone className="w-3.5 h-3.5" />
               <span>أو اتصل مباشرة</span>

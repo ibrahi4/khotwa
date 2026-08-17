@@ -10,7 +10,6 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingActions } from "@/components/layout/FloatingActions";
 import { GoogleAnalytics, GoogleTagManager } from "@/components/analytics/GoogleAnalytics";
-
 const cairo = Cairo({
   subsets: ["arabic"],
   display: "swap",
@@ -171,12 +170,12 @@ export default function RootLayout({
         <GoogleTagManager />
       </head>
       <body className={cairo.className} suppressHydrationWarning>
-        <GoogleAnalytics />
+<GoogleAnalytics />
         <Header />
         <main>{children}</main>
         <Footer />
         <FloatingActions />
-      </body>
+</body>
     </html>
   );
 }

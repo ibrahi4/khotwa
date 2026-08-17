@@ -99,16 +99,16 @@ export default async function BlogPostPage({ params }: Props) {
       <div className="bg-[#FAF5EE] border-b border-[#E5E7EB]">
         <div className="container-custom py-3">
           <nav aria-label="breadcrumb" className="flex items-center gap-2 text-sm text-[#64748B] flex-wrap">
-            <Link href="/" className="hover:text-[#E85D04] transition-colors">الرئيسية</Link>
+            <Link href="/" className="hover:text-[#0F766E] transition-colors">الرئيسية</Link>
             <ChevronLeft className="w-4 h-4" />
-            <Link href="/blog" className="hover:text-[#E85D04] transition-colors">المدونة</Link>
+            <Link href="/blog" className="hover:text-[#0F766E] transition-colors">المدونة</Link>
             <ChevronLeft className="w-4 h-4" />
-            <span className="text-[#1C1C1C] font-semibold line-clamp-1">{post.title}</span>
+            <span className="text-slate-900 font-semibold line-clamp-1">{post.title}</span>
           </nav>
         </div>
       </div>
 
-      <section className="relative bg-[#1C1C1C] text-white overflow-hidden">
+      <section className="relative bg-white text-white overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src={post.image}
@@ -119,13 +119,13 @@ export default async function BlogPostPage({ params }: Props) {
             className="object-cover opacity-30"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C] via-[#1C1C1C]/80 to-[#1C1C1C]/50" />
+          <div className="absolute inset-0 bg-gradient-to-t from-teal-900 via-teal-900/80 to-teal-900/50" />
         </div>
 
         <div className="relative container-custom py-16 md:py-20">
           <div className="max-w-4xl mx-auto text-center">
             {category && (
-              <Badge className="bg-[#E85D04] text-white border-0 mb-5 px-4 py-1.5">
+              <Badge className="bg-[#0F766E] text-white border-0 mb-5 px-4 py-1.5">
                 <Tag className="w-3 h-3 ml-1.5" />
                 {category.name}
               </Badge>
@@ -141,11 +141,11 @@ export default async function BlogPostPage({ params }: Props) {
 
             <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm text-white/70">
               <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-[#E85D04]" />
+                <User className="w-4 h-4 text-[#0F766E]" />
                 <span>{post.author}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#E85D04]" />
+                <Calendar className="w-4 h-4 text-[#0F766E]" />
                 <span>{new Date(post.publishedAt).toLocaleDateString("ar-EG", {
                   year: "numeric",
                   month: "long",
@@ -153,7 +153,7 @@ export default async function BlogPostPage({ params }: Props) {
                 })}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-[#E85D04]" />
+                <Clock className="w-4 h-4 text-[#0F766E]" />
                 <span>{post.readTime} دقائق قراءة</span>
               </div>
             </div>
@@ -170,7 +170,7 @@ export default async function BlogPostPage({ params }: Props) {
                   return (
                     <div key={i} className="mb-8">
                       {section.content.split("\n\n").map((paragraph, j) => (
-                        <p key={j} className="text-base md:text-lg text-[#1C1C1C]/80 leading-loose mb-4">
+                        <p key={j} className="text-base md:text-lg text-slate-900/80 leading-loose mb-4">
                           {paragraph}
                         </p>
                       ))}
@@ -180,14 +180,14 @@ export default async function BlogPostPage({ params }: Props) {
 
                 return (
                   <div key={i} className="mb-10">
-                    <h2 className="text-2xl md:text-3xl font-black text-[#1C1C1C] mb-5 pb-3 border-b-2 border-[#E85D04]/20">
+                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-5 pb-3 border-b-2 border-[#0F766E]/20">
                       {section.title}
                     </h2>
                     <div>
                       {section.content.split("\n\n").map((block, j) => {
                         if (block.startsWith("### ")) {
                           return (
-                            <h3 key={j} className="text-xl md:text-2xl font-bold text-[#1C1C1C] mt-6 mb-3">
+                            <h3 key={j} className="text-xl md:text-2xl font-bold text-slate-900 mt-6 mb-3">
                               {block.replace("### ", "")}
                             </h3>
                           );
@@ -197,7 +197,7 @@ export default async function BlogPostPage({ params }: Props) {
                           return (
                             <ul key={j} className="space-y-2 my-4 pr-6">
                               {items.map((item, k) => (
-                                <li key={k} className="text-base text-[#1C1C1C]/80 leading-relaxed relative before:absolute before:right-[-1rem] before:top-3 before:w-1.5 before:h-1.5 before:bg-[#E85D04] before:rounded-full">
+                                <li key={k} className="text-base text-slate-900/80 leading-relaxed relative before:absolute before:right-[-1rem] before:top-3 before:w-1.5 before:h-1.5 before:bg-[#0F766E] before:rounded-full">
                                   {item.replace("- ", "")}
                                 </li>
                               ))}
@@ -205,7 +205,7 @@ export default async function BlogPostPage({ params }: Props) {
                           );
                         }
                         return (
-                          <p key={j} className="text-base md:text-lg text-[#1C1C1C]/80 leading-loose mb-4">
+                          <p key={j} className="text-base md:text-lg text-slate-900/80 leading-loose mb-4">
                             {block}
                           </p>
                         );
@@ -219,8 +219,8 @@ export default async function BlogPostPage({ params }: Props) {
             {post.keywords && post.keywords.length > 0 && (
               <div className="mt-12 pt-8 border-t border-[#E5E7EB]">
                 <div className="flex items-center gap-2 mb-3">
-                  <Tag className="w-4 h-4 text-[#E85D04]" />
-                  <span className="text-sm font-bold text-[#1C1C1C]">الكلمات المفتاحية:</span>
+                  <Tag className="w-4 h-4 text-[#0F766E]" />
+                  <span className="text-sm font-bold text-slate-900">الكلمات المفتاحية:</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {post.keywords.map((kw, i) => (
@@ -232,8 +232,8 @@ export default async function BlogPostPage({ params }: Props) {
               </div>
             )}
 
-            <Card className="mt-12 bg-[#1C1C1C] border-0 text-white overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-[#E85D04]/10 rounded-full blur-3xl" />
+            <Card className="mt-12 bg-white border-0 text-white overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[#0F766E]/10 rounded-full blur-3xl" />
               <CardContent className="p-8 md:p-10 relative text-center">
                 <h3 className="text-2xl md:text-3xl font-black mb-3">
                   هل تحتاج إلى خدماتنا؟
@@ -242,7 +242,7 @@ export default async function BlogPostPage({ params }: Props) {
                   تواصل معنا الآن للحصول على استشارة مجانية وعرض سعر يناسب احتياجاتك
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-3">
-                  <a href={`tel:${siteConfig.phone}`} className="inline-flex items-center justify-center gap-2 bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-12 px-6 rounded-md text-sm">
+                  <a href={`tel:${siteConfig.phone}`} className="inline-flex items-center justify-center gap-2 bg-[#0F766E] hover:bg-[#0D5F5A] text-white font-bold h-12 px-6 rounded-md text-sm">
                     <Phone className="w-4 h-4" />
                     اتصل الآن
                   </a>
@@ -266,7 +266,7 @@ export default async function BlogPostPage({ params }: Props) {
                   <BookOpen className="w-3 h-3 ml-1" />
                   مقالات مشابهة
                 </Badge>
-                <h2 className="text-3xl md:text-4xl font-black text-[#1C1C1C] tracking-tight">
+                <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
                   اقرأ أيضاً
                 </h2>
               </div>
@@ -274,7 +274,7 @@ export default async function BlogPostPage({ params }: Props) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {relatedPosts.map((rp) => (
                   <Link key={rp.slug} href={`/blog/${rp.slug}`} className="group">
-                    <Card className="h-full overflow-hidden hover:shadow-lg hover:border-[#E85D04] transition-all border-[#E5E7EB] bg-white">
+                    <Card className="h-full overflow-hidden hover:shadow-lg hover:border-[#0F766E] transition-all border-[#E5E7EB] bg-white">
                       <div className="relative aspect-video overflow-hidden bg-[#FAF5EE]">
                         <Image
                           src={rp.image}
@@ -298,13 +298,13 @@ export default async function BlogPostPage({ params }: Props) {
                             {rp.readTime} د
                           </span>
                         </div>
-                        <h3 className="font-bold text-[#1C1C1C] mb-2 group-hover:text-[#E85D04] transition-colors line-clamp-2">
+                        <h3 className="font-bold text-slate-900 mb-2 group-hover:text-[#0F766E] transition-colors line-clamp-2">
                           {rp.title}
                         </h3>
                         <p className="text-xs text-[#64748B] line-clamp-2 mb-3">
                           {rp.excerpt}
                         </p>
-                        <span className="text-[#E85D04] text-xs font-bold flex items-center gap-1">
+                        <span className="text-[#0F766E] text-xs font-bold flex items-center gap-1">
                           اقرأ المقال
                           <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" />
                         </span>
@@ -315,7 +315,7 @@ export default async function BlogPostPage({ params }: Props) {
               </div>
 
               <div className="text-center mt-10">
-                <Button asChild variant="outline" className="border-[#1C1C1C] text-[#1C1C1C] hover:bg-[#1C1C1C] hover:text-white h-12 px-6">
+                <Button asChild variant="outline" className="border-teal-600 text-slate-900 hover:bg-white hover:text-white h-12 px-6">
                   <Link href="/blog">
                     <BookOpen className="w-4 h-4 ml-2" />
                     كل المقالات

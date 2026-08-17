@@ -93,7 +93,7 @@ export function Logo({
         className={cn(
           "font-black tracking-tight",
           s.title,
-          isWhite ? "text-white" : "text-[#1C1C1C]"
+          isWhite ? "text-white" : "text-slate-900"
         )}
       >
         خطوة

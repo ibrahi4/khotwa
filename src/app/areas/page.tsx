@@ -44,7 +44,7 @@ export default function AreasPage() {
       />
 
       {/* ========== HERO WITH IMAGE ========== */}
-      <section className="relative bg-[#1C1C1C] text-white overflow-hidden min-h-[70vh] flex items-center">
+      <section className="relative bg-white text-white overflow-hidden min-h-[70vh] flex items-center">
         <div className="absolute inset-0">
           <Image
             src="/herosection.webp"
@@ -55,15 +55,15 @@ export default function AreasPage() {
             className="object-cover object-center"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-l from-[#1C1C1C]/95 via-[#1C1C1C]/80 to-[#1C1C1C]/60" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-l from-teal-900/95 via-teal-900/80 to-teal-900/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-teal-900 via-transparent to-transparent" />
         </div>
 
         <div className="relative container-custom py-16 md:py-20 w-full">
           <nav aria-label="breadcrumb" className="mb-6">
             <ol className="flex items-center gap-2 text-sm text-white/70">
               <li>
-                <Link href="/" className="hover:text-[#E85D04] transition-colors">
+                <Link href="/" className="hover:text-[#0F766E] transition-colors">
                   الرئيسية
                 </Link>
               </li>
@@ -73,7 +73,7 @@ export default function AreasPage() {
           </nav>
 
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#E85D04] to-[#D14D00] px-4 py-1.5 mb-6 shadow-lg shadow-[#E85D04]/30">
+            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#0F766E] to-[#0D5F5A] px-4 py-1.5 mb-6 shadow-lg shadow-[#0F766E]/30">
               <MapPin className="w-4 h-4 text-white" />
               <span className="text-xs font-black text-white tracking-wide">
                 تغطية شاملة لجميع محافظات مصر
@@ -83,7 +83,7 @@ export default function AreasPage() {
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] mb-6 tracking-tight">
               مناطق خدماتنا
               <br />
-              <span className="text-[#E85D04]">في جميع أنحاء مصر</span>
+              <span className="text-[#0F766E]">في جميع أنحاء مصر</span>
             </h1>
 
             <p className="text-base md:text-lg text-white/80 leading-relaxed mb-8 max-w-2xl">
@@ -103,7 +103,7 @@ export default function AreasPage() {
                   key={i}
                   className="flex items-center gap-1.5 bg-white/10 backdrop-blur border border-white/20 rounded-full px-3 py-1.5"
                 >
-                  <b.icon className="w-3.5 h-3.5 text-[#E85D04]" />
+                  <b.icon className="w-3.5 h-3.5 text-[#0F766E]" />
                   <span className="text-xs font-semibold text-white">{b.text}</span>
                 </div>
               ))}
@@ -112,7 +112,7 @@ export default function AreasPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <a
                 href={`tel:${siteConfig.phone}`}
-                className="inline-flex items-center justify-center gap-2 bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-14 px-8 rounded-md shadow-lg shadow-[#E85D04]/30 transition-all hover:scale-[1.02] text-base"
+                className="inline-flex items-center justify-center gap-2 bg-[#0F766E] hover:bg-[#0D5F5A] text-white font-bold h-14 px-8 rounded-md shadow-lg shadow-[#0F766E]/30 transition-all hover:scale-[1.02] text-base"
               >
                 <Phone className="w-4 h-4" />
                 احجز موعدك الآن
@@ -165,13 +165,13 @@ export default function AreasPage() {
             ].map((f, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 md:gap-4 bg-white p-4 md:p-5 rounded-2xl border border-[#E5E7EB] hover:border-[#E85D04] hover:shadow-md transition-all group"
+                className="flex items-center gap-3 md:gap-4 bg-white p-4 md:p-5 rounded-2xl border border-[#E5E7EB] hover:border-[#0F766E] hover:shadow-md transition-all group"
               >
-                <div className="w-11 h-11 md:w-12 md:h-12 bg-[#FAF5EE] group-hover:bg-[#E85D04] text-[#1C1C1C] group-hover:text-white rounded-xl flex items-center justify-center shrink-0 transition-all">
+                <div className="w-11 h-11 md:w-12 md:h-12 bg-[#FAF5EE] group-hover:bg-[#0F766E] text-slate-900 group-hover:text-white rounded-xl flex items-center justify-center shrink-0 transition-all">
                   <f.icon className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
                 <div className="min-w-0">
-                  <div className="font-bold text-[#1C1C1C] text-sm md:text-base">{f.title}</div>
+                  <div className="font-bold text-slate-900 text-sm md:text-base">{f.title}</div>
                   <div className="text-xs md:text-sm text-[#64748B]">{f.desc}</div>
                 </div>
               </div>
@@ -184,11 +184,11 @@ export default function AreasPage() {
       <section className="section-padding bg-white">
         <div className="container-custom">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <Badge className="bg-gradient-to-r from-[#E85D04] to-[#D14D00] text-white border-0 mb-4 px-4 py-1.5 shadow-lg shadow-[#E85D04]/30">
+            <Badge className="bg-gradient-to-r from-[#0F766E] to-[#0D5F5A] text-white border-0 mb-4 px-4 py-1.5 shadow-lg shadow-[#0F766E]/30">
               <Crown className="w-3 h-3 ml-1" />
               خدمة VIP الحصرية
             </Badge>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-[#1C1C1C] mb-4 tracking-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">
               مناطقنا المميّزة
             </h2>
             <p className="text-base text-[#64748B]">
@@ -199,13 +199,13 @@ export default function AreasPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
             {vipAreas.map((area) => (
               <Link key={area.slug} href={`/areas/${area.slug}`} className="group">
-                <div className="relative bg-gradient-to-br from-[#1C1C1C] via-[#2A2A2A] to-[#1C1C1C] rounded-2xl overflow-hidden border border-[#E5E7EB]/10 hover:border-[#E85D04]/50 transition-all hover:shadow-2xl hover:shadow-[#E85D04]/20 hover:-translate-y-1 h-full">
+                <div className="relative bg-gradient-to-br from-teal-900 via-[#2A2A2A] to-teal-900 rounded-2xl overflow-hidden border border-[#E5E7EB]/10 hover:border-[#0F766E]/50 transition-all hover:shadow-2xl hover:shadow-[#0F766E]/20 hover:-translate-y-1 h-full">
                   {/* Glow effect */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#E85D04]/20 rounded-full blur-3xl group-hover:bg-[#E85D04]/30 transition-all" />
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#0F766E]/20 rounded-full blur-3xl group-hover:bg-[#0F766E]/30 transition-all" />
 
                   {/* VIP Badge */}
                   <div className="absolute top-3 left-3 z-10">
-                    <div className="bg-gradient-to-r from-[#E85D04] to-[#D14D00] text-white text-[10px] font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
+                    <div className="bg-gradient-to-r from-[#0F766E] to-[#0D5F5A] text-white text-[10px] font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
                       <Crown className="w-2.5 h-2.5" />
                       VIP
                     </div>
@@ -213,8 +213,8 @@ export default function AreasPage() {
 
                   <div className="relative p-5 md:p-6">
                     {/* Icon */}
-                    <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-[#E85D04]/20 to-transparent border border-[#E85D04]/30 rounded-2xl flex items-center justify-center mb-4 group-hover:from-[#E85D04] group-hover:to-[#D14D00] group-hover:border-[#E85D04] transition-all">
-                      <MapPin className="w-7 h-7 text-[#E85D04] group-hover:text-white transition-colors" />
+                    <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-[#0F766E]/20 to-transparent border border-[#0F766E]/30 rounded-2xl flex items-center justify-center mb-4 group-hover:from-[#0F766E] group-hover:to-[#0D5F5A] group-hover:border-[#0F766E] transition-all">
+                      <MapPin className="w-7 h-7 text-[#0F766E] group-hover:text-white transition-colors" />
                     </div>
 
                     {/* Content */}
@@ -224,18 +224,18 @@ export default function AreasPage() {
 
                     {area.compounds && area.compounds.length > 0 && (
                       <div className="flex items-center gap-1.5 text-xs text-white/60 mb-3">
-                        <Building2 className="w-3 h-3 text-[#E85D04]" />
+                        <Building2 className="w-3 h-3 text-[#0F766E]" />
                         <span>{area.compounds.length}+ كمبوند فاخر</span>
                       </div>
                     )}
 
                     {/* Arrow */}
                     <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                      <span className="text-xs text-[#E85D04] font-bold flex items-center gap-1">
+                      <span className="text-xs text-[#0F766E] font-bold flex items-center gap-1">
                         استكشف المنطقة
                       </span>
-                      <div className="w-7 h-7 bg-[#E85D04]/10 group-hover:bg-[#E85D04] rounded-full flex items-center justify-center transition-all">
-                        <ArrowLeft className="w-3.5 h-3.5 text-[#E85D04] group-hover:text-white group-hover:-translate-x-0.5 transition-all" />
+                      <div className="w-7 h-7 bg-[#0F766E]/10 group-hover:bg-[#0F766E] rounded-full flex items-center justify-center transition-all">
+                        <ArrowLeft className="w-3.5 h-3.5 text-[#0F766E] group-hover:text-white group-hover:-translate-x-0.5 transition-all" />
                       </div>
                     </div>
                   </div>
@@ -258,31 +258,31 @@ export default function AreasPage() {
                 <Home className="w-3 h-3 ml-1" />
                 منطقة جغرافية
               </Badge>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-[#1C1C1C] mb-4 tracking-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">
                 {group.label}
               </h2>
               <p className="text-[#64748B]">
-                نغطي <strong className="text-[#E85D04]">{group.areas.length}</strong> منطقة في {group.label}
+                نغطي <strong className="text-[#0F766E]">{group.areas.length}</strong> منطقة في {group.label}
               </p>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {group.areas.map((area) => (
                 <Link key={area.slug} href={`/areas/${area.slug}`} className="group">
-                  <Card className="border-[#E5E7EB] hover:border-[#E85D04] hover:shadow-lg transition-all bg-white h-full relative overflow-hidden hover:-translate-y-1">
+                  <Card className="border-[#E5E7EB] hover:border-[#0F766E] hover:shadow-lg transition-all bg-white h-full relative overflow-hidden hover:-translate-y-1">
                     {area.isVip && (
                       <div className="absolute top-2 left-2 z-10">
-                        <div className="bg-gradient-to-r from-[#E85D04] to-[#D14D00] text-white text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-0.5 shadow-md">
+                        <div className="bg-gradient-to-r from-[#0F766E] to-[#0D5F5A] text-white text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-0.5 shadow-md">
                           <Crown className="w-2 h-2" />
                           VIP
                         </div>
                       </div>
                     )}
                     <CardContent className="p-5 text-center">
-                      <div className="w-12 h-12 md:w-14 md:h-14 bg-[#FAF5EE] group-hover:bg-[#E85D04] text-[#E85D04] group-hover:text-white rounded-2xl flex items-center justify-center mx-auto mb-3 transition-all border border-[#E5E7EB] group-hover:border-[#E85D04]">
+                      <div className="w-12 h-12 md:w-14 md:h-14 bg-[#FAF5EE] group-hover:bg-[#0F766E] text-[#0F766E] group-hover:text-white rounded-2xl flex items-center justify-center mx-auto mb-3 transition-all border border-[#E5E7EB] group-hover:border-[#0F766E]">
                         <MapPin className="w-5 h-5 md:w-6 md:h-6" />
                       </div>
-                      <h3 className="font-black text-sm md:text-base text-[#1C1C1C] group-hover:text-[#E85D04] transition-colors mb-1">
+                      <h3 className="font-black text-sm md:text-base text-slate-900 group-hover:text-[#0F766E] transition-colors mb-1">
                         {area.name}
                       </h3>
                       {area.compounds && area.compounds.length > 0 && (
@@ -300,10 +300,10 @@ export default function AreasPage() {
       ))}
 
       {/* ========== WHY US SECTION ========== */}
-      <section className="section-padding bg-[#1C1C1C] text-white relative overflow-hidden">
+      <section className="section-padding bg-white text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#E85D04] rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#E85D04] rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#0F766E] rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#0F766E] rounded-full blur-3xl" />
         </div>
 
         <div className="relative container-custom">
@@ -313,7 +313,7 @@ export default function AreasPage() {
               لماذا خطوة
             </Badge>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
-              خبرة تصنع الفارق في <span className="text-[#E85D04]">كل منطقة</span>
+              خبرة تصنع الفارق في <span className="text-[#0F766E]">كل منطقة</span>
             </h2>
             <p className="text-white/60">
               نمتلك المعرفة والخبرة اللازمة للتعامل مع كل منطقة بخصوصيتها
@@ -340,9 +340,9 @@ export default function AreasPage() {
             ].map((item, i) => (
               <div
                 key={i}
-                className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-[#E85D04]/50 hover:bg-white/10 transition-all group"
+                className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-[#0F766E]/50 hover:bg-white/10 transition-all group"
               >
-                <div className="w-14 h-14 bg-[#E85D04] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-14 h-14 bg-[#0F766E] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <item.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="font-black text-lg text-white mb-2">{item.title}</h3>
@@ -356,17 +356,17 @@ export default function AreasPage() {
       {/* ========== FINAL CTA ========== */}
       <section className="relative bg-gradient-to-br from-[#FAF5EE] to-white overflow-hidden py-16 md:py-24">
         <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#E85D04]/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#E85D04]/10 rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#0F766E]/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#0F766E]/10 rounded-full blur-3xl" />
         </div>
 
         <div className="relative container-custom text-center">
-          <Badge className="bg-gradient-to-r from-[#E85D04] to-[#D14D00] text-white border-0 mb-6 px-4 py-1.5 shadow-lg shadow-[#E85D04]/30">
+          <Badge className="bg-gradient-to-r from-[#0F766E] to-[#0D5F5A] text-white border-0 mb-6 px-4 py-1.5 shadow-lg shadow-[#0F766E]/30">
             <Sparkles className="w-3 h-3 ml-1" />
             منطقتك مش في القائمة؟
           </Badge>
-          <h2 className="text-3xl md:text-5xl font-black text-[#1C1C1C] mb-4 tracking-tight">
-            نغطي <span className="text-[#E85D04]">كل مصر</span>
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+            نغطي <span className="text-[#0F766E]">كل مصر</span>
           </h2>
           <p className="text-[#64748B] mb-10 max-w-xl mx-auto text-base md:text-lg leading-relaxed">
             اتصل بنا للاستفسار عن الخدمة في منطقتك. نقدم خدمة نقل الأثاث لجميع محافظات مصر بأعلى معايير الجودة والاحترافية.
@@ -375,7 +375,7 @@ export default function AreasPage() {
           <div className="flex flex-col sm:flex-row justify-center gap-3">
             <a
               href={`tel:${siteConfig.phone}`}
-              className="inline-flex items-center justify-center gap-2 bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-14 px-8 rounded-md shadow-lg shadow-[#E85D04]/30 transition-all hover:scale-[1.02] text-base"
+              className="inline-flex items-center justify-center gap-2 bg-[#0F766E] hover:bg-[#0D5F5A] text-white font-bold h-14 px-8 rounded-md shadow-lg shadow-[#0F766E]/30 transition-all hover:scale-[1.02] text-base"
             >
               <Phone className="w-4 h-4" />
               اتصل: {siteConfig.phone}
@@ -384,7 +384,7 @@ export default function AreasPage() {
               href={`https://wa.me/${siteConfig.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-[#1C1C1C] hover:bg-[#2A2A2A] text-white h-14 px-8 rounded-md text-base font-bold transition-all"
+              className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-white h-14 px-8 rounded-md text-base font-bold transition-all"
             >
               <MessageCircle className="w-4 h-4" />
               تواصل واتساب

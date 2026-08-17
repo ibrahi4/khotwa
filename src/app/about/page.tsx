@@ -21,9 +21,9 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative bg-[#1C1C1C] text-white overflow-hidden">
+      <section className="relative bg-white text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10" aria-hidden="true">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#E85D04] rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#0F766E] rounded-full blur-3xl" />
         </div>
 
         <div className="relative container-custom py-16 md:py-24">
@@ -32,7 +32,7 @@ export default function AboutPage() {
               قصتنا
             </Badge>
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-5 leading-tight tracking-tight">
-              خبرة تصنع <span className="text-[#E85D04]">الفارق</span>
+              خبرة تصنع <span className="text-[#0F766E]">الفارق</span>
             </h1>
             <p className="text-base md:text-lg text-white/70 leading-relaxed">
               منذ تأسيسنا عام {siteConfig.foundingYear}، التزمنا بتقديم خدمة نقل أثاث تليق بمنزلك،
@@ -50,37 +50,37 @@ export default function AboutPage() {
               <Badge variant="outline" className="border-[#E5E7EB] text-[#64748B] mb-4">
                 قصتنا
               </Badge>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-[#1C1C1C] mb-6 leading-tight tracking-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-6 leading-tight tracking-tight">
                 رحلتنا من {siteConfig.foundingYear} حتى اليوم
               </h2>
               <div className="space-y-4 text-[#64748B] leading-relaxed">
                 <p>
-                  بدأت <strong className="text-[#1C1C1C]">خطوة لنقل الأثاث</strong> رحلتها
+                  بدأت <strong className="text-slate-900">خطوة لنقل الأثاث</strong> رحلتها
                   بفريق متخصص وحلم كبير لتقديم خدمة نقل أثاث ترقى لتوقعات العميل المصري
                   الباحث عن الجودة.
                 </p>
                 <p>
-                  على مدار <strong className="text-[#1C1C1C]">أكثر من 10 سنوات</strong>،
+                  على مدار <strong className="text-slate-900">أكثر من 10 سنوات</strong>،
                   نمت الشركة لتصبح من أبرز شركات نقل الأثاث المتخصصة في خدمة الكمبوندات
                   الراقية في القاهرة الجديدة والتجمع الخامس ومدينتي والشيخ زايد.
                 </p>
                 <p>
-                  نتخصص في خدمة <strong className="text-[#1C1C1C]">الكمبوندات الفاخرة</strong>
+                  نتخصص في خدمة <strong className="text-slate-900">الكمبوندات الفاخرة</strong>
                   والمدن الجديدة، حيث نقدم خدمة White Glove تليق بمقتنياتكم الثمينة.
                 </p>
               </div>
 
               <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-[#E5E7EB]">
                 <div>
-                  <div className="text-3xl md:text-4xl font-black text-[#1C1C1C] mb-1">+10</div>
+                  <div className="text-3xl md:text-4xl font-black text-slate-900 mb-1">+10</div>
                   <div className="text-xs text-[#64748B]">سنوات خبرة</div>
                 </div>
                 <div>
-                  <div className="text-3xl md:text-4xl font-black text-[#1C1C1C] mb-1">500+</div>
+                  <div className="text-3xl md:text-4xl font-black text-slate-900 mb-1">500+</div>
                   <div className="text-xs text-[#64748B]">عميل راضٍ</div>
                 </div>
                 <div>
-                  <div className="text-3xl md:text-4xl font-black text-[#1C1C1C] mb-1">20+</div>
+                  <div className="text-3xl md:text-4xl font-black text-slate-900 mb-1">20+</div>
                   <div className="text-xs text-[#64748B]">منطقة مخدومة</div>
                 </div>
               </div>
@@ -95,12 +95,12 @@ export default function AboutPage() {
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-teal-900/80 via-transparent to-transparent" />
                 <div className="absolute bottom-6 right-6 left-6">
                   <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 text-white">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
-                        <MapPin className="w-6 h-6 text-[#1C1C1C]" />
+                        <MapPin className="w-6 h-6 text-slate-900" />
                       </div>
                       <div>
                         <div className="font-bold text-sm">مقرنا الرئيسي</div>
@@ -111,9 +111,9 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              <div className="absolute -top-4 -left-4 w-24 h-24 bg-[#1C1C1C] rounded-2xl flex items-center justify-center shadow-xl">
+              <div className="absolute -top-4 -left-4 w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-xl">
                 <div className="text-white text-center">
-                  <div className="text-2xl font-black text-[#E85D04]">10+</div>
+                  <div className="text-2xl font-black text-[#0F766E]">10+</div>
                   <div className="text-[10px] font-bold">سنوات</div>
                 </div>
               </div>
@@ -129,7 +129,7 @@ export default function AboutPage() {
             <Badge variant="outline" className="border-[#E5E7EB] text-[#64748B] mb-4">
               قيمنا
             </Badge>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-[#1C1C1C] mb-4 tracking-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">
               ما نؤمن به
             </h2>
             <p className="text-[#64748B]">قيمنا الأساسية هي ما يميزنا ويصنع الفارق في خدماتنا</p>
@@ -155,13 +155,13 @@ export default function AboutPage() {
             ].map((item, i) => (
               <Card
                 key={i}
-                className="hover:border-[#1C1C1C] hover:shadow-md transition-all bg-white border-[#E5E7EB] group"
+                className="hover:border-teal-600 hover:shadow-md transition-all bg-white border-[#E5E7EB] group"
               >
                 <CardContent className="p-8">
-                  <div className="w-14 h-14 bg-[#F5F5F5] group-hover:bg-[#1C1C1C] text-[#1C1C1C] group-hover:text-white rounded-2xl flex items-center justify-center mb-5 transition-all">
+                  <div className="w-14 h-14 bg-[#F5F5F5] group-hover:bg-white text-slate-900 group-hover:text-white rounded-2xl flex items-center justify-center mb-5 transition-all">
                     <item.icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-xl font-black text-[#1C1C1C] mb-3">
+                  <h3 className="text-xl font-black text-slate-900 mb-3">
                     {item.title}
                   </h3>
                   <p className="text-[#64748B] leading-relaxed text-sm">{item.desc}</p>
@@ -179,7 +179,7 @@ export default function AboutPage() {
             <Badge variant="outline" className="border-[#E5E7EB] text-[#64748B] mb-4">
               مميزاتنا
             </Badge>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-[#1C1C1C] mb-4 tracking-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">
               لماذا يختارنا سكان الكمبوندات؟
             </h2>
             <p className="text-[#64748B]">نقدم لعملائنا ما يستحقونه من خدمة احترافية متكاملة</p>
@@ -198,13 +198,13 @@ export default function AboutPage() {
             ].map((item, i) => (
               <Card
                 key={i}
-                className="hover:border-[#1C1C1C] hover:shadow-md transition-all border-[#E5E7EB] bg-[#FAF5EE] group"
+                className="hover:border-teal-600 hover:shadow-md transition-all border-[#E5E7EB] bg-[#FAF5EE] group"
               >
                 <CardContent className="p-5 text-center">
-                  <div className="w-12 h-12 bg-white group-hover:bg-[#1C1C1C] text-[#1C1C1C] group-hover:text-white rounded-xl flex items-center justify-center mx-auto mb-3 transition-all border border-[#E5E7EB] group-hover:border-[#1C1C1C]">
+                  <div className="w-12 h-12 bg-white group-hover:bg-white text-slate-900 group-hover:text-white rounded-xl flex items-center justify-center mx-auto mb-3 transition-all border border-[#E5E7EB] group-hover:border-teal-600">
                     <item.icon className="w-6 h-6" />
                   </div>
-                  <div className="font-bold text-[#1C1C1C] text-sm mb-1">{item.title}</div>
+                  <div className="font-bold text-slate-900 text-sm mb-1">{item.title}</div>
                   <div className="text-xs text-[#64748B]">{item.desc}</div>
                 </CardContent>
               </Card>
@@ -220,7 +220,7 @@ export default function AboutPage() {
             <Badge variant="outline" className="border-[#E5E7EB] text-[#64748B] mb-4">
               خطوات العمل
             </Badge>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-[#1C1C1C] mb-4 tracking-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">
               كيف نعمل؟
             </h2>
             <p className="text-[#64748B]">عملية احترافية مدروسة من البداية حتى النهاية</p>
@@ -235,13 +235,13 @@ export default function AboutPage() {
             ].map((item, i) => (
               <Card
                 key={i}
-                className="bg-white border-[#E5E7EB] hover:border-[#1C1C1C] hover:shadow-md transition-all h-full group"
+                className="bg-white border-[#E5E7EB] hover:border-teal-600 hover:shadow-md transition-all h-full group"
               >
                 <CardContent className="p-6">
-                  <div className="text-6xl font-black text-[#E5E7EB] group-hover:text-[#E85D04] transition-colors mb-3">
+                  <div className="text-6xl font-black text-[#E5E7EB] group-hover:text-[#0F766E] transition-colors mb-3">
                     {item.step}
                   </div>
-                  <h3 className="text-lg font-bold text-[#1C1C1C] mb-2">{item.title}</h3>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">{item.title}</h3>
                   <p className="text-sm text-[#64748B] leading-relaxed">{item.desc}</p>
                 </CardContent>
               </Card>
@@ -253,16 +253,16 @@ export default function AboutPage() {
       {/* Rating Card */}
       <section className="section-padding bg-white">
         <div className="container-custom">
-          <Card className="bg-[#1C1C1C] border-0 text-white overflow-hidden relative">
+          <Card className="bg-white border-0 text-white overflow-hidden relative">
             <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-[#E85D04] rounded-full blur-3xl" />
+              <div className="absolute top-0 right-0 w-96 h-96 bg-[#0F766E] rounded-full blur-3xl" />
             </div>
 
             <CardContent className="p-8 md:p-12 relative">
               <div className="grid lg:grid-cols-2 gap-8 items-center">
                 <div>
                   <Badge className="bg-white/10 text-white border border-white/20 mb-5 px-4 py-1.5">
-                    <Star className="w-3 h-3 ml-1.5 fill-[#E85D04] text-[#E85D04]" />
+                    <Star className="w-3 h-3 ml-1.5 fill-[#0F766E] text-[#0F766E]" />
                     تقييم عملائنا
                   </Badge>
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 leading-tight tracking-tight">
@@ -273,7 +273,7 @@ export default function AboutPage() {
                   </p>
                   <div className="flex items-center gap-2 mb-3">
                     {[1, 2, 3, 4, 5].map((i) => (
-                      <Star key={i} className="w-6 h-6 fill-[#E85D04] text-[#E85D04]" />
+                      <Star key={i} className="w-6 h-6 fill-[#0F766E] text-[#0F766E]" />
                     ))}
                     <span className="text-3xl font-black text-white mr-2">4.9</span>
                     <span className="text-sm text-white/60">/ 5</span>
@@ -306,14 +306,14 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative bg-[#1C1C1C] text-white overflow-hidden">
+      <section className="relative bg-white text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#E85D04] rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#0F766E] rounded-full blur-3xl" />
         </div>
 
         <div className="relative container-custom py-16 md:py-20 text-center">
           <h2 className="text-3xl md:text-5xl font-black mb-5 tracking-tight">
-            جاهزون لخدمتك <span className="text-[#E85D04]">في أي وقت</span>
+            جاهزون لخدمتك <span className="text-[#0F766E]">في أي وقت</span>
           </h2>
           <p className="text-white/60 mb-8 max-w-2xl mx-auto">
             انضم لآلاف العملاء الذين وثقوا بنا في نقل أثاثهم
@@ -322,7 +322,7 @@ export default function AboutPage() {
             <Button
               asChild
               size="lg"
-              className="bg-[#E85D04] hover:bg-[#D14D00] text-white font-bold h-14 px-8 border-0"
+              className="bg-[#0F766E] hover:bg-[#0D5F5A] text-white font-bold h-14 px-8 border-0"
             >
               <a href={`tel:${siteConfig.phone}`}>
                 <Phone className="w-4 h-4 ml-2" />

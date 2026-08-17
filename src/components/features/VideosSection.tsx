@@ -16,27 +16,27 @@ export function VideosSection() {
   };
 
   return (
-    <section className="section-padding bg-gradient-to-br from-[#1C1C1C] via-[#0F0F0F] to-[#1C1C1C] text-white relative overflow-hidden">
+    <section className="section-padding bg-gradient-to-br from-teal-900 via-[#0F0F0F] to-teal-900 text-white relative overflow-hidden">
       {/* Decorative Orange & Gold glows */}
       <div className="absolute inset-0 opacity-15 pointer-events-none" aria-hidden="true">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#E85D04] rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#0F766E] rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#D4AF37] rounded-full blur-3xl" />
       </div>
 
       {/* Top accent line */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E85D04] to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#0F766E] to-transparent" />
 
       <div className="relative container-custom">
 
         <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-          <Badge className="bg-[#E85D04]/10 text-[#E85D04] border border-[#E85D04]/30 mb-4 px-4 py-1.5 backdrop-blur">
+          <Badge className="bg-[#0F766E]/10 text-[#0F766E] border border-[#0F766E]/30 mb-4 px-4 py-1.5 backdrop-blur">
             <Video className="w-3 h-3 ml-1.5" />
             شاهد بنفسك
           </Badge>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
             من داخل
             <br />
-            <span className="text-[#E85D04] drop-shadow-[0_0_20px_rgba(232,93,4,0.4)]">
+            <span className="text-[#0F766E] drop-shadow-[0_0_20px_rgba(232,93,4,0.4)]">
               مشاريعنا الحقيقية
             </span>
           </h2>
@@ -52,7 +52,7 @@ export function VideosSection() {
             return (
               <div
                 key={video.id}
-                className="group relative aspect-video overflow-hidden rounded-2xl cursor-pointer bg-gradient-to-br from-[#2A2A2A] to-[#1C1C1C] border border-white/10 hover:border-[#E85D04]/60 hover:shadow-2xl hover:shadow-[#E85D04]/30 transition-all duration-300"
+                className="group relative aspect-video overflow-hidden rounded-2xl cursor-pointer bg-gradient-to-br from-[#2A2A2A] to-teal-900 border border-white/10 hover:border-[#0F766E]/60 hover:shadow-2xl hover:shadow-[#0F766E]/30 transition-all duration-300"
                 onClick={() => setSelectedVideo(video)}
               >
                 {!hasError ? (
@@ -65,7 +65,7 @@ export function VideosSection() {
                     onError={() => handleImageError(video.id)}
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#E85D04]/20 to-[#1C1C1C]">
+                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#0F766E]/20 to-teal-900">
                     <Film className="w-20 h-20 text-white/10" />
                   </div>
                 )}
@@ -73,15 +73,15 @@ export function VideosSection() {
                 {/* Play Button with pulse ring */}
                 <div className="absolute inset-0 flex items-center justify-center z-10">
                   <div className="relative">
-                    <span className="absolute inset-0 rounded-full bg-[#E85D04] animate-ping opacity-40" />
-                    <div className="relative w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-[#E85D04] to-[#C94A00] group-hover:from-[#F97316] group-hover:to-[#E85D04] rounded-full flex items-center justify-center shadow-2xl shadow-[#E85D04]/50 group-hover:scale-110 transition-all duration-300 border-2 border-white/20">
+                    <span className="absolute inset-0 rounded-full bg-[#0F766E] animate-ping opacity-40" />
+                    <div className="relative w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-[#0F766E] to-[#C94A00] group-hover:from-[#F97316] group-hover:to-[#0F766E] rounded-full flex items-center justify-center shadow-2xl shadow-[#0F766E]/50 group-hover:scale-110 transition-all duration-300 border-2 border-white/20">
                       <Play className="w-6 h-6 md:w-8 md:h-8 text-white fill-white mr-0.5" />
                     </div>
                   </div>
                 </div>
 
                 {/* Info */}
-                <div className="absolute bottom-0 right-0 left-0 bg-gradient-to-t from-[#1C1C1C] via-[#1C1C1C]/70 to-transparent p-5 z-10">
+                <div className="absolute bottom-0 right-0 left-0 bg-gradient-to-t from-teal-900 via-teal-900/70 to-transparent p-5 z-10">
                   <h3 className="font-bold text-white text-base mb-1">
                     {video.title}
                   </h3>
@@ -96,13 +96,13 @@ export function VideosSection() {
       </div>
 
       <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>
-        <DialogContent className="max-w-5xl p-0 overflow-hidden bg-[#1C1C1C] border-0">
+        <DialogContent className="max-w-5xl p-0 overflow-hidden bg-white border-0">
           <DialogTitle className="sr-only">{selectedVideo?.title}</DialogTitle>
           {selectedVideo && (
             <div className="relative">
               <button
                 onClick={() => setSelectedVideo(null)}
-                className="absolute top-4 left-4 z-20 w-10 h-10 bg-white/10 hover:bg-[#E85D04] text-white rounded-full flex items-center justify-center transition-colors backdrop-blur"
+                className="absolute top-4 left-4 z-20 w-10 h-10 bg-white/10 hover:bg-[#0F766E] text-white rounded-full flex items-center justify-center transition-colors backdrop-blur"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -114,7 +114,7 @@ export function VideosSection() {
               >
                 متصفحك لا يدعم تشغيل الفيديو
               </video>
-              <div className="bg-[#1C1C1C] p-5 md:p-6 border-t border-[#E85D04]/20">
+              <div className="bg-white p-5 md:p-6 border-t border-[#0F766E]/20">
                 <h3 className="text-white font-bold text-lg mb-2">
                   {selectedVideo.title}
                 </h3>

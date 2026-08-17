@@ -78,14 +78,14 @@ export function GallerySection() {
       <div className="container-custom">
 
         <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-          <Badge variant="outline" className="border-[#E85D04] text-[#E85D04] bg-[#E85D04]/5 mb-4">
+          <Badge variant="outline" className="border-[#0F766E] text-[#0F766E] bg-[#0F766E]/5 mb-4">
             <Camera className="w-3 h-3 ml-1.5" />
             معرض أعمالنا
           </Badge>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-[#1C1C1C] mb-4 tracking-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">
             شغلنا الحقيقي
             <br />
-            <span className="text-[#E85D04]">يتكلم عنا</span>
+            <span className="text-[#0F766E]">يتكلم عنا</span>
           </h2>
           <p className="text-base text-[#64748B] leading-relaxed">
             مشاهدات من مشاريع نقل الأثاث التي نفذناها بنجاح لعملائنا
@@ -104,7 +104,7 @@ export function GallerySection() {
                     className="flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] px-2"
                   >
                     <div
-                      className="group relative aspect-[4/3] overflow-hidden rounded-2xl cursor-pointer bg-[#FAF5EE] border border-[#E5E1DA] hover:border-[#E85D04] hover:shadow-xl hover:shadow-[#E85D04]/20 transition-all duration-300"
+                      className="group relative aspect-[4/3] overflow-hidden rounded-2xl cursor-pointer bg-[#FAF5EE] border border-[#E5E1DA] hover:border-[#0F766E] hover:shadow-xl hover:shadow-[#0F766E]/20 transition-all duration-300"
                       onClick={() => !hasError && setSelectedImage(item)}
                     >
                       {!hasError ? (
@@ -124,9 +124,9 @@ export function GallerySection() {
                         </div>
                       )}
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C1C]/95 via-[#1C1C1C]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-t from-teal-900/95 via-teal-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <div className="absolute bottom-0 right-0 left-0 p-5">
-                          <Badge className="bg-gradient-to-r from-[#E85D04] to-[#C94A00] text-white border-0 mb-2 text-[10px] font-bold shadow-lg shadow-[#E85D04]/40">
+                          <Badge className="bg-gradient-to-r from-[#0F766E] to-[#C94A00] text-white border-0 mb-2 text-[10px] font-bold shadow-lg shadow-[#0F766E]/40">
                             {item.category}
                           </Badge>
                           <p className="text-white text-sm font-bold leading-tight">
@@ -136,7 +136,7 @@ export function GallerySection() {
                       </div>
 
                       <div className="absolute top-3 right-3 md:hidden">
-                        <Badge className="bg-gradient-to-r from-[#E85D04] to-[#C94A00] text-white border-0 text-[10px] shadow-md shadow-[#E85D04]/30">
+                        <Badge className="bg-gradient-to-r from-[#0F766E] to-[#C94A00] text-white border-0 text-[10px] shadow-md shadow-[#0F766E]/30">
                           {item.category}
                         </Badge>
                       </div>
@@ -150,7 +150,7 @@ export function GallerySection() {
           <div className="hidden md:block">
             <button
               onClick={scrollPrev}
-              className="absolute top-1/2 -translate-y-1/2 -right-4 lg:-right-6 z-20 w-11 h-11 bg-white hover:bg-gradient-to-br hover:from-[#E85D04] hover:to-[#C94A00] text-[#1C1C1C] hover:text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-[#E85D04]/40 flex items-center justify-center transition-all duration-200 border border-[#E5E1DA] hover:border-[#E85D04]"
+              className="absolute top-1/2 -translate-y-1/2 -right-4 lg:-right-6 z-20 w-11 h-11 bg-white hover:bg-gradient-to-br hover:from-[#0F766E] hover:to-[#C94A00] text-slate-900 hover:text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-[#0F766E]/40 flex items-center justify-center transition-all duration-200 border border-[#E5E1DA] hover:border-[#0F766E]"
               aria-label="السابق"
             >
               <ChevronRight className="w-5 h-5" />
@@ -158,7 +158,7 @@ export function GallerySection() {
 
             <button
               onClick={scrollNext}
-              className="absolute top-1/2 -translate-y-1/2 -left-4 lg:-left-6 z-20 w-11 h-11 bg-white hover:bg-gradient-to-br hover:from-[#E85D04] hover:to-[#C94A00] text-[#1C1C1C] hover:text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-[#E85D04]/40 flex items-center justify-center transition-all duration-200 border border-[#E5E1DA] hover:border-[#E85D04]"
+              className="absolute top-1/2 -translate-y-1/2 -left-4 lg:-left-6 z-20 w-11 h-11 bg-white hover:bg-gradient-to-br hover:from-[#0F766E] hover:to-[#C94A00] text-slate-900 hover:text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-[#0F766E]/40 flex items-center justify-center transition-all duration-200 border border-[#E5E1DA] hover:border-[#0F766E]"
               aria-label="التالي"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -169,14 +169,14 @@ export function GallerySection() {
         <div className="flex md:hidden items-center justify-center gap-3 mt-6">
           <button
             onClick={scrollPrev}
-            className="w-11 h-11 bg-gradient-to-br from-[#E85D04] to-[#C94A00] hover:from-[#F97316] hover:to-[#E85D04] text-white rounded-full flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-[#E85D04]/30"
+            className="w-11 h-11 bg-gradient-to-br from-[#0F766E] to-[#C94A00] hover:from-[#F97316] hover:to-[#0F766E] text-white rounded-full flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-[#0F766E]/30"
             aria-label="السابق"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
           <button
             onClick={scrollNext}
-            className="w-11 h-11 bg-gradient-to-br from-[#E85D04] to-[#C94A00] hover:from-[#F97316] hover:to-[#E85D04] text-white rounded-full flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-[#E85D04]/30"
+            className="w-11 h-11 bg-gradient-to-br from-[#0F766E] to-[#C94A00] hover:from-[#F97316] hover:to-[#0F766E] text-white rounded-full flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-[#0F766E]/30"
             aria-label="التالي"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -192,7 +192,7 @@ export function GallerySection() {
                 className={cn(
                   "h-1.5 rounded-full transition-all duration-300",
                   index === selectedIndex
-                    ? "w-8 bg-gradient-to-r from-[#E85D04] to-[#C94A00] shadow-md shadow-[#E85D04]/40"
+                    ? "w-8 bg-gradient-to-r from-[#0F766E] to-[#C94A00] shadow-md shadow-[#0F766E]/40"
                     : "w-1.5 bg-[#E5E1DA] hover:bg-[#D4CCB8]"
                 )}
                 aria-label={`الانتقال للمجموعة ${index + 1}`}
@@ -202,18 +202,18 @@ export function GallerySection() {
         )}
 
         <div className="text-center mt-4 text-sm text-[#64748B]">
-          <span className="font-bold text-[#E85D04]">{gallery.length}</span> صورة من مشاريعنا
+          <span className="font-bold text-[#0F766E]">{gallery.length}</span> صورة من مشاريعنا
         </div>
       </div>
 
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden bg-[#1C1C1C] border-0">
+        <DialogContent className="max-w-4xl p-0 overflow-hidden bg-white border-0">
           <DialogTitle className="sr-only">{selectedImage?.alt}</DialogTitle>
           {selectedImage && (
             <div className="relative">
               <button
                 onClick={() => setSelectedImage(null)}
-                className="absolute top-4 left-4 z-10 w-10 h-10 bg-white/10 hover:bg-[#E85D04] text-white rounded-full flex items-center justify-center transition-colors backdrop-blur"
+                className="absolute top-4 left-4 z-10 w-10 h-10 bg-white/10 hover:bg-[#0F766E] text-white rounded-full flex items-center justify-center transition-colors backdrop-blur"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -225,8 +225,8 @@ export function GallerySection() {
                   className="object-contain"
                 />
               </div>
-              <div className="absolute bottom-0 right-0 left-0 bg-gradient-to-t from-[#1C1C1C] to-transparent p-6">
-                <Badge className="bg-gradient-to-r from-[#E85D04] to-[#C94A00] text-white border-0 mb-2 shadow-lg shadow-[#E85D04]/40">
+              <div className="absolute bottom-0 right-0 left-0 bg-gradient-to-t from-teal-900 to-transparent p-6">
+                <Badge className="bg-gradient-to-r from-[#0F766E] to-[#C94A00] text-white border-0 mb-2 shadow-lg shadow-[#0F766E]/40">
                   {selectedImage.category}
                 </Badge>
                 <p className="text-white font-bold">{selectedImage.alt}</p>

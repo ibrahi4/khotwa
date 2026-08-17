@@ -135,13 +135,13 @@ export default function TermsPage() {
               الرئيسية
             </Link>
             <ChevronLeft className="w-4 h-4" />
-            <span className="text-[#1C1C1C] font-semibold">شروط الاستخدام</span>
+            <span className="text-slate-900 font-semibold">شروط الاستخدام</span>
           </nav>
         </div>
       </div>
 
       {/* Hero */}
-      <section className="relative bg-[#1C1C1C] text-white overflow-hidden">
+      <section className="relative bg-white text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10" aria-hidden="true">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#3F4F44] rounded-full blur-3xl" />
         </div>
@@ -169,7 +169,7 @@ export default function TermsPage() {
         <div className="container-custom max-w-4xl">
           <Card className="border-2 border-[#3F4F44] bg-[#F5F2EC] mb-10">
             <CardContent className="p-6 md:p-8">
-              <p className="text-[#1C1C1C]/80 leading-relaxed">
+              <p className="text-slate-900/80 leading-relaxed">
                 مرحباً بك في خطوة لنقل الأثاث. تحدد هذه الوثيقة الشروط والأحكام
                 التي تحكم استخدامك لخدماتنا وموقعنا الإلكتروني. يرجى قراءتها بعناية قبل التعامل معنا.
               </p>
@@ -187,11 +187,11 @@ export default function TermsPage() {
                     <div className="w-12 h-12 bg-[#3F4F44]/10 text-[#3F4F44] rounded-xl flex items-center justify-center shrink-0">
                       <section.icon className="w-6 h-6" />
                     </div>
-                    <h2 className="text-xl md:text-2xl font-black text-[#1C1C1C]">
+                    <h2 className="text-xl md:text-2xl font-black text-slate-900">
                       {section.title}
                     </h2>
                   </div>
-                  <div className="space-y-3 text-[#1C1C1C]/70 leading-relaxed">
+                  <div className="space-y-3 text-slate-900/70 leading-relaxed">
                     {section.content.map((line, j) => (
                       <p key={j} className={line.startsWith("•") ? "mr-6" : ""}>
                         {line}
@@ -203,7 +203,7 @@ export default function TermsPage() {
             ))}
           </div>
 
-          <Card className="mt-10 bg-[#1C1C1C] border-0 text-white overflow-hidden">
+          <Card className="mt-10 bg-white border-0 text-white overflow-hidden">
             <CardContent className="p-8 md:p-10 text-center">
               <h2 className="text-2xl md:text-3xl font-black mb-4 tracking-tight">
                 هل لديك استفسار قانوني؟
@@ -215,7 +215,7 @@ export default function TermsPage() {
                 <Button
                   asChild
                   size="lg"
-                  className="bg-[#E8E3D9] hover:bg-[#D4CCB8] text-[#1C1C1C] h-12 px-8"
+                  className="bg-[#E8E3D9] hover:bg-[#D4CCB8] text-slate-900 h-12 px-8"
                 >
                   <a href={`tel:${siteConfig.phone}`}>
                     <Phone className="w-4 h-4 ml-2" />

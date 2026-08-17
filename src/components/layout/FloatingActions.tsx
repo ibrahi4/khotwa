@@ -47,7 +47,7 @@ export function FloatingActions() {
         }`}
         aria-label="اتصل بنا"
       >
-        <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-[#E85D04] to-[#D14D00] rounded-full flex items-center justify-center shadow-2xl shadow-[#E85D04]/50 hover:scale-110 active:scale-95 transition-transform duration-200 border-2 border-white/20">
+        <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-[#0F766E] to-[#0D5F5A] rounded-full flex items-center justify-center shadow-2xl shadow-[#0F766E]/50 hover:scale-110 active:scale-95 transition-transform duration-200 border-2 border-white/20">
           <Phone className="w-6 h-6 md:w-7 md:h-7 text-white" strokeWidth={2.5} />
         </div>
       </a>
