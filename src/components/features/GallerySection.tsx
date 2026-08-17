@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Camera, ArrowLeft, X, ChevronRight, ChevronLeft,
@@ -17,23 +19,64 @@ const galleryImages = [
   { src: "/images/gallery/photo_4_2026-08-16_14-31-37.jpg", alt: "فك وتركيب الأثاث بدقة" },
   { src: "/images/gallery/photo_5_2026-08-16_14-31-37.jpg", alt: "فريق خطوة أثناء العمل" },
   { src: "/images/gallery/photo_6_2026-08-16_14-31-37.jpg", alt: "خدمة نقل احترافية في القاهرة" },
+  { src: "/images/gallery/photo_7_2026-08-16_14-31-37.jpg", alt: "نقل أثاث من الكمبوندات الراقية" },
+  { src: "/images/gallery/photo_8_2026-08-16_14-31-38.jpg", alt: "خبرة في التعامل مع كل أنواع الأثاث" },
+  { src: "/images/gallery/photo_9_2026-08-16_14-31-38.jpg", alt: "التزام كامل بالمواعيد والجودة" },
 ];
 
 export function GallerySection() {
   const [mounted, setMounted] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: true,
+      align: "start",
+      direction: "rtl",
+      dragFree: false,
+      containScroll: "trimSnaps",
+    },
+    [
+      Autoplay({
+        delay: 3500,
+        stopOnInteraction: false,
+        stopOnMouseEnter: true,
+      }),
+    ]
+  );
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+  }, [emblaApi, onSelect]);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+  const scrollTo = useCallback(
+    (index: number) => emblaApi?.scrollTo(index),
+    [emblaApi]
+  );
+
+  // Lightbox keyboard
   useEffect(() => {
     if (lightboxIndex === null) return;
 
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setLightboxIndex(null);
-      if (e.key === "ArrowRight") navigate(-1);
-      if (e.key === "ArrowLeft") navigate(1);
+      if (e.key === "ArrowRight") navigateLightbox(-1);
+      if (e.key === "ArrowLeft") navigateLightbox(1);
     };
 
     document.addEventListener("keydown", handleKey);
@@ -43,9 +86,10 @@ export function GallerySection() {
       document.removeEventListener("keydown", handleKey);
       document.body.style.overflow = "";
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lightboxIndex]);
 
-  const navigate = (dir: number) => {
+  const navigateLightbox = (dir: number) => {
     setLightboxIndex((prev) => {
       if (prev === null) return null;
       const next = prev + dir;
@@ -55,12 +99,14 @@ export function GallerySection() {
     });
   };
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return <div className="h-[500px] bg-white" aria-hidden="true" />;
+  }
 
   return (
     <>
       <section
-        className="section-padding bg-white"
+        className="section-padding bg-white overflow-hidden"
         aria-labelledby="gallery-heading"
       >
         <div className="container-custom">
@@ -82,37 +128,91 @@ export function GallerySection() {
             </p>
           </div>
 
-          {/* Gallery Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-5xl mx-auto">
-            {galleryImages.map((img, i) => (
-              <motion.button
-                key={i}
-                type="button"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-30px" }}
-                transition={{ delay: i * 0.06, duration: 0.4 }}
-                onClick={() => setLightboxIndex(i)}
-                className="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                aria-label={`عرض الصورة ${i + 1}: ${img.alt}`}
-              >
-                <Image
-                  src={img.src}
-                  alt={img.alt}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                  loading={i < 2 ? "eager" : "lazy"}
-                  quality={80}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-12 h-12 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-xl">
-                    <ZoomIn className="w-5 h-5 text-slate-900" aria-hidden="true" />
+          {/* Carousel */}
+          <div className="relative max-w-6xl mx-auto">
+            <div className="overflow-hidden -mx-2" ref={emblaRef}>
+              <div className="flex">
+                {galleryImages.map((img, i) => (
+                  <div
+                    key={i}
+                    className="shrink-0 basis-1/2 md:basis-1/3 lg:basis-1/4 px-2"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setLightboxIndex(i)}
+                      className="group relative block w-full aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                      aria-label={`عرض الصورة ${i + 1}: ${img.alt}`}
+                    >
+                      <Image
+                        src={img.src}
+                        alt={img.alt}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        loading={i < 4 ? "eager" : "lazy"}
+                        quality={80}
+                      />
+
+                      {/* Gradient overlay always visible for text readability */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent" />
+
+                      {/* Zoom icon on hover */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="w-12 h-12 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-xl">
+                          <ZoomIn className="w-5 h-5 text-slate-900" aria-hidden="true" />
+                        </div>
+                      </div>
+
+                      {/* Index badge */}
+                      <div className="absolute bottom-3 right-3">
+                        <div className="bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 text-[10px] font-black text-slate-900 tabular-nums shadow-md">
+                          0{i + 1} / 0{galleryImages.length}
+                        </div>
+                      </div>
+                    </button>
                   </div>
-                </div>
-              </motion.button>
-            ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Prev button */}
+            <button
+              type="button"
+              onClick={scrollPrev}
+              className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 -translate-x-4 w-11 h-11 rounded-full bg-white border border-slate-200 hover:border-green-300 hover:bg-green-50 shadow-lg items-center justify-center text-slate-700 hover:text-green-700 transition-all z-10"
+              aria-label="الصورة السابقة"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
+            {/* Next button */}
+            <button
+              type="button"
+              onClick={scrollNext}
+              className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 translate-x-4 w-11 h-11 rounded-full bg-white border border-slate-200 hover:border-green-300 hover:bg-green-50 shadow-lg items-center justify-center text-slate-700 hover:text-green-700 transition-all z-10"
+              aria-label="الصورة التالية"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            {/* Dots */}
+            <div className="flex justify-center items-center gap-1.5 mt-6" role="tablist">
+              {galleryImages.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => scrollTo(i)}
+                  className={`h-1.5 rounded-full transition-all ${
+                    selectedIndex === i
+                      ? "w-8 bg-green-700"
+                      : "w-1.5 bg-slate-300 hover:bg-slate-400"
+                  }`}
+                  role="tab"
+                  aria-selected={selectedIndex === i}
+                  aria-label={`الانتقال إلى الصورة ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
 
           {/* CTA */}
@@ -145,7 +245,6 @@ export function GallerySection() {
             aria-modal="true"
             aria-label="عارض الصور"
           >
-            {/* Close */}
             <button
               type="button"
               onClick={() => setLightboxIndex(null)}
@@ -155,17 +254,15 @@ export function GallerySection() {
               <X className="w-5 h-5" />
             </button>
 
-            {/* Counter */}
             <div className="absolute top-4 right-4 rounded-full bg-white/10 backdrop-blur-md px-4 py-2 text-white text-sm font-semibold tabular-nums">
               {lightboxIndex + 1} / {galleryImages.length}
             </div>
 
-            {/* Prev */}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(-1);
+                navigateLightbox(-1);
               }}
               className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors z-10"
               aria-label="الصورة السابقة"
@@ -173,12 +270,11 @@ export function GallerySection() {
               <ChevronRight className="w-6 h-6" />
             </button>
 
-            {/* Next */}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(1);
+                navigateLightbox(1);
               }}
               className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors z-10"
               aria-label="الصورة التالية"
@@ -186,7 +282,6 @@ export function GallerySection() {
               <ChevronLeft className="w-6 h-6" />
             </button>
 
-            {/* Image */}
             <motion.div
               key={lightboxIndex}
               initial={{ opacity: 0, scale: 0.95 }}
@@ -206,7 +301,6 @@ export function GallerySection() {
               />
             </motion.div>
 
-            {/* Caption */}
             <div className="absolute bottom-4 inset-x-4 md:inset-x-auto md:bottom-6 md:left-1/2 md:-translate-x-1/2 md:max-w-2xl text-center">
               <p className="text-white/90 text-sm bg-white/10 backdrop-blur-md rounded-full px-4 py-2 inline-block">
                 {galleryImages[lightboxIndex].alt}
