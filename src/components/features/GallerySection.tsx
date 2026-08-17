@@ -1,240 +1,220 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
-import useEmblaCarousel from "embla-carousel-react";
-import Autoplay from "embla-carousel-autoplay";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { gallery } from "@/config/media";
-import { Camera, X, ChevronLeft, ChevronRight, ImageIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Camera, ArrowLeft, X, ChevronRight, ChevronLeft,
+  ZoomIn,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const galleryImages = [
+  { src: "/images/gallery/photo_1_2026-08-16_14-31-37.jpg", alt: "عملية نقل أثاث احترافية من فريق خطوة" },
+  { src: "/images/gallery/photo_2_2026-08-16_14-31-37.jpg", alt: "تغليف أثاث بمواد عالية الجودة" },
+  { src: "/images/gallery/photo_3_2026-08-16_14-31-37.jpg", alt: "نقل أثاث بسيارات مجهزة" },
+  { src: "/images/gallery/photo_4_2026-08-16_14-31-37.jpg", alt: "فك وتركيب الأثاث بدقة" },
+  { src: "/images/gallery/photo_5_2026-08-16_14-31-37.jpg", alt: "فريق خطوة أثناء العمل" },
+  { src: "/images/gallery/photo_6_2026-08-16_14-31-37.jpg", alt: "خدمة نقل احترافية في القاهرة" },
+];
 
 export function GallerySection() {
   const [mounted, setMounted] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<typeof gallery[0] | null>(null);
-  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
-
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    {
-      loop: true,
-      direction: "rtl",
-      align: "start",
-      slidesToScroll: 1,
-      breakpoints: {
-        "(min-width: 640px)": { slidesToScroll: 2 },
-        "(min-width: 1024px)": { slidesToScroll: 3 },
-      },
-    },
-    [
-      Autoplay({
-        delay: 4500,
-        stopOnInteraction: true,
-        stopOnMouseEnter: true,
-      }),
-    ]
-  );
-
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
-
-  const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
-  }, [emblaApi]);
-
-  const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
-  }, [emblaApi]);
-
-  const scrollTo = useCallback(
-    (index: number) => {
-      if (emblaApi) emblaApi.scrollTo(index);
-    },
-    [emblaApi]
-  );
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
-  const handleImageError = (id: number) => {
-    setImageErrors((prev) => ({ ...prev, [id]: true }));
-  };
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!emblaApi) return;
-    setScrollSnaps(emblaApi.scrollSnapList());
-    emblaApi.on("select", onSelect);
-    onSelect();
-  }, [emblaApi, onSelect]);
+    if (lightboxIndex === null) return;
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxIndex(null);
+      if (e.key === "ArrowRight") navigate(-1);
+      if (e.key === "ArrowLeft") navigate(1);
+    };
+
+    document.addEventListener("keydown", handleKey);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "";
+    };
+  }, [lightboxIndex]);
+
+  const navigate = (dir: number) => {
+    setLightboxIndex((prev) => {
+      if (prev === null) return null;
+      const next = prev + dir;
+      if (next < 0) return galleryImages.length - 1;
+      if (next >= galleryImages.length) return 0;
+      return next;
+    });
+  };
+
+  if (!mounted) return null;
 
   return (
-    <section className="section-padding bg-white">
-      <div className="container-custom">
-
-        <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-          <Badge variant="outline" className="border-[#0F766E] text-[#0F766E] bg-[#0F766E]/5 mb-4">
-            <Camera className="w-3 h-3 ml-1.5" />
-            معرض أعمالنا
-          </Badge>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-            شغلنا الحقيقي
-            <br />
-            <span className="text-[#0F766E]">يتكلم عنا</span>
-          </h2>
-          <p className="text-base text-[#64748B] leading-relaxed">
-            مشاهدات من مشاريع نقل الأثاث التي نفذناها بنجاح لعملائنا
-          </p>
-        </div>
-
-        <div className="relative">
-          <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex -mx-2">
-              {gallery.map((item, i) => {
-                const hasError = imageErrors[item.id];
-
-                return (
-                  <div
-                    key={item.id}
-                    className="flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] px-2"
-                  >
-                    <div
-                      className="group relative aspect-[4/3] overflow-hidden rounded-2xl cursor-pointer bg-[#FAF5EE] border border-[#E5E1DA] hover:border-[#0F766E] hover:shadow-xl hover:shadow-[#0F766E]/20 transition-all duration-300"
-                      onClick={() => !hasError && setSelectedImage(item)}
-                    >
-                      {!hasError ? (
-                        <Image
-                          src={item.src}
-                          alt={item.alt}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          loading={i < 3 ? "eager" : "lazy"}
-                          onError={() => handleImageError(item.id)}
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#FAF5EE] to-[#E8E3D9] text-[#64748B]">
-                          <ImageIcon className="w-16 h-16 mb-2 opacity-30" />
-                          <span className="text-xs font-medium">{item.category}</span>
-                        </div>
-                      )}
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-teal-900/95 via-teal-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="absolute bottom-0 right-0 left-0 p-5">
-                          <Badge className="bg-gradient-to-r from-[#0F766E] to-[#C94A00] text-white border-0 mb-2 text-[10px] font-bold shadow-lg shadow-[#0F766E]/40">
-                            {item.category}
-                          </Badge>
-                          <p className="text-white text-sm font-bold leading-tight">
-                            {item.alt}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="absolute top-3 right-3 md:hidden">
-                        <Badge className="bg-gradient-to-r from-[#0F766E] to-[#C94A00] text-white border-0 text-[10px] shadow-md shadow-[#0F766E]/30">
-                          {item.category}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+    <>
+      <section
+        className="section-padding bg-white"
+        aria-labelledby="gallery-heading"
+      >
+        <div className="container-custom">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <div className="inline-flex items-center gap-2 rounded-full bg-green-50 border border-green-100 px-4 py-1.5 mb-4">
+              <Camera className="w-4 h-4 text-green-700" aria-hidden="true" />
+              <span className="text-xs font-bold text-green-800 tracking-wide">
+                من أعمالنا الحقيقية
+              </span>
             </div>
+            <h2
+              id="gallery-heading"
+              className="text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 mb-3 leading-tight"
+            >
+              شوف شغلنا على أرض الواقع
+            </h2>
+            <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+              صور حقيقية من عمليات نقل نفذها فريقنا خلال الأسابيع الماضية
+            </p>
           </div>
 
-          <div className="hidden md:block">
-            <button
-              onClick={scrollPrev}
-              className="absolute top-1/2 -translate-y-1/2 -right-4 lg:-right-6 z-20 w-11 h-11 bg-white hover:bg-gradient-to-br hover:from-[#0F766E] hover:to-[#C94A00] text-slate-900 hover:text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-[#0F766E]/40 flex items-center justify-center transition-all duration-200 border border-[#E5E1DA] hover:border-[#0F766E]"
-              aria-label="السابق"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-
-            <button
-              onClick={scrollNext}
-              className="absolute top-1/2 -translate-y-1/2 -left-4 lg:-left-6 z-20 w-11 h-11 bg-white hover:bg-gradient-to-br hover:from-[#0F766E] hover:to-[#C94A00] text-slate-900 hover:text-white rounded-full shadow-lg hover:shadow-xl hover:shadow-[#0F766E]/40 flex items-center justify-center transition-all duration-200 border border-[#E5E1DA] hover:border-[#0F766E]"
-              aria-label="التالي"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        <div className="flex md:hidden items-center justify-center gap-3 mt-6">
-          <button
-            onClick={scrollPrev}
-            className="w-11 h-11 bg-gradient-to-br from-[#0F766E] to-[#C94A00] hover:from-[#F97316] hover:to-[#0F766E] text-white rounded-full flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-[#0F766E]/30"
-            aria-label="السابق"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-          <button
-            onClick={scrollNext}
-            className="w-11 h-11 bg-gradient-to-br from-[#0F766E] to-[#C94A00] hover:from-[#F97316] hover:to-[#0F766E] text-white rounded-full flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-[#0F766E]/30"
-            aria-label="التالي"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-        </div>
-
-        {mounted && (
-          <div className="flex items-center justify-center gap-2 mt-6 flex-wrap max-w-md mx-auto">
-            {scrollSnaps.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => scrollTo(index)}
-                className={cn(
-                  "h-1.5 rounded-full transition-all duration-300",
-                  index === selectedIndex
-                    ? "w-8 bg-gradient-to-r from-[#0F766E] to-[#C94A00] shadow-md shadow-[#0F766E]/40"
-                    : "w-1.5 bg-[#E5E1DA] hover:bg-[#D4CCB8]"
-                )}
-                aria-label={`الانتقال للمجموعة ${index + 1}`}
-              />
+          {/* Gallery Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-5xl mx-auto">
+            {galleryImages.map((img, i) => (
+              <motion.button
+                key={i}
+                type="button"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-30px" }}
+                transition={{ delay: i * 0.06, duration: 0.4 }}
+                onClick={() => setLightboxIndex(i)}
+                className="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                aria-label={`عرض الصورة ${i + 1}: ${img.alt}`}
+              >
+                <Image
+                  src={img.src}
+                  alt={img.alt}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                  loading={i < 2 ? "eager" : "lazy"}
+                  quality={80}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="w-12 h-12 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-xl">
+                    <ZoomIn className="w-5 h-5 text-slate-900" aria-hidden="true" />
+                  </div>
+                </div>
+              </motion.button>
             ))}
           </div>
-        )}
 
-        <div className="text-center mt-4 text-sm text-[#64748B]">
-          <span className="font-bold text-[#0F766E]">{gallery.length}</span> صورة من مشاريعنا
+          {/* CTA */}
+          <div className="text-center mt-10">
+            <Button
+              asChild
+              variant="outline"
+              className="border-slate-200 hover:border-green-300 hover:bg-green-50 text-slate-800 h-11 px-6 rounded-xl gap-2"
+            >
+              <Link href="/gallery">
+                استكشف المعرض الكامل
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+              </Link>
+            </Button>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden bg-white border-0">
-          <DialogTitle className="sr-only">{selectedImage?.alt}</DialogTitle>
-          {selectedImage && (
-            <div className="relative">
-              <button
-                onClick={() => setSelectedImage(null)}
-                className="absolute top-4 left-4 z-10 w-10 h-10 bg-white/10 hover:bg-[#0F766E] text-white rounded-full flex items-center justify-center transition-colors backdrop-blur"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <div className="relative aspect-video">
-                <Image
-                  src={selectedImage.src}
-                  alt={selectedImage.alt}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-              <div className="absolute bottom-0 right-0 left-0 bg-gradient-to-t from-teal-900 to-transparent p-6">
-                <Badge className="bg-gradient-to-r from-[#0F766E] to-[#C94A00] text-white border-0 mb-2 shadow-lg shadow-[#0F766E]/40">
-                  {selectedImage.category}
-                </Badge>
-                <p className="text-white font-bold">{selectedImage.alt}</p>
-              </div>
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxIndex !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[9999] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4"
+            onClick={() => setLightboxIndex(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label="عارض الصور"
+          >
+            {/* Close */}
+            <button
+              type="button"
+              onClick={() => setLightboxIndex(null)}
+              className="absolute top-4 left-4 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white z-10 transition-colors"
+              aria-label="إغلاق العرض"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Counter */}
+            <div className="absolute top-4 right-4 rounded-full bg-white/10 backdrop-blur-md px-4 py-2 text-white text-sm font-semibold tabular-nums">
+              {lightboxIndex + 1} / {galleryImages.length}
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </section>
+
+            {/* Prev */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(-1);
+              }}
+              className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors z-10"
+              aria-label="الصورة السابقة"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+
+            {/* Next */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(1);
+              }}
+              className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors z-10"
+              aria-label="الصورة التالية"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+
+            {/* Image */}
+            <motion.div
+              key={lightboxIndex}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-5xl aspect-[4/3] md:aspect-video"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Image
+                src={galleryImages[lightboxIndex].src}
+                alt={galleryImages[lightboxIndex].alt}
+                fill
+                className="object-contain"
+                sizes="90vw"
+                quality={95}
+                priority
+              />
+            </motion.div>
+
+            {/* Caption */}
+            <div className="absolute bottom-4 inset-x-4 md:inset-x-auto md:bottom-6 md:left-1/2 md:-translate-x-1/2 md:max-w-2xl text-center">
+              <p className="text-white/90 text-sm bg-white/10 backdrop-blur-md rounded-full px-4 py-2 inline-block">
+                {galleryImages[lightboxIndex].alt}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

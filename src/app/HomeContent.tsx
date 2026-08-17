@@ -19,6 +19,7 @@ import { siteConfig } from "@/config/site";
 import { CompoundsTrust } from "@/components/shared/CompoundsTrust";
 import { LiveOrdersFeed } from "@/components/shared/LiveOrdersFeed";
 import { InlineQuoteForm } from "@/components/shared/InlineQuoteForm";
+import { GallerySection } from "@/components/features/GallerySection";
 
 const TestimonialsSection = dynamic(
   () => import("@/components/features/TestimonialsSection").then((m) => ({ default: m.TestimonialsSection })),
@@ -293,6 +294,9 @@ export default function HomeContent() {
 
       {/* ═══════════════ COMPOUNDS TRUST (White) ═══════════════ */}
       <CompoundsTrust />
+
+      {/* ═══════════════ GALLERY (White) ═══════════════ */}
+      <GallerySection />
 
       {/* ═══════════════ LIVE ORDERS (Off-white) ═══════════════ */}
       <LiveOrdersFeed />
