@@ -12,20 +12,13 @@ import {
   ClipboardCheck, PackageCheck, Home as HomeIcon, CircleCheckBig,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { services } from "@/config/services";
 import { featuredAreas } from "@/config/areas";
 import { siteConfig } from "@/config/site";
-import { testimonials } from "@/config/testimonials";
-import { LiveCounter } from "@/components/shared/LiveCounter";
-import { TrustBar } from "@/components/shared/TrustBar";
+import { CompoundsTrust } from "@/components/shared/CompoundsTrust";
+import { LiveOrdersFeed } from "@/components/shared/LiveOrdersFeed";
 import { InlineQuoteForm } from "@/components/shared/InlineQuoteForm";
-
-const GallerySection = dynamic(
-  () => import("@/components/features/GallerySection").then((m) => ({ default: m.GallerySection })),
-  { loading: () => <div className="h-96 bg-[#FAFDF7]" aria-hidden="true" /> }
-);
 
 const TestimonialsSection = dynamic(
   () => import("@/components/features/TestimonialsSection").then((m) => ({ default: m.TestimonialsSection })),
@@ -41,7 +34,6 @@ const serviceIcons: Record<string, React.ElementType> = {
   "naql-moqtaniat-hassasa": Gem,
 };
 
-/* ═══════ Animated Counter ═══════ */
 function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -53,57 +45,40 @@ function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: str
     const step = target / (1800 / 16);
     const timer = setInterval(() => {
       start += step;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
+      if (start >= target) { setCount(target); clearInterval(timer); }
+      else setCount(Math.floor(start));
     }, 16);
     return () => clearInterval(timer);
   }, [isInView, target]);
 
   return (
-    <div ref={ref} className="text-4xl md:text-5xl font-black text-green-700 tabular-nums">
+    <div ref={ref} className="text-4xl md:text-5xl font-black text-slate-900 tabular-nums">
       {count.toLocaleString()}{suffix}
     </div>
   );
 }
 
-/* ═══════ Data ═══════ */
 const steps = [
-  { icon: ClipboardCheck, title: "معاينة مجانية", desc: "بنيجي نشوف الأثاث ونقدر حجم الشغل ونديك سعر نهائي.", num: "01" },
-  { icon: PackageCheck, title: "تغليف وفك", desc: "كل قطعة بتتغلف بالمادة المناسبة والأثاث بيتفك بترقيم.", num: "02" },
-  { icon: Truck, title: "نقل آمن", desc: "سيارات مغلقة مجهزة بأنظمة تثبيت بتحمي أثاثك أثناء الطريق.", num: "03" },
-  { icon: HomeIcon, title: "تركيب وتسليم", desc: "بنركب كل حاجة في مكانها الجديد ونسلمك النقلة كاملة.", num: "04" },
+  { icon: ClipboardCheck, title: "معاينة مجانية", desc: "نُقيّم أثاثك ونحدد الحلول المناسبة" },
+  { icon: PackageCheck, title: "تغليف احترافي", desc: "مواد عالمية لحماية كاملة لكل قطعة" },
+  { icon: Truck, title: "نقل آمن", desc: "أسطول مجهز بأنظمة تثبيت متقدمة" },
+  { icon: HomeIcon, title: "تركيب وتسليم", desc: "نُرتّب كل شيء في مكانه الجديد" },
 ];
 
 const whyUsItems = [
-  { icon: Shield, title: "تأمين شامل", desc: "كل قطعة مؤمن عليها طول فترة النقل" },
-  { icon: Users, title: "فريق متخصص", desc: "فنيين مدربين على كل أنواع الأثاث" },
-  { icon: Clock, title: "مواعيد دقيقة", desc: "بنلتزم بالموعد المتفق عليه بدون تأخير" },
-  { icon: ThumbsUp, title: "سعر نهائي", desc: "مفيش رسوم خفية. السعر المتفق عليه هو النهائي" },
-  { icon: Zap, title: "خبرة بالكمبوندات", desc: "بنعرف إجراءات كل كمبوند وبنتعامل بسلاسة" },
-  { icon: Award, title: "ضمان الجودة", desc: "لو مش راضي عن أي حاجة بنرجع نظبطها" },
+  { icon: Shield, title: "تأمين شامل", desc: "غطاء تأميني كامل على كل قطعة" },
+  { icon: Users, title: "فريق معتمد", desc: "فنيون مدربون بخبرة عالية" },
+  { icon: Clock, title: "التزام بالمواعيد", desc: "دقة كاملة في المواعيد المتفق عليها" },
+  { icon: ThumbsUp, title: "أسعار شفافة", desc: "بدون رسوم خفية أو مفاجآت" },
 ];
 
 const statsData = [
-  { value: 500, suffix: "+", label: "عميل راضٍ", icon: Users },
-  { value: 10, suffix: "+", label: "سنوات خبرة", icon: Award },
-  { value: 24, suffix: "/7", label: "خدمة مستمرة", icon: Clock },
-  { value: 98, suffix: "%", label: "معدل الرضا", icon: Star },
+  { value: 500, suffix: "+", label: "عميل راضٍ" },
+  { value: 10, suffix: "+", label: "سنوات خبرة" },
+  { value: 98, suffix: "%", label: "معدل الرضا" },
+  { value: 24, suffix: "/7", label: "خدمة مستمرة" },
 ];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.08, duration: 0.5 },
-  }),
-};
-
-/* ═══════ Schema.org JSON-LD ═══════ */
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "MovingCompany",
@@ -127,53 +102,38 @@ const localBusinessSchema = {
     latitude: siteConfig.coordinates.latitude,
     longitude: siteConfig.coordinates.longitude,
   },
-  openingHoursSpecification: {
-    "@type": "OpeningHoursSpecification",
-    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-    opens: "00:00",
-    closes: "23:59",
-  },
   aggregateRating: {
     "@type": "AggregateRating",
     ratingValue: siteConfig.ratings.value,
     reviewCount: siteConfig.ratings.count,
     bestRating: siteConfig.ratings.best,
   },
-  areaServed: featuredAreas.map((a) => ({
-    "@type": "City",
-    name: a.name,
-  })),
+  areaServed: featuredAreas.map((a) => ({ "@type": "City", name: a.name })),
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.08, duration: 0.5 },
+  }),
 };
 
 export default function HomeContent() {
   const [mounted, setMounted] = useState(false);
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
-
   useEffect(() => { setMounted(true); }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    const interval = setInterval(() => {
-      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [mounted]);
-
   if (!mounted) return null;
-
-  const currentTestimonial = testimonials[activeTestimonial];
 
   return (
     <>
-      {/* Schema.org JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
       />
 
-      {/* ═══════════════════════ HERO ═══════════════════════ */}
+      {/* ═══════════════ HERO (Green Dark) ═══════════════ */}
       <section className="relative min-h-[92vh] flex items-center overflow-hidden">
-        {/* Background Image */}
         <div className="absolute inset-0">
           <Image
             src="/herosection.webp"
@@ -188,7 +148,6 @@ export default function HomeContent() {
 
         <div className="container-custom relative z-10 py-20">
           <div className="grid lg:grid-cols-12 gap-8 items-center">
-            {/* Text - takes 7 cols */}
             <div className="lg:col-span-7 space-y-7">
               <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
                 <Badge className="bg-white/10 backdrop-blur-md text-white border-white/20 text-sm px-4 py-2 gap-2">
@@ -243,7 +202,6 @@ export default function HomeContent() {
                 </a>
               </motion.div>
 
-              {/* Trust Ticker */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -266,9 +224,7 @@ export default function HomeContent() {
               </motion.div>
             </div>
 
-            {/* Floating Cards - takes 5 cols */}
             <div className="hidden lg:flex lg:col-span-5 flex-col items-center gap-5 relative">
-              {/* Rating Card */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, y: -20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -291,7 +247,6 @@ export default function HomeContent() {
                 </div>
               </motion.div>
 
-              {/* Moves Counter Card */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -309,7 +264,6 @@ export default function HomeContent() {
                 </div>
               </motion.div>
 
-              {/* Experience Card */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -330,134 +284,60 @@ export default function HomeContent() {
           </div>
         </div>
 
-        {/* Wave bottom */}
-        <div className="absolute bottom-0 inset-x-0">
+        <div className="absolute bottom-0 inset-x-0" aria-hidden="true">
           <svg viewBox="0 0 1440 80" fill="none" className="w-full" preserveAspectRatio="none">
-            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z" fill="#FAFDF7" />
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z" fill="#FFFFFF" />
           </svg>
         </div>
       </section>
 
-      {/* ═══════════════════════ STATS ═══════════════════════ */}
-      <section className="py-16 bg-[#FAFDF7]" aria-label="إحصائيات">
+      {/* ═══════════════ COMPOUNDS TRUST (White) ═══════════════ */}
+      <CompoundsTrust />
+
+      {/* ═══════════════ LIVE ORDERS (Off-white) ═══════════════ */}
+      <LiveOrdersFeed />
+
+      {/* ═══════════════ STATS (White) ═══════════════ */}
+      <section className="py-16 md:py-20 bg-white border-y border-slate-100" aria-label="إحصائيات">
         <div className="container-custom">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {statsData.map((stat, i) => {
-              const StatIcon = stat.icon;
-              return (
-                <motion.div
-                  key={stat.label}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeUp}
-                  className="text-center"
-                >
-                  <div className="w-16 h-16 bg-green-50 border border-green-100 rounded-3xl flex items-center justify-center mx-auto mb-4">
-                    <StatIcon className="w-7 h-7 text-green-700" aria-hidden="true" />
-                  </div>
-                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-                  <div className="text-sm text-slate-500 mt-1 font-medium">{stat.label}</div>
-                </motion.div>
-              );
-            })}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {statsData.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                custom={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeUp}
+                className="text-center"
+              >
+                <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+                <div className="text-sm text-slate-500 mt-2 font-medium">{stat.label}</div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      <GallerySection />
-
-      {/* ═══════════════════════ HOW IT WORKS ═══════════════════════ */}
-      <section className="section-padding bg-white" aria-labelledby="how-heading">
+      {/* ═══════════════ SERVICES (Off-white) ═══════════════ */}
+      <section className="section-padding bg-slate-50/60" aria-labelledby="services-heading">
         <div className="container-custom">
-          <div className="text-center mb-14">
-            <Badge className="bg-green-50 text-green-700 border-green-200 mb-4 px-4 py-1.5 text-sm">
-              <Wrench className="w-4 h-4 mr-1.5" aria-hidden="true" />
-              طريقة شغلنا
-            </Badge>
-            <h2
-              id="how-heading"
-              className="text-3xl md:text-4xl font-black text-green-950 mb-3"
-            >
-              4 خطوات وبس
-            </h2>
-            <p className="text-slate-500 max-w-lg mx-auto text-lg">
-              من المعاينة للتسليم - كل حاجة منظمة ومحسوبة
-            </p>
-          </div>
-
-          <div className="relative max-w-4xl mx-auto">
-            <div className="hidden md:block absolute right-1/2 top-0 bottom-0 w-px bg-green-200 translate-x-1/2" aria-hidden="true" />
-
-            <div className="space-y-12 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-20 md:gap-y-16">
-              {steps.map((step, i) => {
-                const StepIcon = step.icon;
-                const isEven = i % 2 === 0;
-                return (
-                  <motion.div
-                    key={step.num}
-                    custom={i}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={fadeUp}
-                    className={`relative ${isEven ? "md:text-left" : "md:col-start-2 md:text-right"}`}
-                  >
-                    <div className={`hidden md:flex absolute top-2 ${isEven ? "-left-[62px]" : "-right-[62px]"} w-10 h-10 bg-green-700 text-white rounded-full items-center justify-center text-sm font-black z-10 shadow-lg shadow-green-700/30`}>
-                      {step.num}
-                    </div>
-
-                    <Card className="border-green-100/60 hover:shadow-xl transition-all duration-300 bg-white overflow-hidden group">
-                      <CardContent className="p-6">
-                        <div className={`flex items-start gap-4 ${isEven ? "" : "md:flex-row-reverse"}`}>
-                          <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-green-700 transition-colors duration-300">
-                            <StepIcon className="w-7 h-7 text-green-700 group-hover:text-white transition-colors duration-300" aria-hidden="true" />
-                          </div>
-                          <div>
-                            <span className="md:hidden text-xs font-bold text-green-600 mb-1 block">خطوة {step.num}</span>
-                            <h3 className="text-lg font-bold text-green-950 mb-1">{step.title}</h3>
-                            <p className="text-sm text-slate-500 leading-relaxed">{step.desc}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════ SERVICES ═══════════════════════ */}
-      <section
-        className="section-padding bg-green-950 text-white relative overflow-hidden"
-        aria-labelledby="services-heading"
-      >
-        <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-green-400 rounded-full blur-[150px]" />
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-400 rounded-full blur-[120px]" />
-        </div>
-
-        <div className="container-custom relative">
-          <div className="text-center mb-14">
-            <Badge className="bg-green-500/15 text-green-300 border-green-500/30 mb-4 px-4 py-1.5 text-sm">
-              <Package className="w-4 h-4 mr-1.5" aria-hidden="true" />
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <p className="text-sm font-bold text-green-700 mb-3 tracking-wider uppercase">
               خدماتنا
-            </Badge>
+            </p>
             <h2
               id="services-heading"
-              className="text-3xl md:text-4xl font-black text-white mb-3"
+              className="text-3xl md:text-4xl font-black text-slate-900 mb-3 leading-tight"
             >
-              كل اللي أثاثك محتاجه
+              حلول متكاملة لكل احتياجاتك
             </h2>
-            <p className="text-green-200/70 max-w-lg mx-auto text-lg">
-              6 خدمات متكاملة تغطي كل احتياجاتك
+            <p className="text-slate-600 text-base leading-relaxed">
+              6 خدمات احترافية تحت سقف واحد بمعايير عالمية
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="max-w-4xl mx-auto bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             {services.map((service, i) => {
               const SIcon = serviceIcons[service.slug] || Truck;
               return (
@@ -466,23 +346,41 @@ export default function HomeContent() {
                   custom={i}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true }}
+                  viewport={{ once: true, margin: "-20px" }}
                   variants={fadeUp}
                 >
-                  <Link href={`/services/${service.slug}`} aria-label={`اعرف المزيد عن خدمة ${service.name}`}>
-                    <article className="group h-full border border-green-800/50 bg-green-900/50 backdrop-blur-sm hover:bg-green-800/60 transition-all duration-300 cursor-pointer rounded-2xl p-6">
-                      <div className="w-14 h-14 bg-green-500/15 border border-green-500/25 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-green-500 group-hover:border-green-500 transition-all duration-300">
-                        <SIcon className="w-7 h-7 text-green-400 group-hover:text-white transition-colors duration-300" aria-hidden="true" />
+                  <Link href={`/services/${service.slug}`} className="group block">
+                    <article className={`flex items-center gap-4 md:gap-6 p-5 md:p-6 hover:bg-green-50/30 transition-all duration-300 ${
+                      i !== services.length - 1 ? "border-b border-slate-100" : ""
+                    }`}>
+                      {/* Icon */}
+                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-green-50 flex items-center justify-center shrink-0 group-hover:bg-green-700 transition-colors duration-300">
+                        <SIcon className="w-6 h-6 md:w-7 md:h-7 text-green-700 group-hover:text-white transition-colors duration-300" aria-hidden="true" />
                       </div>
-                      <h3 className="font-bold text-white text-lg mb-2 group-hover:text-green-300 transition-colors">
-                        {service.name}
-                      </h3>
-                      <p className="text-sm text-green-200/60 line-clamp-2 leading-relaxed mb-4">
-                        {service.shortDescription}
-                      </p>
-                      <div className="flex items-center gap-1.5 text-green-400 text-sm font-medium group-hover:gap-3 transition-all">
-                        <span>تفاصيل الخدمة</span>
-                        <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-base md:text-lg font-bold text-slate-900 group-hover:text-green-800 transition-colors leading-tight">
+                            {service.name}
+                          </h3>
+                          <span className="hidden sm:inline text-[10px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                            0{i + 1}
+                          </span>
+                        </div>
+                        <p className="text-xs md:text-sm text-slate-600 leading-relaxed line-clamp-2 md:line-clamp-1">
+                          {service.shortDescription}
+                        </p>
+                      </div>
+
+                      {/* Arrow */}
+                      <div className="shrink-0 flex items-center gap-2 text-green-700">
+                        <span className="hidden md:inline text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                          اعرف المزيد
+                        </span>
+                        <div className="w-9 h-9 rounded-full bg-slate-50 group-hover:bg-green-700 flex items-center justify-center transition-all duration-300">
+                          <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:-translate-x-0.5 transition-all" aria-hidden="true" />
+                        </div>
                       </div>
                     </article>
                   </Link>
@@ -490,42 +388,118 @@ export default function HomeContent() {
               );
             })}
           </div>
+
+          {/* View all services CTA */}
+          <div className="text-center mt-8">
+            <Button
+              asChild
+              variant="outline"
+              className="border-slate-200 hover:border-green-300 hover:bg-green-50 text-slate-800 h-11 px-6 rounded-xl gap-2"
+            >
+              <Link href="/services">
+                عرض جميع تفاصيل الخدمات
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 
-      {/* ═══════════════════════ WHY US ═══════════════════════ */}
-      <section className="section-padding bg-white" aria-labelledby="why-heading">
+      {/* ═══════════════ HOW IT WORKS (White) ═══════════════ */}
+      <section className="section-padding bg-white" aria-labelledby="how-heading">
         <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <p className="text-sm font-bold text-green-700 mb-3 tracking-wider uppercase">
+              كيف نعمل
+            </p>
+            <h2
+              id="how-heading"
+              className="text-3xl md:text-4xl font-black text-slate-900 mb-3 leading-tight"
+            >
+              4 خطوات نحو نقلة مثالية
+            </h2>
+            <p className="text-slate-600 text-base leading-relaxed">
+              عملية منظمة من المعاينة حتى التسليم النهائي
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((step, i) => {
+              const StepIcon = step.icon;
+              return (
+                <motion.article
+                  key={step.title}
+                  custom={i}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-30px" }}
+                  variants={fadeUp}
+                  className="relative"
+                >
+                  <div className="bg-slate-50/60 border border-slate-100 rounded-2xl p-6 h-full hover:border-green-200 hover:bg-white transition-all">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-11 h-11 rounded-xl bg-green-700 text-white flex items-center justify-center font-bold text-sm tabular-nums">
+                        0{i + 1}
+                      </div>
+                      <StepIcon className="w-5 h-5 text-green-600" aria-hidden="true" />
+                    </div>
+                    <h3 className="font-bold text-slate-900 mb-2">{step.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">{step.desc}</p>
+                  </div>
+
+                  {i < steps.length - 1 && (
+                    <div
+                      className="hidden lg:flex absolute top-1/2 -left-3 -translate-y-1/2 z-10"
+                      aria-hidden="true"
+                    >
+                      <ArrowLeft className="w-5 h-5 text-slate-300" />
+                    </div>
+                  )}
+                </motion.article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ WHY US (Off-white) ═══════════════ */}
+      <section className="section-padding bg-slate-50/60" aria-labelledby="why-heading">
+        <div className="container-custom">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div>
-              <Badge className="bg-green-50 text-green-700 border-green-200 mb-4 px-4 py-1.5 text-sm">
-                <CheckCircle2 className="w-4 h-4 mr-1.5" aria-hidden="true" />
-                ليه خطوة؟
-              </Badge>
+              <p className="text-sm font-bold text-green-700 mb-3 tracking-wider uppercase">
+                لماذا نحن
+              </p>
               <h2
                 id="why-heading"
-                className="text-3xl md:text-4xl font-black text-green-950 mb-4"
+                className="text-3xl md:text-4xl font-black text-slate-900 mb-5 leading-tight"
               >
-                مش مجرد شركة نقل
-                <span className="block text-green-600 mt-1">احنا شريكك في كل تفصيلة</span>
+                خبرة تصنع الفارق
               </h2>
-              <p className="text-slate-500 text-lg leading-relaxed mb-8">
-                كل نقلة عندنا بتتعامل معاها كأنها الوحيدة. فريق مدرب، معدات حديثة، والتزام كامل بالوعود.
+              <p className="text-slate-600 text-base leading-relaxed mb-8">
+                نتعامل مع كل قطعة من أثاثك كأنها من أثاثنا. لأننا نُدرك أن كل قطعة تحمل ذكرى
+                وقيمة تستحق العناية الكاملة.
               </p>
 
               <div className="grid sm:grid-cols-2 gap-4">
                 {whyUsItems.map((item, i) => {
                   const ItemIcon = item.icon;
                   return (
-                    <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                      <div className="flex items-start gap-3 p-4 rounded-2xl bg-green-50/60 border border-green-100/60 hover:shadow-md transition-shadow">
-                        <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
-                          <ItemIcon className="w-5 h-5 text-green-700" aria-hidden="true" />
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-green-950 text-sm">{item.title}</h3>
-                          <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{item.desc}</p>
-                        </div>
+                    <motion.div
+                      key={item.title}
+                      custom={i}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true }}
+                      variants={fadeUp}
+                      className="flex gap-3 bg-white border border-slate-100 rounded-2xl p-5"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                        <ItemIcon className="w-5 h-5 text-green-700" aria-hidden="true" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-sm mb-1">{item.title}</h3>
+                        <p className="text-xs text-slate-600 leading-relaxed">{item.desc}</p>
                       </div>
                     </motion.div>
                   );
@@ -534,59 +508,61 @@ export default function HomeContent() {
             </div>
 
             <motion.div
-              initial={{ opacity: 0, x: 40 }}
+              initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="relative hidden lg:block"
+              transition={{ duration: 0.6 }}
+              className="hidden lg:block relative"
             >
-              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl bg-slate-100">
+              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden bg-slate-100">
                 <Image
                   src="/herosection.webp"
-                  alt="فريق خطوة أثناء نقل الأثاث"
+                  alt="فريق خطوة أثناء العمل"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 0vw, 40vw"
                   loading="lazy"
-                  quality={80}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-green-950/40 to-transparent" />
               </div>
 
-              <div className="absolute -bottom-5 -left-5 bg-green-700 text-white rounded-2xl p-4 shadow-xl">
-                <div className="flex items-center gap-3">
-                  <Shield className="w-8 h-8 text-green-300" aria-hidden="true" />
-                  <div>
-                    <div className="font-bold text-lg">تأمين شامل</div>
-                    <div className="text-xs text-green-300">على كل المنقولات</div>
-                  </div>
+              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl border border-slate-100 p-5 max-w-[240px]">
+                <div className="flex items-center gap-1 mb-2">
+                  {[1,2,3,4,5].map((i) => (
+                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  ))}
                 </div>
+                <p className="text-sm text-slate-700 font-medium leading-relaxed">
+                  &ldquo;خدمة استثنائية وفريق محترف&rdquo;
+                </p>
+                <p className="text-xs text-slate-500 mt-2">— أحمد م.، التجمع الخامس</p>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════ AREAS ═══════════════════════ */}
-      <section className="section-padding bg-green-50/40" aria-labelledby="areas-heading">
+      {/* ═══════════════ TESTIMONIALS (White) ═══════════════ */}
+      <TestimonialsSection />
+
+      {/* ═══════════════ AREAS (White) ═══════════════ */}
+      <section className="section-padding bg-white" aria-labelledby="areas-heading">
         <div className="container-custom">
-          <div className="text-center mb-12">
-            <Badge className="bg-green-100 text-green-700 border-green-200 mb-4 px-4 py-1.5 text-sm">
-              <MapPin className="w-4 h-4 mr-1.5" aria-hidden="true" />
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <p className="text-sm font-bold text-green-700 mb-3 tracking-wider uppercase">
               مناطق الخدمة
-            </Badge>
+            </p>
             <h2
               id="areas-heading"
-              className="text-3xl md:text-4xl font-black text-green-950 mb-3"
+              className="text-3xl md:text-4xl font-black text-slate-900 mb-3 leading-tight"
             >
-              موجودين في منطقتك
+              نصل إليك أينما كنت
             </h2>
-            <p className="text-slate-500 max-w-lg mx-auto text-lg">
-              نغطي أهم المناطق والكمبوندات في القاهرة والجيزة
+            <p className="text-slate-600 text-base leading-relaxed">
+              نُغطي جميع المناطق الرئيسية والكمبوندات في القاهرة الكبرى
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3">
             {featuredAreas.map((area, i) => (
               <motion.div
                 key={area.slug}
@@ -598,22 +574,20 @@ export default function HomeContent() {
               >
                 <Link
                   href={`/areas/${area.slug}`}
-                  aria-label={`خدمة نقل أثاث في ${area.name}`}
+                  className="group flex items-center gap-3 bg-slate-50/60 border border-slate-100 rounded-xl p-4 hover:border-green-300 hover:bg-white hover:shadow-md transition-all"
                 >
-                  <article className="group h-full flex items-center gap-4 bg-white rounded-2xl p-5 border border-green-100/60 hover:shadow-lg hover:border-green-300 transition-all cursor-pointer">
-                    <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-green-700 transition-colors">
-                      <MapPin className="w-6 h-6 text-green-600 group-hover:text-white transition-colors" aria-hidden="true" />
+                  <div className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center shrink-0 group-hover:bg-green-700 group-hover:border-green-700 transition-colors">
+                    <MapPin className="w-5 h-5 text-green-700 group-hover:text-white transition-colors" aria-hidden="true" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold text-slate-900 text-sm truncate group-hover:text-green-800 transition-colors">
+                      {area.name}
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-bold text-green-950 text-base group-hover:text-green-700 transition-colors truncate">
-                        {area.name}
-                      </h3>
-                      <p className="text-xs text-slate-500 mt-1">
-                        {area.neighborhoods?.length || 0} أحياء · خدمة VIP
-                      </p>
+                    <div className="text-xs text-slate-500">
+                      {area.neighborhoods?.length || 0} أحياء · خدمة VIP
                     </div>
-                    <ArrowLeft className="w-5 h-5 text-slate-300 group-hover:text-green-600 transition-colors shrink-0" aria-hidden="true" />
-                  </article>
+                  </div>
+                  <ArrowLeft className="w-4 h-4 text-slate-300 group-hover:text-green-600 transition-colors" aria-hidden="true" />
                 </Link>
               </motion.div>
             ))}
@@ -621,141 +595,64 @@ export default function HomeContent() {
 
           <div className="text-center mt-10">
             <Button
-              variant="outline"
-              className="border-green-200 text-green-700 hover:bg-green-50 gap-2 rounded-xl h-12 px-6"
               asChild
+              variant="outline"
+              className="border-slate-200 hover:border-green-300 hover:bg-green-50 text-slate-800 h-11 px-6 rounded-xl"
             >
               <Link href="/areas">
-                عرض كل المناطق
-                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                عرض جميع المناطق
+                <ArrowLeft className="w-4 h-4 mr-2" />
               </Link>
             </Button>
           </div>
         </div>
       </section>
 
-      <TestimonialsSection />
-
-      {/* ═══════════════════════ TESTIMONIAL SPOTLIGHT ═══════════════════════ */}
-      <section
-        className="section-padding bg-[#FAFDF7] overflow-hidden"
-        aria-labelledby="spotlight-heading"
-      >
-        <div className="container-custom">
-          <div className="text-center mb-12">
-            <Badge className="bg-amber-50 text-amber-700 border-amber-200 mb-4 px-4 py-1.5 text-sm">
-              <Star className="w-4 h-4 mr-1.5 fill-amber-400" aria-hidden="true" />
-              رأي مميز
-            </Badge>
-            <h2
-              id="spotlight-heading"
-              className="text-3xl md:text-4xl font-black text-green-950"
-            >
-              عملاؤنا بيتكلموا
-            </h2>
-          </div>
-
-          <div className="max-w-3xl mx-auto">
-            <motion.div
-              key={activeTestimonial}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Card className="border-green-100/60 shadow-lg bg-white overflow-hidden">
-                <CardContent className="p-8 md:p-10 text-center">
-                  <div className="flex justify-center gap-0.5 mb-5">
-                    {Array.from({ length: currentTestimonial.rating }).map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" aria-hidden="true" />
-                    ))}
-                  </div>
-                  <blockquote className="text-lg md:text-xl text-slate-700 leading-relaxed mb-6 font-medium">
-                    &ldquo;{currentTestimonial.text}&rdquo;
-                  </blockquote>
-                  <div className="flex items-center justify-center gap-3">
-                    <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold text-sm ${currentTestimonial.colorClass}`}>
-                      {currentTestimonial.initials}
-                    </div>
-                    <div className="text-right">
-                      <div className="font-bold text-green-950 text-lg">{currentTestimonial.name}</div>
-                      <div className="flex items-center gap-1.5 text-sm text-slate-400 mt-1">
-                        <MapPin className="w-3.5 h-3.5" aria-hidden="true" />
-                        <span>{currentTestimonial.area}</span>
-                        <span className="mx-1">-</span>
-                        <span className="text-green-600 font-medium">{currentTestimonial.service}</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <div className="flex justify-center gap-2 mt-6" role="tablist">
-              {testimonials.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveTestimonial(i)}
-                  className={`h-2.5 rounded-full transition-all ${
-                    i === activeTestimonial ? "w-8 bg-green-600" : "w-2.5 bg-green-200 hover:bg-green-300"
-                  }`}
-                  role="tab"
-                  aria-selected={i === activeTestimonial}
-                  aria-label={`عرض التقييم ${i + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       <InlineQuoteForm />
 
-      {/* ═══════════════════════ FINAL CTA ═══════════════════════ */}
+      {/* ═══════════════ FINAL CTA (Green Dark) ═══════════════ */}
       <section
-        className="section-padding bg-gradient-to-br from-green-700 via-green-800 to-green-900 relative overflow-hidden"
+        className="section-padding bg-green-950 relative overflow-hidden"
         aria-labelledby="cta-heading"
       >
-        <div className="absolute inset-0 opacity-20" aria-hidden="true">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-green-400 rounded-full blur-3xl" />
+        <div className="absolute inset-0 opacity-15" aria-hidden="true">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-green-500 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-400 rounded-full blur-3xl" />
         </div>
 
-        <div className="container-custom text-center space-y-6 relative z-10">
-          <h2
-            id="cta-heading"
-            className="text-3xl md:text-5xl font-black text-white"
-          >
-            جاهز تنقل؟
-          </h2>
-          <p className="text-green-100 max-w-md mx-auto text-lg">
-            كلمنا دلوقتي والمعاينة مجانية وعرض السعر فوري.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Button
-              size="lg"
-              className="bg-white text-green-900 hover:bg-green-50 gap-2 text-base h-13 px-8 rounded-2xl font-bold shadow-xl"
-              asChild
+        <div className="relative container-custom">
+          <div className="max-w-3xl mx-auto text-center space-y-6">
+            <h2
+              id="cta-heading"
+              className="text-3xl md:text-5xl font-black text-white leading-tight"
             >
-              <a href={`tel:${siteConfig.phone}`} aria-label={`اتصل بنا على ${siteConfig.phone}`}>
-                <Phone className="w-5 h-5" aria-hidden="true" />
-                اتصل دلوقتي
-              </a>
-            </Button>
-            <Button
-              size="lg"
-              className="bg-green-500 hover:bg-green-600 text-white gap-2 text-base h-13 px-8 rounded-2xl shadow-xl shadow-green-500/25"
-              asChild
-            >
-              <a
-                href={`https://wa.me/${siteConfig.whatsapp}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="تواصل معنا عبر واتساب"
+              جاهزون لخدمتك في أي وقت
+            </h2>
+            <p className="text-white/80 max-w-md mx-auto text-lg">
+              تواصل معنا الآن للحصول على معاينة مجانية وعرض سعر شفاف
+            </p>
+            <div className="flex flex-wrap justify-center gap-3 pt-2">
+              <Button
+                size="lg"
+                className="bg-white text-green-900 hover:bg-green-50 gap-2 text-base h-13 px-8 rounded-2xl font-bold shadow-xl"
+                asChild
               >
-                <MessageCircle className="w-5 h-5" aria-hidden="true" />
-                واتساب
-              </a>
-            </Button>
+                <a href={`tel:${siteConfig.phone}`}>
+                  <Phone className="w-5 h-5" />
+                  اتصل دلوقتي
+                </a>
+              </Button>
+              <Button
+                size="lg"
+                className="bg-green-500 hover:bg-green-600 text-white gap-2 text-base h-13 px-8 rounded-2xl shadow-xl shadow-green-500/25"
+                asChild
+              >
+                <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="w-5 h-5" />
+                  واتساب
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
