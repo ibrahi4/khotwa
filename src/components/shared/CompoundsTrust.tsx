@@ -142,6 +142,7 @@ export function CompoundsTrust() {
                     width={120}
                     height={120}
                     className="object-contain w-full h-full opacity-90 group-hover:opacity-100 transition-opacity"
+                    style={{ width: "auto", height: "auto" }}
                     loading="lazy"
                     quality={90}
                   />

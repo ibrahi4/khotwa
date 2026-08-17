@@ -19,31 +19,31 @@ interface LogoProps {
 
 const sizeMap = {
   sm: {
-    image: "w-14 h-14",
-    imagePx: 86,
-    title: "text-sm",
+    image: "w-11 h-11",
+    imagePx: 44,
+    title: "text-base",
     subtitle: "text-[10px]",
-    gap: "gap-0",
+    gap: "gap-2",
   },
   md: {
     image: "w-14 h-14",
-    imagePx: 84,
-    title: "text-base",
+    imagePx: 56,
+    title: "text-xl",
     subtitle: "text-xs",
-    gap: "gap-2.5",
+    gap: "gap-3",
   },
   lg: {
-    image: "w-14 h-14",
-    imagePx: 86,
-    title: "text-lg",
-    subtitle: "text-xs",
+    image: "w-16 h-16",
+    imagePx: 64,
+    title: "text-2xl",
+    subtitle: "text-sm",
     gap: "gap-3",
   },
   xl: {
     image: "w-20 h-20",
     imagePx: 80,
-    title: "text-2xl",
-    subtitle: "text-sm",
+    title: "text-3xl",
+    subtitle: "text-base",
     gap: "gap-4",
   },
 };
@@ -64,20 +64,22 @@ export function Logo({
   const LogoImage = (
     <div
       className={cn(
-        "relative rounded-xl overflow-hidden shrink-0 ring-1 transition-all duration-300",
+        "relative rounded-2xl overflow-hidden shrink-0 ring-2 shadow-md transition-all duration-300",
         s.image,
         isWhite
-          ? "ring-white/20 group-hover:ring-[#E8E3D9]"
-          : "ring-[#E5E1DA] group-hover:ring-[#3F4F44]"
+          ? "ring-white/25 bg-white/5 shadow-black/20 group-hover:ring-white/40"
+          : "ring-green-100 bg-white shadow-green-700/10 group-hover:ring-green-300 group-hover:shadow-green-700/20"
       )}
     >
       <Image
         src="/logo.webp"
         alt={siteConfig.name}
-        fill
-        className="object-cover"
+        width={s.imagePx}
+        height={s.imagePx}
+        className="w-full h-full object-cover"
         priority={priority}
         sizes={`${s.imagePx}px`}
+        quality={95}
       />
     </div>
   );
@@ -93,16 +95,16 @@ export function Logo({
         className={cn(
           "font-black tracking-tight",
           s.title,
-          isWhite ? "text-white" : "text-slate-900"
+          isWhite ? "text-white" : "text-green-950"
         )}
       >
         خطوة
       </span>
       <span
         className={cn(
-          "font-medium",
+          "font-bold tracking-wide",
           s.subtitle,
-          isWhite ? "text-white/60" : "text-[#6B6B6B]"
+          isWhite ? "text-green-300" : "text-green-700"
         )}
       >
         لنقل الأثاث
@@ -122,7 +124,11 @@ export function Logo({
   }
 
   return (
-    <Link href={href} className="inline-flex shrink-0">
+    <Link
+      href={href}
+      className="inline-flex shrink-0"
+      aria-label={siteConfig.name}
+    >
       {content}
     </Link>
   );
