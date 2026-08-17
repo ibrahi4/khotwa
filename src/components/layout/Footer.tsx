@@ -72,7 +72,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-green-950 min-h-[500px] text-green-100 no-print relative overflow-hidden mt-16 lg:mt-24">
+    <footer className="bg-green-950 text-green-100 no-print relative overflow-hidden ">
       <div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-green-400 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-green-500 rounded-full blur-3xl" />

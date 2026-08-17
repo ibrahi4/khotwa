@@ -18,34 +18,10 @@ interface LogoProps {
 }
 
 const sizeMap = {
-  sm: {
-    image: "w-11 h-11",
-    imagePx: 44,
-    title: "text-base",
-    subtitle: "text-[10px]",
-    gap: "gap-2",
-  },
-  md: {
-    image: "w-14 h-14",
-    imagePx: 56,
-    title: "text-xl",
-    subtitle: "text-xs",
-    gap: "gap-3",
-  },
-  lg: {
-    image: "w-16 h-16",
-    imagePx: 64,
-    title: "text-2xl",
-    subtitle: "text-sm",
-    gap: "gap-3",
-  },
-  xl: {
-    image: "w-20 h-20",
-    imagePx: 80,
-    title: "text-3xl",
-    subtitle: "text-base",
-    gap: "gap-4",
-  },
+  sm: { pixels: 44, title: "text-base", subtitle: "text-[10px]", gap: "gap-2" },
+  md: { pixels: 56, title: "text-xl", subtitle: "text-xs", gap: "gap-3" },
+  lg: { pixels: 64, title: "text-2xl", subtitle: "text-sm", gap: "gap-3" },
+  xl: { pixels: 80, title: "text-3xl", subtitle: "text-base", gap: "gap-4" },
 };
 
 export function Logo({
@@ -65,22 +41,21 @@ export function Logo({
     <div
       className={cn(
         "relative rounded-2xl overflow-hidden shrink-0 ring-2 shadow-md transition-all duration-300",
-        s.image,
         isWhite
           ? "ring-white/25 bg-white/5 shadow-black/20 group-hover:ring-white/40"
           : "ring-green-100 bg-white shadow-green-700/10 group-hover:ring-green-300 group-hover:shadow-green-700/20"
       )}
+      style={{ width: s.pixels, height: s.pixels }}
     >
       <Image
         src="/logo.webp"
         alt={siteConfig.name}
-        width={s.imagePx}
-        height={s.imagePx}
-        style={{ width: "100%", height: "100%" }}
-        className="w-full h-full object-cover"
+        width={s.pixels}
+        height={s.pixels}
         priority={priority}
-        sizes={`${s.imagePx}px`}
-        quality={95}
+        loading={priority ? "eager" : "eager"}
+        quality={90}
+        className="w-full h-full object-cover"
       />
     </div>
   );
