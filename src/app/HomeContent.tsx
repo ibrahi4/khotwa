@@ -609,7 +609,7 @@ export default function HomeContent() {
                         {area.name}
                       </h3>
                       <p className="text-xs text-slate-500 mt-1">
-                        {area.neighborhoods.length} أحياء · خدمة VIP
+                        {area.neighborhoods?.length || 0} أحياء · خدمة VIP
                       </p>
                     </div>
                     <ArrowLeft className="w-5 h-5 text-slate-300 group-hover:text-green-600 transition-colors shrink-0" aria-hidden="true" />
