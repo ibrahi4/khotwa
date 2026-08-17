@@ -76,6 +76,7 @@ export function Logo({
         alt={siteConfig.name}
         width={s.imagePx}
         height={s.imagePx}
+        style={{ width: "100%", height: "100%" }}
         className="w-full h-full object-cover"
         priority={priority}
         sizes={`${s.imagePx}px`}
