@@ -1,15 +1,45 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import { BadgeCheck } from "lucide-react";
 import { compounds } from "@/config/compounds";
 
 export function CompoundsTrust() {
+  const [mounted, setMounted] = useState(false);
+
+  const [emblaRef] = useEmblaCarousel(
+    {
+      loop: true,
+      align: "start",
+      direction: "rtl",
+      dragFree: true,
+      containScroll: false,
+      watchDrag: false,
+    },
+    [
+      Autoplay({
+        delay: 0,
+        stopOnInteraction: false,
+        stopOnMouseEnter: false,
+      }),
+    ]
+  );
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <section
-      className="py-16 md:py-20 bg-white border-y border-slate-100"
+      className="py-14 md:py-16 bg-white border-y border-slate-100 overflow-hidden"
       aria-labelledby="compounds-trust-heading"
     >
       <div className="container-custom">
-        <div className="text-center max-w-2xl mx-auto mb-12">
+        {/* Header */}
+        <div className="text-center max-w-2xl mx-auto mb-10 md:mb-12">
           <div className="inline-flex items-center gap-2 rounded-full bg-green-50 border border-green-100 px-4 py-1.5 mb-4">
             <BadgeCheck className="w-4 h-4 text-green-700" aria-hidden="true" />
             <span className="text-xs font-bold text-green-800 tracking-wide">
@@ -23,11 +53,73 @@ export function CompoundsTrust() {
             معتمدون لدى أكبر الكمبوندات
           </h2>
           <p className="text-slate-600 text-sm md:text-base leading-relaxed">
-            نقدم خدماتنا رسمياً داخل أكثر الكمبوندات فخامة في مصر بتصاريح دخول جاهزة
+            نقدم خدماتنا رسمياً داخل أكثر الكمبوندات فخامة في مصر
           </p>
         </div>
+      </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
+      {/* ═══ Mobile: Marquee (auto-scroll infinite) ═══ */}
+      {mounted && (
+        <div className="md:hidden">
+          <div className="relative">
+            {/* Fade edges */}
+            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+
+            {/* Marquee CSS animation */}
+            <div className="flex overflow-hidden">
+              <div className="flex gap-3 animate-marquee-compounds shrink-0">
+                {[...compounds, ...compounds].map((c, i) => (
+                  <article
+                    key={`${c.nameEn}-${i}`}
+                    className="shrink-0 w-[140px] bg-white border border-slate-200 rounded-2xl p-4 flex flex-col items-center"
+                  >
+                    <div className="relative w-full aspect-square mb-2 flex items-center justify-center">
+                      <Image
+                        src={c.logo}
+                        alt={`شعار ${c.name}`}
+                        width={100}
+                        height={100}
+                        className="object-contain w-full h-full opacity-90"
+                        loading="lazy"
+                        quality={90}
+                      />
+                    </div>
+                    <div className="text-center w-full">
+                      <h3 className="font-bold text-slate-900 text-xs leading-tight truncate">
+                        {c.name}
+                      </h3>
+                      <div className="flex items-center justify-center gap-1 mt-1">
+                        <BadgeCheck className="w-3 h-3 text-green-600" aria-hidden="true" />
+                        <span className="text-[9px] text-slate-500 font-medium">معتمد</span>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <style jsx>{`
+            @keyframes marquee-compounds {
+              0% {
+                transform: translateX(0);
+              }
+              100% {
+                transform: translateX(-50%);
+              }
+            }
+            .animate-marquee-compounds {
+              animation: marquee-compounds 25s linear infinite;
+              width: fit-content;
+            }
+          `}</style>
+        </div>
+      )}
+
+      {/* ═══ Desktop: Grid ═══ */}
+      <div className="hidden md:block container-custom">
+        <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
           {compounds.map((c) => (
             <article
               key={c.nameEn}
@@ -60,7 +152,10 @@ export function CompoundsTrust() {
             </article>
           ))}
         </div>
+      </div>
 
+      {/* Footer text */}
+      <div className="container-custom">
         <div className="text-center mt-8">
           <p className="text-xs text-slate-500 flex items-center justify-center gap-2">
             <BadgeCheck className="w-4 h-4 text-green-600" aria-hidden="true" />
