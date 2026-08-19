@@ -16,7 +16,7 @@ const galleryImages = [
   { src: "/images/gallery/photo_1_2026-08-16_14-31-37.jpg", alt: "عملية نقل أثاث احترافية من فريق خطوة" },
   { src: "/images/gallery/photo_2_2026-08-16_14-31-37.jpg", alt: "تغليف أثاث بمواد عالية الجودة" },
   { src: "/images/gallery/photo_3_2026-08-16_14-31-37.jpg", alt: "نقل أثاث بسيارات مجهزة" },
-  { src: "/images/gallery/photo_4_2026-08-16_14-31-37.jpg", alt: "فك وتركيب الأثاث بدقة" },
+  { src: "/images/gallery/tarkeeb.webp", alt: "فك وتركيب الأثاث بدقة" },
   { src: "/images/gallery/photo_5_2026-08-16_14-31-37.jpg", alt: "فريق خطوة أثناء العمل" },
   { src: "/images/gallery/photo_6_2026-08-16_14-31-37.jpg", alt: "خدمة نقل احترافية في القاهرة" },
   { src: "/images/gallery/photo_7_2026-08-16_14-31-37.jpg", alt: "نقل أثاث من الكمبوندات الراقية" },
