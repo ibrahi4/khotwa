@@ -134,6 +134,8 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={cairo.variable}>
       <head>
+        <meta name="color-scheme" content="light only" />
+        <meta name="supported-color-schemes" content="light" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(businessSchema) }}

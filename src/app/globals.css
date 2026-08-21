@@ -181,3 +181,27 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Senior Force-Light Fix for Mobile Browsers ── */
+:root, html, body {
+  color-scheme: light only !important;
+  supported-color-schemes: light !important;
+}
+
+/* Override Android Chrome Auto-Dark Engine */
+@media (prefers-color-scheme: dark) {
+  :root, html, body {
+    color-scheme: light only !important;
+    background-color: #F8FBFF !important;
+    color: #1E293B !important;
+  }
+  
+  img, svg, video, canvas {
+    filter: none !important;
+  }
+}
+
+/* Disable Forced Colors in Windows/Android High Contrast */
+* {
+  forced-color-adjust: none !important;
+}
