@@ -29,6 +29,8 @@ const PROVIDER_REFERENCE = {
   name: siteConfig.name,
   telephone: siteConfig.phoneIntl,
   url: siteConfig.url,
+    hasMap: "https://g.page/r/CdCTBbp7TvxgEAI",
+    sameAs: ["https://g.page/r/CdCTBbp7TvxgEAI"],
   logo: `${siteConfig.url}/logo.webp`,
 };
 
@@ -67,6 +69,8 @@ export function generateLocalBusinessSchema() {
     alternateName: [siteConfig.shortName, "Khotwa Moving", "Khatwa Moving", "خطوة"],
     description: siteConfig.description,
     url: siteConfig.url,
+    hasMap: "https://g.page/r/CdCTBbp7TvxgEAI",
+    sameAs: ["https://g.page/r/CdCTBbp7TvxgEAI"],
     logo: LOGO_OBJECT,
     image: [`${siteConfig.url}/herosection.webp`],
     telephone: siteConfig.phoneIntl,
@@ -103,6 +107,8 @@ export function generateWebsiteSchema() {
     "@type": "WebSite",
     "@id": WEBSITE_ID,
     url: siteConfig.url,
+    hasMap: "https://g.page/r/CdCTBbp7TvxgEAI",
+    sameAs: ["https://g.page/r/CdCTBbp7TvxgEAI"],
     name: siteConfig.name,
     description: siteConfig.description,
     publisher: { "@id": ORG_ID },

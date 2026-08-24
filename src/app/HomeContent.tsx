@@ -581,44 +581,64 @@ export default function HomeContent() {
 
       {/* ═══════════════ FINAL CTA (Green Dark) ═══════════════ */}
       <section
-        className="section-padding bg-green-950 relative overflow-hidden"
+        className="section-padding relative overflow-hidden bg-slate-950 border-t border-emerald-950"
         aria-labelledby="cta-heading"
       >
-        <div className="absolute inset-0 opacity-15" aria-hidden="true">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-green-500 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-400 rounded-full blur-3xl" />
-        </div>
+        {/* Soft Ambient Glows */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-emerald-500/15 rounded-full blur-[140px] pointer-events-none" aria-hidden="true" />
+        
+        {/* Modern Grid Overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.05]"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+            maskImage: "radial-gradient(ellipse 60% 60% at 50% 50%, #000 30%, transparent 100%)",
+            WebkitMaskImage: "radial-gradient(ellipse 60% 60% at 50% 50%, #000 30%, transparent 100%)",
+          }}
+          aria-hidden="true"
+        />
 
         <div className="relative container-custom">
-          <div className="max-w-3xl mx-auto text-center space-y-6">
+          <div className="max-w-3xl mx-auto text-center space-y-8">
+            <Badge className="bg-white/10 backdrop-blur-md text-emerald-300 border-white/10 px-4 py-2 text-sm gap-2 rounded-full font-medium inline-flex">
+              <CircleCheckBig className="w-4 h-4" aria-hidden="true" />
+              جاهزون لخدمتك في أي وقت
+            </Badge>
+
             <h2
               id="cta-heading"
-              className="text-3xl md:text-5xl font-black text-white leading-tight"
+              className="text-4xl md:text-5xl font-black text-white leading-[1.2] tracking-tight"
             >
-              جاهزون لخدمتك في أي وقت
+              انضم لأكثر من 500 عميل
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-green-400 mt-2">
+                وثقوا بنا في نقل أثاثهم بأمان
+              </span>
             </h2>
-            <p className="text-white/80 max-w-md mx-auto text-lg">
-              تواصل معنا الآن للحصول على معاينة مجانية وعرض سعر شفاف
+            
+            <p className="text-slate-300/90 max-w-xl mx-auto text-lg font-normal">
+              تواصل معنا الآن للحصول على معاينة مجانية وعرض سعر شفاف، فرقنا جاهزة للرد الفوري وتقديم أفضل خدمة.
             </p>
-            <div className="flex flex-wrap justify-center gap-3 pt-2">
+            
+            <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
               <Button
                 size="lg"
-                className="bg-white text-green-900 hover:bg-green-50 gap-2 text-base h-13 px-8 rounded-2xl font-bold shadow-xl"
+                className="bg-white text-slate-900 hover:bg-slate-100 gap-2 text-base h-14 px-8 rounded-2xl font-bold shadow-xl hover:scale-105 transition-all duration-300"
                 asChild
               >
-                <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("hero_main")}>
-                  <Phone className="w-5 h-5" />
+                <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("final_cta")}>
+                  <Phone className="w-5 h-5 text-emerald-600" />
                   اتصل دلوقتي
                 </a>
               </Button>
               <Button
                 size="lg"
-                className="bg-green-500 hover:bg-green-600 text-white gap-2 text-base h-13 px-8 rounded-2xl shadow-xl shadow-green-500/25"
+                className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white gap-2 text-base h-14 px-8 rounded-2xl font-bold shadow-xl shadow-emerald-500/25 hover:scale-105 transition-all duration-300 border border-white/10"
                 asChild
               >
-                <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("hero_main")}>
+                <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("final_cta")}>
                   <MessageCircle className="w-5 h-5" />
-                  واتساب
+                  تواصل واتساب
                 </a>
               </Button>
             </div>
