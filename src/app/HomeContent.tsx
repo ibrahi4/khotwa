@@ -20,6 +20,7 @@ import { CompoundsTrust } from "@/components/shared/CompoundsTrust";
 import { LiveOrdersFeed } from "@/components/shared/LiveOrdersFeed";
 import { InlineQuoteForm } from "@/components/shared/InlineQuoteForm";
 import { GallerySection } from "@/components/features/GallerySection";
+import { trackPhoneCall, trackWhatsApp } from "@/lib/analytics/events";
 
 const TestimonialsSection = dynamic(
   () => import("@/components/features/TestimonialsSection").then((m) => ({ default: m.TestimonialsSection })),
@@ -80,38 +81,6 @@ const statsData = [
   { value: 24, suffix: "/7", label: "خدمة مستمرة" },
 ];
 
-const localBusinessSchema = {
-  "@context": "https://schema.org",
-  "@type": "MovingCompany",
-  name: siteConfig.name,
-  description: siteConfig.description,
-  url: siteConfig.url,
-  telephone: siteConfig.phoneIntl,
-  email: siteConfig.email,
-  priceRange: "$$",
-  image: `${siteConfig.url}/herosection.webp`,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: siteConfig.address,
-    addressLocality: siteConfig.city,
-    addressRegion: siteConfig.region,
-    postalCode: siteConfig.postalCode,
-    addressCountry: siteConfig.countryCode,
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: siteConfig.coordinates.latitude,
-    longitude: siteConfig.coordinates.longitude,
-  },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: siteConfig.ratings.value,
-    reviewCount: siteConfig.ratings.count,
-    bestRating: siteConfig.ratings.best,
-  },
-  areaServed: featuredAreas.map((a) => ({ "@type": "City", name: a.name })),
-};
-
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   visible: (i: number) => ({
@@ -128,10 +97,7 @@ export default function HomeContent() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
-      />
+      
 
       {/* ═══════════════ HERO (Green Dark) ═══════════════ */}
       <section className="relative min-h-[92vh] flex items-center overflow-hidden">
@@ -163,8 +129,7 @@ export default function HomeContent() {
                 transition={{ duration: 0.7, delay: 0.15 }}
                 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] font-black text-white leading-[1.1] tracking-tight"
               >
-                نقلتك
-                <span className="block text-green-400 mt-1">بخطوة واحدة</span>
+                شركة نقل أثاث<span className="block text-green-400 mt-1">بالقاهرة والجيزة</span>
               </motion.h1>
 
               <motion.p
@@ -183,13 +148,13 @@ export default function HomeContent() {
                 className="flex flex-wrap gap-3"
               >
                 <Button size="lg" className="bg-green-500 hover:bg-green-600 text-white gap-2 text-base h-13 px-7 shadow-xl shadow-green-500/25 rounded-2xl" asChild>
-                  <a href={`tel:${siteConfig.phone}`}>
+                  <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("hero_main")}>
                     <Phone className="w-5 h-5" />
                     اتصل دلوقتي
                   </a>
                 </Button>
                 <Button size="lg" className="bg-white text-green-900 hover:bg-green-50 gap-2 text-base h-13 px-7 rounded-2xl font-bold" asChild>
-                  <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer">
+                  <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("hero_main")}>
                     <MessageCircle className="w-5 h-5" />
                     واتساب
                   </a>
@@ -641,7 +606,7 @@ export default function HomeContent() {
                 className="bg-white text-green-900 hover:bg-green-50 gap-2 text-base h-13 px-8 rounded-2xl font-bold shadow-xl"
                 asChild
               >
-                <a href={`tel:${siteConfig.phone}`}>
+                <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("hero_main")}>
                   <Phone className="w-5 h-5" />
                   اتصل دلوقتي
                 </a>
@@ -651,7 +616,7 @@ export default function HomeContent() {
                 className="bg-green-500 hover:bg-green-600 text-white gap-2 text-base h-13 px-8 rounded-2xl shadow-xl shadow-green-500/25"
                 asChild
               >
-                <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer">
+                <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("hero_main")}>
                   <MessageCircle className="w-5 h-5" />
                   واتساب
                 </a>

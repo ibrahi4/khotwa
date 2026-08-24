@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Phone, X } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { WhatsAppWidget } from "@/components/shared/WhatsAppWidget";
+import { trackPhoneCall, trackWhatsApp } from "@/lib/analytics/events";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -22,7 +23,7 @@ export function FloatingActions() {
     setMounted(true);
 
     const handleScroll = () => {
-      setIsVisible(window.scrollY > 600);
+      setIsVisible(window.scrollY > 100);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -38,8 +39,7 @@ export function FloatingActions() {
       <WhatsAppWidget open={showWidget} onClose={() => setShowWidget(false)} />
 
       {/* Call Button */}
-      <a
-        href={`tel:${siteConfig.phone}`}
+      <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("floating_btn")}
         className={`fixed bottom-4 md:bottom-6 left-4 md:left-6 z-40 transition-all duration-300 ${
           isVisible
             ? "translate-y-0 opacity-100 pointer-events-auto"
@@ -54,7 +54,7 @@ export function FloatingActions() {
 
       {/* WhatsApp Button */}
       <button
-        onClick={() => setShowWidget(!showWidget)}
+        onClick={() => { trackWhatsApp("floating_btn"); setShowWidget(!showWidget); }}
         className={`fixed bottom-4 md:bottom-6 right-4 md:right-6 z-40 transition-all duration-300 ${
           isVisible
             ? "translate-y-0 opacity-100 pointer-events-auto"
