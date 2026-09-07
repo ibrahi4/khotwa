@@ -7,7 +7,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Camera, ArrowLeft, X, ChevronRight, ChevronLeft,
+  Camera, ArrowLeft, X, ChevronRight, ChevronLeft,ؤ
   ZoomIn,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
