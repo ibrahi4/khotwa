@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { motion, useInView } from "framer-motion";
 import {
   Phone, MessageCircle, Star, Shield, Clock, Users, ArrowLeft,
-  MapPin, Truck, Award, Send, ThumbsUp, Zap, CheckCircle2,
-  Package, Wrench, Wind, Box, ArrowUpToLine, Gem,
+  MapPin, Truck, Send, ThumbsUp,
+  Wrench, Wind, Box, ArrowUpToLine, Gem,
   ClipboardCheck, PackageCheck, Home as HomeIcon, CircleCheckBig,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,15 +17,52 @@ import { services } from "@/config/services";
 import { featuredAreas } from "@/config/areas";
 import { siteConfig } from "@/config/site";
 import { CompoundsTrust } from "@/components/shared/CompoundsTrust";
-import { LiveOrdersFeed } from "@/components/shared/LiveOrdersFeed";
 import { InlineQuoteForm } from "@/components/shared/InlineQuoteForm";
 import { GallerySection } from "@/components/features/GallerySection";
 import { trackPhoneCall, trackWhatsApp } from "@/lib/analytics/events";
+
+/* ───────────────────────── Dynamic imports ─────────────────────────
+   LiveOrdersFeed معزول (ssr:false) عشان أي hydration mismatch منه
+   ميأثرش على باقي الصفحة. الباقي بيتترندر على السيرفر عادي. */
+const LiveOrdersFeed = dynamic(
+  () => import("@/components/shared/LiveOrdersFeed").then((m) => ({ default: m.LiveOrdersFeed })),
+  { ssr: false, loading: () => <div className="h-64 bg-slate-50" aria-hidden="true" /> }
+);
 
 const TestimonialsSection = dynamic(
   () => import("@/components/features/TestimonialsSection").then((m) => ({ default: m.TestimonialsSection })),
   { loading: () => <div className="h-96 bg-white" aria-hidden="true" /> }
 );
+
+/* ───────────────────────── Helpers ───────────────────────── */
+
+const DEFAULT_WA_TEXT = "السلام عليكم، عايز أعرف سعر نقل عفش/أثاث";
+
+function waLink(text: string = DEFAULT_WA_TEXT) {
+  return `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(text)}`;
+}
+
+/* بيحفظ gclid / gbraid / wbraid / UTM أول ما الزائر يدخل من إعلان.
+   القيمة بتتخزن في localStorage وكوكي اسمها ad_params (JSON) لمدة 90 يوم.
+   اقرأها من InlineQuoteForm وابعتها مع الطلب عشان تقدر ترفع النقلات المقفولة
+   (Offline conversions) لجوجل. الأفضل تنقل الدالة دي للـ layout عشان تشتغل على كل الصفحات. */
+function captureAdParams() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const keys = ["gclid", "gbraid", "wbraid", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+    const found: Record<string, string> = {};
+    keys.forEach((k) => {
+      const v = params.get(k);
+      if (v) found[k] = v;
+    });
+    if (Object.keys(found).length === 0) return;
+    const payload = JSON.stringify({ ...found, landing: window.location.pathname, ts: Date.now() });
+    try { localStorage.setItem("ad_params", payload); } catch { /* ignore */ }
+    document.cookie = `ad_params=${encodeURIComponent(payload)}; path=/; max-age=${60 * 60 * 24 * 90}; SameSite=Lax`;
+  } catch {
+    /* ignore */
+  }
+}
 
 const serviceIcons: Record<string, React.ElementType> = {
   "naql-athath": Truck,
@@ -55,25 +92,158 @@ function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: str
 
   return (
     <div ref={ref} className="text-4xl md:text-5xl font-black text-slate-900 tabular-nums">
-      {count.toLocaleString()}{suffix}
+      {count.toLocaleString("en-US")}{suffix}
     </div>
   );
 }
 
+/* ───────────────────────── Quick estimate (WhatsApp) ─────────────────────────
+   بيجمع تفاصيل النقلة ويبني رسالة واتساب جاهزة. مفيش أرقام أسعار متألفة. */
+
+const PROPERTY_TYPES = ["شقة غرفة أو غرفتين", "شقة 3 غرف", "شقة 4 غرف أو أكتر", "فيلا / دوبلكس", "مكتب / شركة"];
+const FLOORS = ["أرضي", "من 1 لـ 3", "من 4 لـ 6", "7 فأعلى"];
+const EXTRAS = ["فك وتركيب", "تغليف", "ونش رفع", "فك وتركيب تكييفات"];
+const TIMINGS = ["خلال أسبوع", "خلال شهر", "لسه بسأل عن السعر"];
+
+const fieldCls =
+  "w-full h-11 rounded-xl border border-slate-200 bg-white px-3 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500";
+
+function QuickEstimateCard({ source }: { source: string }) {
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [property, setProperty] = useState("");
+  const [floor, setFloor] = useState("");
+  const [elevator, setElevator] = useState<"" | "yes" | "no">("");
+  const [extras, setExtras] = useState<string[]>([]);
+  const [timing, setTiming] = useState("");
+
+  const href = useMemo(() => {
+    const lines = ["السلام عليكم، عايز عرض سعر نقل عفش:"];
+    if (from.trim()) lines.push(`- من: ${from.trim()}`);
+    if (to.trim()) lines.push(`- إلى: ${to.trim()}`);
+    if (property) lines.push(`- النوع: ${property}`);
+    if (floor) lines.push(`- الدور: ${floor}`);
+    if (elevator) lines.push(`- أسانسير: ${elevator === "yes" ? "فيه" : "مفيش"}`);
+    if (extras.length) lines.push(`- خدمات مطلوبة: ${extras.join("، ")}`);
+    if (timing) lines.push(`- الموعد: ${timing}`);
+    return waLink(lines.length > 1 ? lines.join("\n") : DEFAULT_WA_TEXT);
+  }, [from, to, property, floor, elevator, extras, timing]);
+
+  const toggleExtra = (x: string) =>
+    setExtras((prev) => (prev.includes(x) ? prev.filter((i) => i !== x) : [...prev, x]));
+
+  const id = (name: string) => `${source}-${name}`;
+
+  return (
+    <div className="w-full rounded-3xl bg-white p-5 shadow-2xl md:p-6 text-right">
+      <h2 className="text-xl font-black text-green-950">احسب عرض سعرك في دقيقة</h2>
+      <p className="mt-1 text-sm text-slate-600">
+        املا التفاصيل وابعتها على واتساب، وهنرد عليك بعرض سعر واضح.
+      </p>
+
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <div>
+          <label htmlFor={id("from")} className="mb-1 block text-sm font-semibold text-slate-700">من منطقة</label>
+          <input id={id("from")} className={fieldCls} value={from} onChange={(e) => setFrom(e.target.value)} placeholder="مثال: التجمع" autoComplete="off" />
+        </div>
+        <div>
+          <label htmlFor={id("to")} className="mb-1 block text-sm font-semibold text-slate-700">إلى منطقة</label>
+          <input id={id("to")} className={fieldCls} value={to} onChange={(e) => setTo(e.target.value)} placeholder="مثال: الشيخ زايد" autoComplete="off" />
+        </div>
+        <div>
+          <label htmlFor={id("property")} className="mb-1 block text-sm font-semibold text-slate-700">نوع النقلة</label>
+          <select id={id("property")} className={fieldCls} value={property} onChange={(e) => setProperty(e.target.value)}>
+            <option value="">اختار</option>
+            {PROPERTY_TYPES.map((p) => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor={id("floor")} className="mb-1 block text-sm font-semibold text-slate-700">الدور</label>
+          <select id={id("floor")} className={fieldCls} value={floor} onChange={(e) => setFloor(e.target.value)}>
+            <option value="">اختار</option>
+            {FLOORS.map((f) => <option key={f} value={f}>{f}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div className="mt-3">
+        <span className="mb-1 block text-sm font-semibold text-slate-700">أسانسير</span>
+        <div className="grid grid-cols-2 gap-2">
+          {([["yes", "فيه أسانسير"], ["no", "مفيش أسانسير"]] as const).map(([val, label]) => (
+            <button
+              key={val}
+              type="button"
+              aria-pressed={elevator === val}
+              onClick={() => setElevator(elevator === val ? "" : val)}
+              className={`h-11 rounded-xl border text-sm font-semibold transition-colors ${
+                elevator === val ? "border-green-600 bg-green-50 text-green-800" : "border-slate-200 bg-white text-slate-700 hover:border-green-300"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-3">
+        <span className="mb-1 block text-sm font-semibold text-slate-700">محتاج إيه كمان؟</span>
+        <div className="flex flex-wrap gap-2">
+          {EXTRAS.map((x) => (
+            <button
+              key={x}
+              type="button"
+              aria-pressed={extras.includes(x)}
+              onClick={() => toggleExtra(x)}
+              className={`h-10 rounded-full border px-4 text-sm font-semibold transition-colors ${
+                extras.includes(x) ? "border-green-600 bg-green-50 text-green-800" : "border-slate-200 bg-white text-slate-700 hover:border-green-300"
+              }`}
+            >
+              {x}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-3">
+        <label htmlFor={id("timing")} className="mb-1 block text-sm font-semibold text-slate-700">الموعد</label>
+        <select id={id("timing")} className={fieldCls} value={timing} onChange={(e) => setTiming(e.target.value)}>
+          <option value="">اختار</option>
+          {TIMINGS.map((t) => <option key={t} value={t}>{t}</option>)}
+        </select>
+      </div>
+
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => trackWhatsApp(source)}
+        className="mt-5 inline-flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-green-600 px-6 text-base font-bold text-white shadow-lg shadow-green-600/25 transition-colors hover:bg-green-700"
+      >
+        <MessageCircle className="h-5 w-5" aria-hidden="true" />
+        ابعت التفاصيل على واتساب
+      </a>
+      <p className="mt-2 text-center text-xs text-slate-500">المعاينة مجانية، والسعر النهائي بيتحدد بعد المعاينة.</p>
+    </div>
+  );
+}
+
+/* ───────────────────────── Static content ───────────────────────── */
+
 const steps = [
-  { icon: ClipboardCheck, title: "معاينة مجانية", desc: "نُقيّم أثاثك ونحدد الحلول المناسبة" },
-  { icon: PackageCheck, title: "تغليف احترافي", desc: "مواد عالمية لحماية كاملة لكل قطعة" },
-  { icon: Truck, title: "نقل آمن", desc: "أسطول مجهز بأنظمة تثبيت متقدمة" },
-  { icon: HomeIcon, title: "تركيب وتسليم", desc: "نُرتّب كل شيء في مكانه الجديد" },
+  { icon: ClipboardCheck, title: "معاينة مجانية", desc: "بنعاين الأثاث ونحدد اللي هيتفك واللي هيتغلف" },
+  { icon: PackageCheck, title: "تغليف احترافي", desc: "مواد تغليف بتحمي كل قطعة من الخدش والكسر" },
+  { icon: Truck, title: "نقل آمن", desc: "عربيات مجهزة وتثبيت محكم للحمولة" },
+  { icon: HomeIcon, title: "تركيب وتسليم", desc: "بنرتب كل حاجة في مكانها ونركّب اللي اتفك" },
 ];
 
 const whyUsItems = [
-  { icon: Shield, title: "تأمين شامل", desc: "غطاء تأميني كامل على كل قطعة" },
-  { icon: Users, title: "فريق معتمد", desc: "فنيون مدربون بخبرة عالية" },
-  { icon: Clock, title: "التزام بالمواعيد", desc: "دقة كاملة في المواعيد المتفق عليها" },
-  { icon: ThumbsUp, title: "أسعار شفافة", desc: "بدون رسوم خفية أو مفاجآت" },
+  { icon: Shield, title: "تأمين شامل", desc: "غطاء تأميني على كل قطعة" },
+  { icon: Users, title: "فريق معتمد", desc: "فنيين مدربين بخبرة عالية" },
+  { icon: Clock, title: "التزام بالمواعيد", desc: "بنوصل في الميعاد المتفق عليه" },
+  { icon: ThumbsUp, title: "أسعار واضحة", desc: "سعر معروف قبل ما نبدأ، من غير رسوم مخفية" },
 ];
 
+/* الأرقام دي لازم تكون حقيقية ومطابقة لتقييمك على Google Business. */
 const statsData = [
   { value: 500, suffix: "+", label: "عميل راضٍ" },
   { value: 10, suffix: "+", label: "سنوات خبرة" },
@@ -90,17 +260,15 @@ const fadeUp = {
   }),
 };
 
+/* ───────────────────────── Page ───────────────────────── */
+
 export default function HomeContent() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-  if (!mounted) return null;
+  useEffect(() => { captureAdParams(); }, []);
 
   return (
     <>
-      
-
-      {/* ═══════════════ HERO (Green Dark) ═══════════════ */}
-      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+      {/* ═══════════════ HERO ═══════════════ */}
+      <section className="relative flex min-h-[88svh] items-center overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/herosection.webp"
@@ -108,168 +276,105 @@ export default function HomeContent() {
             fill
             className="object-cover"
             sizes="100vw"
+            quality={70}
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-l from-green-950/95 via-green-950/80 to-green-950/40" />
         </div>
 
-        <div className="container-custom relative z-10 py-20">
-          <div className="grid lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7 space-y-7">
-              <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
-                <Badge className="bg-white/10 backdrop-blur-md text-white border-white/20 text-sm px-4 py-2 gap-2">
-                  <CircleCheckBig className="w-4 h-4 text-green-400" />
-                  +500 عميل يثقون بنا في القاهرة الكبرى
-                </Badge>
-              </motion.div>
+        <div className="container-custom relative z-10 py-16 md:py-20">
+          <div className="grid items-center gap-8 lg:grid-cols-12">
+            <div className="space-y-6 lg:col-span-7">
+              <Badge className="gap-2 border-white/20 bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-md">
+                <CircleCheckBig className="h-4 w-4 text-green-400" aria-hidden="true" />
+                +500 عميل يثقون بنا في القاهرة الكبرى
+              </Badge>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.15 }}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] font-black text-white leading-[1.1] tracking-tight"
-              >
-                شركة نقل أثاث<span className="block text-green-400 mt-1">بالقاهرة والجيزة</span>
-              </motion.h1>
+              {/* H1 والفقرة من غير أنيميشن عشان الـ LCP يظهر فوراً */}
+              <h1 className="text-4xl font-black leading-[1.15] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[3.75rem]">
+                شركة نقل عفش وأثاث
+                <span className="mt-1 block text-green-400">بالقاهرة والجيزة</span>
+              </h1>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.3 }}
-                className="text-lg md:text-xl text-white/70 leading-relaxed max-w-xl"
-              >
-                فريق محترف بخبرة +10 سنوات. تغليف عالمي، سيارات مجهزة، وضمان كامل. من الباب للباب.
-              </motion.p>
+              <p className="max-w-xl text-lg leading-relaxed text-white/80 md:text-xl">
+                نقل وفك وتركيب وتغليف وونش رفع. فريق بخبرة +10 سنوات، ومعاينة مجانية قبل ما تحجز.
+              </p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.45 }}
-                className="flex flex-wrap gap-3"
-              >
-                <Button size="lg" className="bg-green-500 hover:bg-green-600 text-white gap-2 text-base h-13 px-7 shadow-xl shadow-green-500/25 rounded-2xl" asChild>
+              <div className="flex flex-wrap gap-3">
+                <Button size="lg" className="h-13 gap-2 rounded-2xl bg-green-500 px-7 text-base text-white shadow-xl shadow-green-500/25 hover:bg-green-600" asChild>
                   <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("hero_main")}>
-                    <Phone className="w-5 h-5" />
+                    <Phone className="h-5 w-5" aria-hidden="true" />
                     اتصل دلوقتي
                   </a>
                 </Button>
-                <Button size="lg" className="bg-white text-green-900 hover:bg-green-50 gap-2 text-base h-13 px-7 rounded-2xl font-bold" asChild>
-                  <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("hero_main")}>
-                    <MessageCircle className="w-5 h-5" />
+                <Button size="lg" className="h-13 gap-2 rounded-2xl bg-white px-7 text-base font-bold text-green-900 hover:bg-green-50" asChild>
+                  <a href={waLink()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("hero_main")}>
+                    <MessageCircle className="h-5 w-5" aria-hidden="true" />
                     واتساب
                   </a>
                 </Button>
                 <a
                   href="#quote-form"
-                  className="inline-flex h-13 items-center justify-center gap-2 rounded-2xl border-2 border-white/30 bg-white/5 backdrop-blur-sm px-7 text-base font-medium text-white transition-all hover:bg-white/15"
+                  className="inline-flex h-13 items-center justify-center gap-2 rounded-2xl border-2 border-white/30 bg-white/5 px-7 text-base font-medium text-white backdrop-blur-sm transition-all hover:bg-white/15"
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="h-5 w-5" aria-hidden="true" />
                   عرض سعر مجاني
                 </a>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="flex items-center gap-6 pt-4"
-              >
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2">
                 {[
                   { icon: Shield, text: "ضمان شامل" },
                   { icon: Clock, text: "24/7" },
-                  { icon: PackageCheck, text: "تغليف عالمي" },
-                ].map((item, i) => {
+                  { icon: PackageCheck, text: "تغليف احترافي" },
+                ].map((item) => {
                   const ItemIcon = item.icon;
                   return (
-                    <div key={i} className="flex items-center gap-2 text-white/50 text-sm">
-                      <ItemIcon className="w-4 h-4 text-green-400/70" />
+                    <div key={item.text} className="flex items-center gap-2 text-sm text-white/70">
+                      <ItemIcon className="h-4 w-4 text-green-400" aria-hidden="true" />
                       <span>{item.text}</span>
                     </div>
                   );
                 })}
-              </motion.div>
+              </div>
             </div>
 
-            <div className="hidden lg:flex lg:col-span-5 flex-col items-center gap-5 relative">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8, y: -20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-                className="bg-white rounded-3xl shadow-2xl p-5 w-64 self-start"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center">
-                    <Star className="w-6 h-6 fill-amber-400 text-amber-400" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-black text-green-950">4.9</div>
-                    <div className="text-xs text-slate-500">تقييم العملاء</div>
-                  </div>
-                </div>
-                <div className="flex gap-0.5 mt-3">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
-                className="bg-white rounded-3xl shadow-2xl p-5 w-64 self-end"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center">
-                    <Truck className="w-6 h-6 text-green-700" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-black text-green-950">500+</div>
-                    <div className="text-xs text-slate-500">عميل راضٍ</div>
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.9, duration: 0.5 }}
-                className="bg-green-600 text-white rounded-3xl shadow-2xl p-5 w-64 self-start"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <Award className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-black">+10</div>
-                    <div className="text-xs text-green-200">سنوات خبرة</div>
-                  </div>
-                </div>
-              </motion.div>
+            {/* Desktop: فورم التقدير داخل الـ hero */}
+            <div className="hidden lg:col-span-5 lg:block">
+              <QuickEstimateCard source="hero_estimate" />
+              <div className="mt-4 flex items-center justify-center gap-6 text-sm text-white/80">
+                <span className="flex items-center gap-1.5">
+                  <Star className="h-4 w-4 fill-amber-400 text-amber-400" aria-hidden="true" />
+                  4.9 تقييم العملاء
+                </span>
+                <span>+500 عميل</span>
+                <span>+10 سنوات خبرة</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="absolute bottom-0 inset-x-0" aria-hidden="true">
+        <div className="absolute inset-x-0 bottom-0" aria-hidden="true">
           <svg viewBox="0 0 1440 80" fill="none" className="w-full" preserveAspectRatio="none">
             <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z" fill="#FFFFFF" />
           </svg>
         </div>
       </section>
 
-      {/* ═══════════════ COMPOUNDS TRUST (White) ═══════════════ */}
+      {/* Mobile / Tablet: فورم التقدير تحت الـ hero مباشرة */}
+      <section className="bg-white px-4 pb-10 pt-2 lg:hidden" aria-label="احسب عرض سعرك">
+        <div className="mx-auto max-w-lg rounded-3xl border border-slate-100 shadow-xl">
+          <QuickEstimateCard source="mobile_estimate" />
+        </div>
+      </section>
+
+      {/* ═══════════════ COMPOUNDS TRUST ═══════════════ */}
       <CompoundsTrust />
 
-      {/* ═══════════════ GALLERY (White) ═══════════════ */}
-      <GallerySection />
-
-      {/* ═══════════════ LIVE ORDERS (Off-white) ═══════════════ */}
-      <LiveOrdersFeed />
-
-      {/* ═══════════════ STATS (White) ═══════════════ */}
-      <section className="py-16 md:py-20 bg-white border-y border-slate-100" aria-label="إحصائيات">
+      {/* ═══════════════ STATS ═══════════════ */}
+      <section className="border-y border-slate-100 bg-white py-14 md:py-16" aria-label="إحصائيات">
         <div className="container-custom">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
             {statsData.map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -281,32 +386,33 @@ export default function HomeContent() {
                 className="text-center"
               >
                 <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-                <div className="text-sm text-slate-500 mt-2 font-medium">{stat.label}</div>
+                <div className="mt-2 text-sm font-medium text-slate-500">{stat.label}</div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════ SERVICES (Off-white) ═══════════════ */}
+      {/* ═══════════════ TESTIMONIALS (قرّبناها من الأعلى) ═══════════════ */}
+      <TestimonialsSection />
+
+      {/* ═══════════════ GALLERY ═══════════════ */}
+      <GallerySection />
+
+      {/* ═══════════════ SERVICES ═══════════════ */}
       <section className="section-padding bg-slate-50/60" aria-labelledby="services-heading">
         <div className="container-custom">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <p className="text-sm font-bold text-green-700 mb-3 tracking-wider uppercase">
-              خدماتنا
-            </p>
-            <h2
-              id="services-heading"
-              className="text-3xl md:text-4xl font-black text-slate-900 mb-3 leading-tight"
-            >
-              حلول متكاملة لكل احتياجاتك
+          <div className="mx-auto mb-12 max-w-2xl text-center">
+            <p className="mb-3 text-sm font-bold tracking-wider text-green-700">خدماتنا</p>
+            <h2 id="services-heading" className="mb-3 text-3xl font-black leading-tight text-slate-900 md:text-4xl">
+              كل اللي تحتاجه لنقلة مريحة
             </h2>
-            <p className="text-slate-600 text-base leading-relaxed">
-              6 خدمات احترافية تحت سقف واحد بمعايير عالمية
+            <p className="text-base leading-relaxed text-slate-600">
+              6 خدمات تحت سقف واحد: نقل عفش، فك وتركيب، تغليف، وونش رفع
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+          <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             {services.map((service, i) => {
               const SIcon = serviceIcons[service.slug] || Truck;
               return (
@@ -319,36 +425,30 @@ export default function HomeContent() {
                   variants={fadeUp}
                 >
                   <Link href={`/services/${service.slug}`} className="group block">
-                    <article className={`flex items-center gap-4 md:gap-6 p-5 md:p-6 hover:bg-green-50/30 transition-all duration-300 ${
-                      i !== services.length - 1 ? "border-b border-slate-100" : ""
-                    }`}>
-                      {/* Icon */}
-                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-green-50 flex items-center justify-center shrink-0 group-hover:bg-green-700 transition-colors duration-300">
-                        <SIcon className="w-6 h-6 md:w-7 md:h-7 text-green-700 group-hover:text-white transition-colors duration-300" aria-hidden="true" />
+                    <article
+                      className={`flex items-center gap-4 p-5 transition-all duration-300 hover:bg-green-50/30 md:gap-6 md:p-6 ${
+                        i !== services.length - 1 ? "border-b border-slate-100" : ""
+                      }`}
+                    >
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-50 transition-colors duration-300 group-hover:bg-green-700 md:h-14 md:w-14">
+                        <SIcon className="h-6 w-6 text-green-700 transition-colors duration-300 group-hover:text-white md:h-7 md:w-7" aria-hidden="true" />
                       </div>
 
-                      {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-base md:text-lg font-bold text-slate-900 group-hover:text-green-800 transition-colors leading-tight">
-                            {service.name}
-                          </h3>
-                          <span className="hidden sm:inline text-[10px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                            0{i + 1}
-                          </span>
-                        </div>
-                        <p className="text-xs md:text-sm text-slate-600 leading-relaxed line-clamp-2 md:line-clamp-1">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="mb-1 text-base font-bold leading-tight text-slate-900 transition-colors group-hover:text-green-800 md:text-lg">
+                          {service.name}
+                        </h3>
+                        <p className="line-clamp-2 text-xs leading-relaxed text-slate-600 md:line-clamp-1 md:text-sm">
                           {service.shortDescription}
                         </p>
                       </div>
 
-                      {/* Arrow */}
-                      <div className="shrink-0 flex items-center gap-2 text-green-700">
-                        <span className="hidden md:inline text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex shrink-0 items-center gap-2 text-green-700">
+                        <span className="hidden text-xs font-semibold opacity-0 transition-opacity group-hover:opacity-100 md:inline">
                           اعرف المزيد
                         </span>
-                        <div className="w-9 h-9 rounded-full bg-slate-50 group-hover:bg-green-700 flex items-center justify-center transition-all duration-300">
-                          <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:-translate-x-0.5 transition-all" aria-hidden="true" />
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-50 transition-all duration-300 group-hover:bg-green-700">
+                          <ArrowLeft className="h-4 w-4 text-slate-500 transition-all group-hover:-translate-x-0.5 group-hover:text-white" aria-hidden="true" />
                         </div>
                       </div>
                     </article>
@@ -358,41 +458,29 @@ export default function HomeContent() {
             })}
           </div>
 
-          {/* View all services CTA */}
-          <div className="text-center mt-8">
-            <Button
-              asChild
-              variant="outline"
-              className="border-slate-200 hover:border-green-300 hover:bg-green-50 text-slate-800 h-11 px-6 rounded-xl gap-2"
-            >
+          <div className="mt-8 text-center">
+            <Button asChild variant="outline" className="h-11 gap-2 rounded-xl border-slate-200 px-6 text-slate-800 hover:border-green-300 hover:bg-green-50">
               <Link href="/services">
                 عرض جميع تفاصيل الخدمات
-                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════ HOW IT WORKS (White) ═══════════════ */}
+      {/* ═══════════════ HOW IT WORKS ═══════════════ */}
       <section className="section-padding bg-white" aria-labelledby="how-heading">
         <div className="container-custom">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <p className="text-sm font-bold text-green-700 mb-3 tracking-wider uppercase">
-              كيف نعمل
-            </p>
-            <h2
-              id="how-heading"
-              className="text-3xl md:text-4xl font-black text-slate-900 mb-3 leading-tight"
-            >
-              4 خطوات نحو نقلة مثالية
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <p className="mb-3 text-sm font-bold tracking-wider text-green-700">إزاي بنشتغل</p>
+            <h2 id="how-heading" className="mb-3 text-3xl font-black leading-tight text-slate-900 md:text-4xl">
+              4 خطوات لنقلة من غير وجع دماغ
             </h2>
-            <p className="text-slate-600 text-base leading-relaxed">
-              عملية منظمة من المعاينة حتى التسليم النهائي
-            </p>
+            <p className="text-base leading-relaxed text-slate-600">من المعاينة لحد التسليم النهائي</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step, i) => {
               const StepIcon = step.icon;
               return (
@@ -405,23 +493,20 @@ export default function HomeContent() {
                   variants={fadeUp}
                   className="relative"
                 >
-                  <div className="bg-slate-50/60 border border-slate-100 rounded-2xl p-6 h-full hover:border-green-200 hover:bg-white transition-all">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-11 h-11 rounded-xl bg-green-700 text-white flex items-center justify-center font-bold text-sm tabular-nums">
-                        0{i + 1}
+                  <div className="h-full rounded-2xl border border-slate-100 bg-slate-50/60 p-6 transition-all hover:border-green-200 hover:bg-white">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-700 text-sm font-bold text-white tabular-nums">
+                        {i + 1}
                       </div>
-                      <StepIcon className="w-5 h-5 text-green-600" aria-hidden="true" />
+                      <StepIcon className="h-5 w-5 text-green-600" aria-hidden="true" />
                     </div>
-                    <h3 className="font-bold text-slate-900 mb-2">{step.title}</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">{step.desc}</p>
+                    <h3 className="mb-2 font-bold text-slate-900">{step.title}</h3>
+                    <p className="text-sm leading-relaxed text-slate-600">{step.desc}</p>
                   </div>
 
                   {i < steps.length - 1 && (
-                    <div
-                      className="hidden lg:flex absolute top-1/2 -left-3 -translate-y-1/2 z-10"
-                      aria-hidden="true"
-                    >
-                      <ArrowLeft className="w-5 h-5 text-slate-300" />
+                    <div className="absolute -left-3 top-1/2 z-10 hidden -translate-y-1/2 lg:flex" aria-hidden="true">
+                      <ArrowLeft className="h-5 w-5 text-slate-300" />
                     </div>
                   )}
                 </motion.article>
@@ -431,26 +516,20 @@ export default function HomeContent() {
         </div>
       </section>
 
-      {/* ═══════════════ WHY US (Off-white) ═══════════════ */}
+      {/* ═══════════════ WHY US ═══════════════ */}
       <section className="section-padding bg-slate-50/60" aria-labelledby="why-heading">
         <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
-              <p className="text-sm font-bold text-green-700 mb-3 tracking-wider uppercase">
-                لماذا نحن
-              </p>
-              <h2
-                id="why-heading"
-                className="text-3xl md:text-4xl font-black text-slate-900 mb-5 leading-tight"
-              >
-                خبرة تصنع الفارق
+              <p className="mb-3 text-sm font-bold tracking-wider text-green-700">ليه تختارنا</p>
+              <h2 id="why-heading" className="mb-5 text-3xl font-black leading-tight text-slate-900 md:text-4xl">
+                خبرة تفرق في يوم النقل
               </h2>
-              <p className="text-slate-600 text-base leading-relaxed mb-8">
-                نتعامل مع كل قطعة من أثاثك كأنها من أثاثنا. لأننا نُدرك أن كل قطعة تحمل ذكرى
-                وقيمة تستحق العناية الكاملة.
+              <p className="mb-8 text-base leading-relaxed text-slate-600">
+                بنتعامل مع كل قطعة كأنها أثاثنا، لأن كل قطعة ليها قيمة وذكرى عندك.
               </p>
 
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 {whyUsItems.map((item, i) => {
                   const ItemIcon = item.icon;
                   return (
@@ -461,14 +540,14 @@ export default function HomeContent() {
                       whileInView="visible"
                       viewport={{ once: true }}
                       variants={fadeUp}
-                      className="flex gap-3 bg-white border border-slate-100 rounded-2xl p-5"
+                      className="flex gap-3 rounded-2xl border border-slate-100 bg-white p-5"
                     >
-                      <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
-                        <ItemIcon className="w-5 h-5 text-green-700" aria-hidden="true" />
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-50">
+                        <ItemIcon className="h-5 w-5 text-green-700" aria-hidden="true" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-slate-900 text-sm mb-1">{item.title}</h3>
-                        <p className="text-xs text-slate-600 leading-relaxed">{item.desc}</p>
+                        <h3 className="mb-1 text-sm font-bold text-slate-900">{item.title}</h3>
+                        <p className="text-xs leading-relaxed text-slate-600">{item.desc}</p>
                       </div>
                     </motion.div>
                   );
@@ -481,9 +560,10 @@ export default function HomeContent() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="hidden lg:block relative"
+              className="relative hidden lg:block"
             >
-              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden bg-slate-100">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-slate-100">
+                {/* غيّر الصورة دي بصورة حقيقية للفريق أثناء الشغل */}
                 <Image
                   src="/herosection.webp"
                   alt="فريق خطوة أثناء العمل"
@@ -494,44 +574,40 @@ export default function HomeContent() {
                 />
               </div>
 
-              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl border border-slate-100 p-5 max-w-[240px]">
-                <div className="flex items-center gap-1 mb-2">
-                  {[1,2,3,4,5].map((i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+              <div className="absolute -bottom-6 -left-6 max-w-[240px] rounded-2xl border border-slate-100 bg-white p-5 shadow-xl">
+                <div className="mb-2 flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" aria-hidden="true" />
                   ))}
                 </div>
-                <p className="text-sm text-slate-700 font-medium leading-relaxed">
+                <p className="text-sm font-medium leading-relaxed text-slate-700">
                   &ldquo;خدمة استثنائية وفريق محترف&rdquo;
                 </p>
-                <p className="text-xs text-slate-500 mt-2">— أحمد م.، التجمع الخامس</p>
+                <p className="mt-2 text-xs text-slate-500">— أحمد م.، التجمع الخامس</p>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════ TESTIMONIALS (White) ═══════════════ */}
-      <TestimonialsSection />
+      {/* ═══════════════ LIVE ORDERS ═══════════════
+          لو الطلبات دي مش حقيقية، امسح السطر ده. سياسة جوجل بتمنع الادعاءات المضللة. */}
+      <LiveOrdersFeed />
 
-      {/* ═══════════════ AREAS (White) ═══════════════ */}
+      {/* ═══════════════ AREAS ═══════════════ */}
       <section className="section-padding bg-white" aria-labelledby="areas-heading">
         <div className="container-custom">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <p className="text-sm font-bold text-green-700 mb-3 tracking-wider uppercase">
-              مناطق الخدمة
-            </p>
-            <h2
-              id="areas-heading"
-              className="text-3xl md:text-4xl font-black text-slate-900 mb-3 leading-tight"
-            >
-              نصل إليك أينما كنت
+          <div className="mx-auto mb-12 max-w-2xl text-center">
+            <p className="mb-3 text-sm font-bold tracking-wider text-green-700">مناطق الخدمة</p>
+            <h2 id="areas-heading" className="mb-3 text-3xl font-black leading-tight text-slate-900 md:text-4xl">
+              بنوصلك أينما كنت
             </h2>
-            <p className="text-slate-600 text-base leading-relaxed">
-              نُغطي جميع المناطق الرئيسية والكمبوندات في القاهرة الكبرى
+            <p className="text-base leading-relaxed text-slate-600">
+              بنغطي المناطق الرئيسية والكمبوندات في القاهرة الكبرى
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {featuredAreas.map((area, i) => (
               <motion.div
                 key={area.slug}
@@ -543,55 +619,50 @@ export default function HomeContent() {
               >
                 <Link
                   href={`/areas/${area.slug}`}
-                  className="group flex items-center gap-3 bg-slate-50/60 border border-slate-100 rounded-xl p-4 hover:border-green-300 hover:bg-white hover:shadow-md transition-all"
+                  className="group flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-4 transition-all hover:border-green-300 hover:bg-white hover:shadow-md"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center shrink-0 group-hover:bg-green-700 group-hover:border-green-700 transition-colors">
-                    <MapPin className="w-5 h-5 text-green-700 group-hover:text-white transition-colors" aria-hidden="true" />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-100 bg-white transition-colors group-hover:border-green-700 group-hover:bg-green-700">
+                    <MapPin className="h-5 w-5 text-green-700 transition-colors group-hover:text-white" aria-hidden="true" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="font-semibold text-slate-900 text-sm truncate group-hover:text-green-800 transition-colors">
+                    <div className="truncate text-sm font-semibold text-slate-900 transition-colors group-hover:text-green-800">
                       {area.name}
                     </div>
                     <div className="text-xs text-slate-500">
                       {area.neighborhoods?.length || 0} أحياء · خدمة VIP
                     </div>
                   </div>
-                  <ArrowLeft className="w-4 h-4 text-slate-300 group-hover:text-green-600 transition-colors" aria-hidden="true" />
+                  <ArrowLeft className="h-4 w-4 text-slate-300 transition-colors group-hover:text-green-600" aria-hidden="true" />
                 </Link>
               </motion.div>
             ))}
           </div>
 
-          <div className="text-center mt-10">
-            <Button
-              asChild
-              variant="outline"
-              className="border-slate-200 hover:border-green-300 hover:bg-green-50 text-slate-800 h-11 px-6 rounded-xl"
-            >
+          <div className="mt-10 text-center">
+            <Button asChild variant="outline" className="h-11 rounded-xl border-slate-200 px-6 text-slate-800 hover:border-green-300 hover:bg-green-50">
               <Link href="/areas">
                 عرض جميع المناطق
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
           </div>
         </div>
       </section>
 
+      {/* ═══════════════ QUOTE FORM ═══════════════ */}
       <InlineQuoteForm />
 
-      {/* ═══════════════ FINAL CTA (Green Dark) ═══════════════ */}
+      {/* ═══════════════ FINAL CTA ═══════════════ */}
       <section
-        className="section-padding relative overflow-hidden bg-slate-950 border-t border-emerald-950"
+        className="section-padding relative overflow-hidden border-t border-emerald-950 bg-slate-950"
         aria-labelledby="cta-heading"
       >
-        {/* Soft Ambient Glows */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-emerald-500/15 rounded-full blur-[140px] pointer-events-none" aria-hidden="true" />
-        
-        {/* Modern Grid Overlay */}
+        <div className="pointer-events-none absolute left-1/2 top-1/2 h-[400px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/15 blur-[140px]" aria-hidden="true" />
         <div
-          className="absolute inset-0 pointer-events-none opacity-[0.05]"
+          className="pointer-events-none absolute inset-0 opacity-[0.05]"
           style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
             backgroundSize: "40px 40px",
             maskImage: "radial-gradient(ellipse 60% 60% at 50% 50%, #000 30%, transparent 100%)",
             WebkitMaskImage: "radial-gradient(ellipse 60% 60% at 50% 50%, #000 30%, transparent 100%)",
@@ -599,45 +670,32 @@ export default function HomeContent() {
           aria-hidden="true"
         />
 
-        <div className="relative container-custom">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <Badge className="bg-white/10 backdrop-blur-md text-emerald-300 border-white/10 px-4 py-2 text-sm gap-2 rounded-full font-medium inline-flex">
-              <CircleCheckBig className="w-4 h-4" aria-hidden="true" />
-              جاهزون لخدمتك في أي وقت
+        <div className="container-custom relative">
+          <div className="mx-auto max-w-3xl space-y-8 text-center">
+            <Badge className="inline-flex gap-2 rounded-full border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-emerald-300 backdrop-blur-md">
+              <CircleCheckBig className="h-4 w-4" aria-hidden="true" />
+              جاهزين لخدمتك في أي وقت
             </Badge>
 
-            <h2
-              id="cta-heading"
-              className="text-4xl md:text-5xl font-black text-white leading-[1.2] tracking-tight"
-            >
-              انضم لأكثر من 500 عميل
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-green-400 mt-2">
-                وثقوا بنا في نقل أثاثهم بأمان
-              </span>
+            <h2 id="cta-heading" className="text-4xl font-black leading-[1.2] tracking-tight text-white md:text-5xl">
+              انضم لأكتر من 500 عميل
+              <span className="mt-2 block text-green-400">وثقوا فينا في نقل أثاثهم بأمان</span>
             </h2>
-            
-            <p className="text-slate-300/90 max-w-xl mx-auto text-lg font-normal">
-              تواصل معنا الآن للحصول على معاينة مجانية وعرض سعر شفاف، فرقنا جاهزة للرد الفوري وتقديم أفضل خدمة.
+
+            <p className="mx-auto max-w-xl text-lg text-slate-300">
+              كلمنا دلوقتي للحصول على معاينة مجانية وعرض سعر واضح، وفريقنا بيرد بسرعة.
             </p>
-            
-            <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-              <Button
-                size="lg"
-                className="bg-white text-slate-900 hover:bg-slate-100 gap-2 text-base h-14 px-8 rounded-2xl font-bold shadow-xl hover:scale-105 transition-all duration-300"
-                asChild
-              >
+
+            <div className="flex flex-col justify-center gap-4 pt-4 sm:flex-row">
+              <Button size="lg" className="h-14 gap-2 rounded-2xl bg-white px-8 text-base font-bold text-slate-900 shadow-xl hover:bg-slate-100" asChild>
                 <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("final_cta")}>
-                  <Phone className="w-5 h-5 text-emerald-600" />
+                  <Phone className="h-5 w-5 text-emerald-600" aria-hidden="true" />
                   اتصل دلوقتي
                 </a>
               </Button>
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white gap-2 text-base h-14 px-8 rounded-2xl font-bold shadow-xl shadow-emerald-500/25 hover:scale-105 transition-all duration-300 border border-white/10"
-                asChild
-              >
-                <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("final_cta")}>
-                  <MessageCircle className="w-5 h-5" />
+              <Button size="lg" className="h-14 gap-2 rounded-2xl border border-white/10 bg-green-600 px-8 text-base font-bold text-white shadow-xl shadow-emerald-500/25 hover:bg-green-700" asChild>
+                <a href={waLink()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("final_cta")}>
+                  <MessageCircle className="h-5 w-5" aria-hidden="true" />
                   تواصل واتساب
                 </a>
               </Button>
@@ -645,6 +703,35 @@ export default function HomeContent() {
           </div>
         </div>
       </section>
+
+      {/* مساحة عشان الشريط الثابت ميغطيش آخر الصفحة على الموبايل */}
+      <div className="h-20 md:hidden" aria-hidden="true" />
+
+      {/* ═══════════════ STICKY MOBILE CTA ═══════════════ */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-50 flex gap-2 border-t border-slate-200 bg-white/95 px-3 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur md:hidden"
+        role="region"
+        aria-label="تواصل سريع"
+      >
+        <a
+          href={`tel:${siteConfig.phone}`}
+          onClick={() => trackPhoneCall("sticky_bar")}
+          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-green-600 text-base font-bold text-white"
+        >
+          <Phone className="h-5 w-5" aria-hidden="true" />
+          اتصل
+        </a>
+        <a
+          href={waLink()}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => trackWhatsApp("sticky_bar")}
+          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border-2 border-green-600 bg-white text-base font-bold text-green-700"
+        >
+          <MessageCircle className="h-5 w-5" aria-hidden="true" />
+          واتساب
+        </a>
+      </div>
     </>
   );
 }
