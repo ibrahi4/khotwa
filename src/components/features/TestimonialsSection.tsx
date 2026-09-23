@@ -31,7 +31,7 @@ export function TestimonialsSection() {
           </p>
           <h2
             id="testimonials-heading"
-            className="text-3xl md:text-4xl font-black text-green-950 mb-4 leading-tight"
+            className="text-3xl md:text-4xl font-black text-slate-900 mb-4 leading-tight"
           >
             ثقة تُبنى بالتجربة
           </h2>
@@ -50,14 +50,10 @@ export function TestimonialsSection() {
               viewport={{ once: true, margin: "-40px" }}
               variants={fadeUp}
               className="group relative bg-white border border-slate-200 rounded-2xl p-6 hover:border-green-200 hover:shadow-md transition-all duration-300"
-              itemScope
-              itemType="https://schema.org/Review"
             >
               <Quote className="absolute top-5 left-5 w-8 h-8 text-green-100 group-hover:text-green-200 transition-colors" aria-hidden="true" />
 
-              <div className="flex items-center gap-1 mb-4" itemProp="reviewRating" itemScope itemType="https://schema.org/Rating">
-                <meta itemProp="ratingValue" content={String(t.rating)} />
-                <meta itemProp="bestRating" content="5" />
+              <div className="flex items-center gap-1 mb-4">
                 {Array.from({ length: t.rating }).map((_, idx) => (
                   <Star
                     key={idx}
@@ -67,10 +63,7 @@ export function TestimonialsSection() {
                 ))}
               </div>
 
-              <p
-                className="text-slate-700 text-sm leading-relaxed mb-6 min-h-[110px]"
-                itemProp="reviewBody"
-              >
+              <p className="text-slate-700 text-sm leading-relaxed mb-6 min-h-[110px]">
                 &ldquo;{t.text}&rdquo;
               </p>
 
@@ -81,8 +74,8 @@ export function TestimonialsSection() {
                 >
                   {t.initials}
                 </div>
-                <div className="min-w-0 flex-1" itemProp="author" itemScope itemType="https://schema.org/Person">
-                  <div className="font-bold text-green-950 text-sm truncate" itemProp="name">
+                <div className="min-w-0 flex-1">
+                  <div className="font-bold text-green-950 text-sm truncate">
                     {t.name}
                   </div>
                   <div className="flex items-center gap-1 text-xs text-slate-500 mt-0.5">

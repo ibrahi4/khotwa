@@ -1,4 +1,5 @@
 import { siteConfig } from "@/config/site";
+import { testimonials } from "@/config/testimonials";
 
 export function generateLocalBusinessSchema() {
   return {
@@ -48,6 +49,19 @@ export function generateLocalBusinessSchema() {
       reviewCount: String(siteConfig.ratings.count),
       bestRating: String(siteConfig.ratings.best),
     },
+    review: testimonials.map((t) => ({
+      "@type": "Review",
+      author: {
+        "@type": "Person",
+        name: t.name,
+      },
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: String(t.rating),
+        bestRating: "5",
+      },
+      reviewBody: t.text,
+    })),
   };
 }
 
