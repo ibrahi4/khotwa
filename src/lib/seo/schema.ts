@@ -71,9 +71,16 @@ export function generateWebsiteSchema() {
     "@type": "WebSite",
     "@id": `${siteConfig.url}/#website`,
     name: siteConfig.name,
+    alternateName: [siteConfig.shortName, "خطوة", "Khotwa Moving"],
     url: siteConfig.url,
     description: siteConfig.description,
     inLanguage: "ar-EG",
+    publisher: {
+      "@type": "Organization",
+      name: siteConfig.name,
+      url: siteConfig.url,
+      logo: `${siteConfig.url}/logo.webp`
+    }
   };
 }
 
