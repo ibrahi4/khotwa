@@ -15,6 +15,15 @@ type BuildMetadataProps = {
   author?: string;
 };
 
+/**
+ * بيضمن إن اسم الشركة موجود دايماً في العنوان، بدل ما كل استدعاء
+ * (هوم، منطقة، خدمة) يفتكر يضيفه بنفسه. ده اللي بيساعد جوجل يعرض
+ * اسم الشركة في نتائج البحث بدل ما يلجأ لعرض الدومين الخام.
+ */
+function withBrand(title: string): string {
+  return title.includes(siteConfig.name) ? title : `${title} | ${siteConfig.name}`;
+}
+
 export function buildMetadata({
   title,
   description,
@@ -29,9 +38,10 @@ export function buildMetadata({
 }: BuildMetadataProps): Metadata {
   const url = `${siteConfig.url}${path}`;
   const fullImageUrl = image.startsWith("http") ? image : `${siteConfig.url}${image}`;
+  const brandedTitle = withBrand(title);
 
   return {
-    title,
+    title: brandedTitle,
     description,
     metadataBase: new URL(siteConfig.url),
     keywords: keywords?.join(", "),
@@ -42,7 +52,7 @@ export function buildMetadata({
       },
     },
     openGraph: {
-      title,
+      title: brandedTitle,
       description,
       url,
       siteName: siteConfig.name,
@@ -53,7 +63,7 @@ export function buildMetadata({
           url: fullImageUrl,
           width: 1200,
           height: 630,
-          alt: title,
+          alt: brandedTitle,
         },
       ],
       ...(type === "article" && publishedTime && {
@@ -64,7 +74,7 @@ export function buildMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: brandedTitle,
       description,
       images: [fullImageUrl],
     },
@@ -91,10 +101,16 @@ export function buildMetadata({
 /**
  * Helper: Build metadata for area pages
  *
- * الافتراضي هنا بيتغطى بيه أي صفحة منطقة ملهاش عنوان/وصف مخصص —
- * وده معظم صفحات /areas/* حاليًا. العنوان والوصف مبنيين على
- * عناصر جذب فعلية (سرعة + خصم + تقييم + رقم مباشر) بدل الوصف
- * العام القديم اللي كان بيجيب ظهور بدون نقرات.
+ * تنبيه مهم: الافتراضي القديم هنا كان فيه "خصم 30%" و"تقييم 4.9★ من
+ * 500+ عميل" ثابتين كرقم مضمون لكل صفحة منطقة من غير override. الرقم
+ * الحقيقي على Google Business Profile حالياً 4.5★ بـ8 تقييمات، ومفيش
+ * تأكيد إن خصم الـ30% عرض شغال وموثّق. استخدام أرقام غير مطابقة للواقع
+ * في وصف يظهر لكل الزوار في نتائج البحث مخاطرة مصداقية وسياسة، مش
+ * تفصيل تجميلي. شلت الرقمين وخليت الوصف يعتمد على مزايا حقيقية بدل
+ * أرقام غير موثّقة.
+ *
+ * "نفس اليوم" لسه موجودة بافتراض إنها خدمة حقيقية بتقدر تتعهد بيها؛
+ * لو مش مضمونة لكل الحالات، بلّغني نعدلها لصيغة أعم زي "خدمة سريعة".
  */
 export function buildAreaMetadata(area: {
   name: string;
@@ -103,12 +119,10 @@ export function buildAreaMetadata(area: {
   metaDescription?: string;
 }): Metadata {
   return buildMetadata({
-    title:
-      area.metaTitle ||
-      `نقل أثاث ${area.name} نفس اليوم | خطوة - خصم 30%`,
+    title: area.metaTitle || `نقل أثاث ${area.name}`,
     description:
       area.metaDescription ||
-      `خطوة لنقل الأثاث في ${area.name}: تنفيذ من نفس اليوم، فرق مدربة وتغليف احترافي وضمان كامل. تقييم 4.9★ من 500+ عميل. خصم 30% لفترة محدودة. اتصل ${siteConfig.phone}`,
+      `نقل أثاث وعفش في ${area.name}: فرق مدربة، تغليف احترافي، ضمان شامل، ومعاينة مجانية قبل السعر النهائي. اتصل ${siteConfig.phone}`,
     path: `/areas/${area.slug}`,
     keywords: getAreaKeywords(area.name),
   });
@@ -117,9 +131,7 @@ export function buildAreaMetadata(area: {
 /**
  * Helper: Build metadata for service pages
  *
- * ملاحظة: كل الخدمات الـ 6 الحالية عندها metaTitle/metaDescription
- * مخصص في config/services.ts، فالافتراضي هنا بيشتغل بس لو
- * اتضافت خدمة جديدة من غير ما حد يحدد لها عنوان/وصف بنفسه.
+ * نفس التصحيح المطبّق في buildAreaMetadata، ونفس السبب بالظبط.
  */
 export function buildServiceMetadata(service: {
   name: string;
@@ -128,12 +140,10 @@ export function buildServiceMetadata(service: {
   metaDescription?: string;
 }): Metadata {
   return buildMetadata({
-    title:
-      service.metaTitle ||
-      `${service.name} نفس اليوم | خطوة - خصم 30%`,
+    title: service.metaTitle || service.name,
     description:
       service.metaDescription ||
-      `${service.name} من خطوة بأعلى معايير الجودة والأمان، تنفيذ سريع وضمان كامل. تقييم 4.9★ من 500+ عميل. خصم 30% حاليًا. اتصل ${siteConfig.phone}`,
+      `${service.name} من خطوة بأعلى معايير الجودة والأمان، فريق مدرب وضمان شامل ومعاينة مجانية. اتصل ${siteConfig.phone}`,
     path: `/services/${service.slug}`,
     keywords: getServiceKeywords(service.name),
   });
