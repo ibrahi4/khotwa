@@ -1,5 +1,4 @@
 import { siteConfig } from "@/config/site";
-import { testimonials } from "@/config/testimonials";
 
 export function generateLocalBusinessSchema() {
   return {
@@ -43,25 +42,25 @@ export function generateLocalBusinessSchema() {
         closes: siteConfig.businessHours.close,
       },
     ],
+    /**
+     * aggregateRating بيسحب من siteConfig.ratings مباشرة، فبعد تصحيح
+     * site.ts (4.5 من 8 تقييمات حقيقية) بقت صادقة تلقائياً من غير أي
+     * تعديل هنا.
+     *
+     * حقل "review" اتشال بالكامل: كان بيحط تقييمات "خطوة" عن نفسها على
+     * الـ Schema الخاصة بـ"خطوة" نفسها (نفس @id بتاع البيزنس) — وده
+     * التعريف الحرفي لسياسة "Self-serving reviews" اللي جوجل بتمنعها
+     * من 2019. النجوم مش هتظهر أبداً بيها، وده بيفضل بدون تأثير حتى لو
+     * الأرقام بقت صادقة. لو عايز نجوم فعلية تظهر في نتائج البحث، الطريق
+     * الوحيد هو Google Business Profile حقيقي بتقييمات موثّقة هناك،
+     * مش تعديل في الكود ده.
+     */
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: String(siteConfig.ratings.value),
       reviewCount: String(siteConfig.ratings.count),
       bestRating: String(siteConfig.ratings.best),
     },
-    review: testimonials.map((t) => ({
-      "@type": "Review",
-      author: {
-        "@type": "Person",
-        name: t.name,
-      },
-      reviewRating: {
-        "@type": "Rating",
-        ratingValue: String(t.rating),
-        bestRating: "5",
-      },
-      reviewBody: t.text,
-    })),
   };
 }
 
@@ -79,8 +78,8 @@ export function generateWebsiteSchema() {
       "@type": "Organization",
       name: siteConfig.name,
       url: siteConfig.url,
-      logo: `${siteConfig.url}/logo.webp`
-    }
+      logo: `${siteConfig.url}/logo.webp`,
+    },
   };
 }
 
