@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Star, MapPin, Quote } from "lucide-react";
 import { testimonials } from "@/config/testimonials";
+import { TestimonialsJsonLd } from "./TestimonialsJsonLd";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -15,15 +15,18 @@ const fadeUp = {
 };
 
 export function TestimonialsSection() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-  if (!mounted) return null;
-
+  // شلت الـ mounted gate اللي كانت هنا (if (!mounted) return null).
+  // القسم ده كان بيختفي تماماً في أول رسم للصفحة ويظهر فجأة بعدين،
+  // وده الشرح الأقوى لرقم CLS = 0.85 اللي طلع في PageSpeed Insights.
+  // مفيش جوه المكوّن ده حاجة عشوائية أو مرتبطة بالوقت ممكن تعمل
+  // Hydration mismatch، فمفيش داعي للـ gate من الأساس.
   return (
     <section
       className="section-padding bg-white"
       aria-labelledby="testimonials-heading"
     >
+      <TestimonialsJsonLd />
+
       <div className="container-custom">
         <div className="max-w-2xl mx-auto text-center mb-14">
           <p className="text-sm font-bold text-green-700 mb-3 tracking-wider uppercase">
@@ -36,7 +39,10 @@ export function TestimonialsSection() {
             ثقة تُبنى بالتجربة
           </h2>
           <p className="text-slate-600 text-base leading-relaxed">
-            أكثر من 500 عميل اختاروا خطوة لنقل أثاثهم بأمان واحترافية
+            {/* كانت "أكثر من 500 عميل" ثابتة في النص. رقم العملاء الحقيقي
+                لسه صغير (Google Business Profile: 8 تقييمات)، فسبت الجملة
+                عامة من غير رقم لحد ما يبقى فيه رقم حقيقي يستاهل يتقال. */}
+            عملاء اختاروا خطوة لنقل أثاثهم بأمان واحترافية
           </p>
         </div>
 
