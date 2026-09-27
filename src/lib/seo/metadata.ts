@@ -21,7 +21,14 @@ type BuildMetadataProps = {
  * اسم الشركة في نتائج البحث بدل ما يلجأ لعرض الدومين الخام.
  */
 function withBrand(title: string): string {
-  return title.includes(siteConfig.name) ? title : `${title} | ${siteConfig.name}`;
+  // كل العناوين المخصصة في areas.ts وservices.ts بتنتهي بالاسم المختصر
+  // "خطوة"، مش الاسم الكامل "خطوة لنقل الأثاث". الفحص كان بيدوّر على
+  // الاسم الكامل بس، فمش بيلاقيه، وبيضيفه فوق الاسم المختصر الموجود
+  // أصلاً — ده سبب تكرار "خطوة لنقل الأثاث" مرتين في نفس العنوان.
+  if (title.includes(siteConfig.name) || title.includes(siteConfig.shortName)) {
+    return title;
+  }
+  return `${title} | ${siteConfig.shortName}`;
 }
 
 export function buildMetadata({
