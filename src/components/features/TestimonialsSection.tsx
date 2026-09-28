@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Star, MapPin, Quote } from "lucide-react";
 import { testimonials } from "@/config/testimonials";
-import { TestimonialsJsonLd } from "./TestimonialsJsonLd";
+import { TestimonialsJsonLd } from "@/components/features/Testimonialsjsonld";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
