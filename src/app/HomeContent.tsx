@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import type { Variants } from "framer-motion";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
-  Phone, MessageCircle, ArrowLeft, MapPin, Truck, Star,
-  Wrench, Wind, Box, ArrowUpToLine, Gem, ChevronLeft, Award, Sparkles
+  Phone, MessageCircle, Star, Shield, Clock, ShieldCheck, ArrowLeft,
+  MapPin, Truck, Send, PackageCheck, HelpCircle,
+  Wrench, Wind, Box, ArrowUpToLine, Gem,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,37 +18,53 @@ import { siteConfig } from "@/config/site";
 import { CompoundsTrust } from "@/components/shared/CompoundsTrust";
 import { InlineQuoteForm } from "@/components/shared/InlineQuoteForm";
 import { GallerySection } from "@/components/features/GallerySection";
+import { TestimonialsSection } from "@/components/features/TestimonialsSection";
 import { trackPhoneCall, trackWhatsApp } from "@/lib/analytics/events";
 
-/* ───────────────────────── Dynamic Imports ───────────────────────── */
+/* ─────────────────────────────────────────────────────────
+   TestimonialsSection بقت SSR-safe (شلنا الـ mounted gate منها
+   قبل كده)، فبتتحمّل مباشرة هنا مش عن طريق dynamic({ssr:false}).
+   استيرادها كـ ssr:false تاني هيرجّع نفس مشكلة CLS=0.85 اللي
+   كانت السبب في إخفاء القسم ده بالكامل من أول رسم للصفحة.
+
+   LiveOrdersFeed لسه عن قصد ssr:false (محتوى حي فعلاً مش SEO-critical)،
+   لكن بـ placeholder بارتفاع ثابت بدل "مفيش حاجة" عشان يقلل قفزة
+   التخطيط لما يتحمّل.
+   ───────────────────────────────────────────────────────── */
 const LiveOrdersFeed = dynamic(
   () => import("@/components/shared/LiveOrdersFeed").then((m) => ({ default: m.LiveOrdersFeed })),
-  { ssr: false }
-);
-
-const TestimonialsSection = dynamic(
-  () => import("@/components/features/TestimonialsSection").then((m) => ({ default: m.TestimonialsSection })),
-  { ssr: false }
+  { ssr: false, loading: () => <div className="h-24 bg-white" aria-hidden="true" /> }
 );
 
 /* ───────────────────────── Helpers ───────────────────────── */
-const DEFAULT_WA_TEXT = "السلام عليكم، مهتم بمعرفة تفاصيل وأسعار خدمة نقل الأثاث.";
+
+const DEFAULT_WA_TEXT = "السلام عليكم، عايز أعرف سعر نقل عفش/أثاث";
+
 function waLink(text: string = DEFAULT_WA_TEXT) {
   return `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(text)}`;
 }
 
+/**
+ * كانت بتحفظ في localStorage بس، وده بيمنع السيرفر (وأي كود بيتنفذ
+ * على الـ backend وقت استلام الفورم) من قراءة الـ gclid. رجّعتها
+ * تحفظ في كوكي كمان زي النسخة الأصلية اللي بنيناها.
+ */
 function captureAdParams() {
   try {
     const params = new URLSearchParams(window.location.search);
-    const keys = ["gclid", "utm_source", "utm_medium", "utm_campaign"];
+    const keys = ["gclid", "gbraid", "wbraid", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
     const found: Record<string, string> = {};
     keys.forEach((k) => {
       const v = params.get(k);
       if (v) found[k] = v;
     });
     if (Object.keys(found).length === 0) return;
-    localStorage.setItem("ad_params", JSON.stringify({ ...found, landing: window.location.pathname, ts: Date.now() }));
-  } catch { /* ignore */ }
+    const payload = JSON.stringify({ ...found, landing: window.location.pathname, ts: Date.now() });
+    try { localStorage.setItem("ad_params", payload); } catch { /* ignore */ }
+    document.cookie = `ad_params=${encodeURIComponent(payload)}; path=/; max-age=${60 * 60 * 24 * 90}; SameSite=Lax`;
+  } catch {
+    /* ignore */
+  }
 }
 
 const serviceIcons: Record<string, React.ElementType> = {
@@ -60,165 +76,356 @@ const serviceIcons: Record<string, React.ElementType> = {
   "naql-moqtaniat-hassasa": Gem,
 };
 
-const serviceImages: Record<string, string> = {
-  "naql-athath": "/images/services/bg-naql-athath.webp",
-  "fak-tarkeeb-athath": "/images/services/bg-fak-tarkeeb.webp",
-  "fak-tarkeeb-takyifat": "/images/services/bg-takyifat.webp",
-  "taghleef-athath": "/images/services/bg-taghleef.webp",
-  "wensh-raf3-athath": "/images/services/bg-wensh-raf3.webp",
-  "naql-moqtaniat-hassasa": "/images/services/bg-moqtaniat.webp",
-};
+/**
+ * نفس قاعدة "متعرضش رقم تقييم غير حقيقي" المطبّقة في AnnouncementBar.
+ * لو عدد التقييمات الحقيقية لسه تحت الحد ده، بنعرض ثقة عامة (خبرة،
+ * ضمان) بدل رقم تقييم صغير بيضعف الثقة أكتر مما يبنيها.
+ */
+const MIN_REVIEWS_TO_SHOW_RATING = 25;
+const showRating = siteConfig.ratings.count >= MIN_REVIEWS_TO_SHOW_RATING;
 
-const fadeUp: Variants = {
+function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  useEffect(() => {
+    if (!isInView) return;
+    let start = 0;
+    const step = target / (1200 / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { setCount(target); clearInterval(timer); }
+      else setCount(Math.floor(start));
+    }, 16);
+    return () => clearInterval(timer);
+  }, [isInView, target]);
+
+  return (
+    <div ref={ref} className="text-4xl md:text-5xl font-black text-white tabular-nums">
+      {count.toLocaleString("en-US")}{suffix}
+    </div>
+  );
+}
+
+/* ───────────────────────── Quick estimate (WhatsApp lead tool) ─────────────────────────
+   الأداة اللي فعلياً بتحوّل زائر لليد. غيابها من أي "نسخة فاخرة" هو
+   تراجع في التحويل، مش تحسين شكلي. */
+
+const PROPERTY_TYPES = ["شقة غرفة أو غرفتين", "شقة 3 غرف", "شقة 4 غرف أو أكتر", "فيلا / دوبلكس", "مكتب / شركة"];
+const FLOORS = ["أرضي", "من 1 لـ 3", "من 4 لـ 6", "7 فأعلى"];
+const EXTRAS = ["فك وتركيب", "تغليف", "ونش رفع", "فك وتركيب تكييفات"];
+const TIMINGS = ["خلال أسبوع", "خلال شهر", "لسه بسأل عن السعر"];
+
+const fieldCls =
+  "w-full h-11 rounded-lg border border-stone-200 bg-white px-3 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600";
+
+function QuickEstimateCard({ source }: { source: string }) {
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [property, setProperty] = useState("");
+  const [floor, setFloor] = useState("");
+  const [elevator, setElevator] = useState<"" | "yes" | "no">("");
+  const [extras, setExtras] = useState<string[]>([]);
+  const [timing, setTiming] = useState("");
+
+  const href = useMemo(() => {
+    const lines = ["السلام عليكم، عايز عرض سعر نقل عفش:"];
+    if (from.trim()) lines.push(`- من: ${from.trim()}`);
+    if (to.trim()) lines.push(`- إلى: ${to.trim()}`);
+    if (property) lines.push(`- النوع: ${property}`);
+    if (floor) lines.push(`- الدور: ${floor}`);
+    if (elevator) lines.push(`- أسانسير: ${elevator === "yes" ? "فيه" : "مفيش"}`);
+    if (extras.length) lines.push(`- خدمات مطلوبة: ${extras.join("، ")}`);
+    if (timing) lines.push(`- الموعد: ${timing}`);
+    return waLink(lines.length > 1 ? lines.join("\n") : DEFAULT_WA_TEXT);
+  }, [from, to, property, floor, elevator, extras, timing]);
+
+  const toggleExtra = (x: string) =>
+    setExtras((prev) => (prev.includes(x) ? prev.filter((i) => i !== x) : [...prev, x]));
+
+  const id = (name: string) => `${source}-${name}`;
+
+  return (
+    <div className="w-full rounded-2xl bg-white p-5 shadow-2xl md:p-6 text-right">
+      <h2 className="text-xl font-black text-emerald-950">احسب عرض سعرك في دقيقة</h2>
+      <p className="mt-1 text-sm text-slate-600">
+        املا التفاصيل وابعتها على واتساب، وهنرد عليك بعرض سعر واضح.
+      </p>
+
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <div>
+          <label htmlFor={id("from")} className="mb-1 block text-sm font-semibold text-slate-700">من منطقة</label>
+          <input id={id("from")} className={fieldCls} value={from} onChange={(e) => setFrom(e.target.value)} placeholder="مثال: التجمع" autoComplete="off" />
+        </div>
+        <div>
+          <label htmlFor={id("to")} className="mb-1 block text-sm font-semibold text-slate-700">إلى منطقة</label>
+          <input id={id("to")} className={fieldCls} value={to} onChange={(e) => setTo(e.target.value)} placeholder="مثال: الشيخ زايد" autoComplete="off" />
+        </div>
+        <div>
+          <label htmlFor={id("property")} className="mb-1 block text-sm font-semibold text-slate-700">نوع النقلة</label>
+          <select id={id("property")} className={fieldCls} value={property} onChange={(e) => setProperty(e.target.value)}>
+            <option value="">اختار</option>
+            {PROPERTY_TYPES.map((p) => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor={id("floor")} className="mb-1 block text-sm font-semibold text-slate-700">الدور</label>
+          <select id={id("floor")} className={fieldCls} value={floor} onChange={(e) => setFloor(e.target.value)}>
+            <option value="">اختار</option>
+            {FLOORS.map((f) => <option key={f} value={f}>{f}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div className="mt-3">
+        <span className="mb-1 block text-sm font-semibold text-slate-700">أسانسير</span>
+        <div className="grid grid-cols-2 gap-2">
+          {([["yes", "فيه أسانسير"], ["no", "مفيش أسانسير"]] as const).map(([val, label]) => (
+            <button
+              key={val}
+              type="button"
+              aria-pressed={elevator === val}
+              onClick={() => setElevator(elevator === val ? "" : val)}
+              className={`h-11 rounded-lg border text-sm font-semibold transition-colors ${
+                elevator === val ? "border-emerald-600 bg-emerald-50 text-emerald-800" : "border-stone-200 bg-white text-slate-700 hover:border-emerald-300"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-3">
+        <span className="mb-1 block text-sm font-semibold text-slate-700">محتاج إيه كمان؟</span>
+        <div className="flex flex-wrap gap-2">
+          {EXTRAS.map((x) => (
+            <button
+              key={x}
+              type="button"
+              aria-pressed={extras.includes(x)}
+              onClick={() => toggleExtra(x)}
+              className={`h-10 rounded-full border px-4 text-sm font-semibold transition-colors ${
+                extras.includes(x) ? "border-emerald-600 bg-emerald-50 text-emerald-800" : "border-stone-200 bg-white text-slate-700 hover:border-emerald-300"
+              }`}
+            >
+              {x}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-3">
+        <label htmlFor={id("timing")} className="mb-1 block text-sm font-semibold text-slate-700">الموعد</label>
+        <select id={id("timing")} className={fieldCls} value={timing} onChange={(e) => setTiming(e.target.value)}>
+          <option value="">اختار</option>
+          {TIMINGS.map((t) => <option key={t} value={t}>{t}</option>)}
+        </select>
+      </div>
+
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => trackWhatsApp(source)}
+        className="mt-5 inline-flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 text-base font-bold text-white shadow-lg shadow-emerald-600/25 transition-colors hover:bg-emerald-700"
+      >
+        <MessageCircle className="h-5 w-5" aria-hidden="true" />
+        ابعت التفاصيل على واتساب
+      </a>
+      <p className="mt-2 text-center text-xs text-slate-500">المعاينة مجانية، والسعر النهائي بيتحدد بعد المعاينة.</p>
+    </div>
+  );
+}
+
+/* ───────────────────────── Static content ───────────────────────── */
+
+const steps = [
+  { title: "معاينة مجانية", desc: "بنعاين الأثاث بزيارة أو فيديو كول ونحدد اللي هيتفك واللي هيتغلف" },
+  { title: "تغليف احترافي", desc: "مواد تغليف بتحمي كل قطعة من الخدش والكسر قبل التحميل" },
+  { title: "نقل وونش عند الحاجة", desc: "عربيات مجهزة، وونش رفع لو الدور أو مقاس القطعة يحتاجه" },
+  { title: "تركيب وتسليم", desc: "بنرتب كل حاجة في مكانها ونركّب اللي اتفك، وتسلّمها جاهزة" },
+];
+
+const trustPillars = [
+  { icon: Shield, title: "ضمان على الشغل", desc: "أي ضرر بسبب إهمال الفريق مسؤوليتنا، مش هتتفاجئ بعد النقل." },
+  { icon: PackageCheck, title: "تغليف بمواد حقيقية", desc: "فقاعات هواء وكرتون مقوى حسب نوع كل قطعة، مش تغطية شكلية." },
+  { icon: Clock, title: "معاد واضح", desc: "بنلتزم بميعاد المعاينة والنقل، ونقولك مقدماً لو أي تأخير محتمل." },
+  { icon: ShieldCheck, title: "سعر مكتوب قبل البدء", desc: "عرض السعر بعد المعاينة بيتبعت مكتوب، من غير رسوم تتضاف يوم النقل." },
+];
+
+const sectionFade = {
   hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-/* ───────────────────────── Page Component ───────────────────────── */
+/* ───────────────────────── Page ───────────────────────── */
+
 export default function HomeContent() {
   useEffect(() => { captureAdParams(); }, []);
 
   return (
-    <div className="bg-[#FAF8F5] text-slate-900 overflow-hidden antialiased selection:bg-emerald-800 selection:text-white">
-      
-      {/* ═══════════════ 1. FULL-HEIGHT PREMIUM HERO SECTION ═══════════════ */}
-      <section className="relative flex flex-col justify-center min-h-[82svh] sm:min-h-[85vh] md:min-h-[90vh] pt-20 pb-10 sm:pt-24 sm:pb-14 md:pt-28 md:pb-16 bg-emerald-950 overflow-hidden">
-        
-        {/* Background Image & Dual Overlay */}
-        <div className="absolute inset-0 z-0">
+    <>
+      {/* ═══════════════ HERO ═══════════════ */}
+      <section className="relative flex min-h-[92svh] items-center overflow-hidden bg-emerald-950">
+        <div className="absolute inset-0">
           <Image
             src="/herosection.webp"
-            alt="خطوة لنقل الأثاث الراقية"
+            alt="فريق خطوة أثناء نقل أثاث فاخر"
             fill
-            className="object-cover object-center opacity-50 scale-100"
-            priority
-            quality={90}
+            className="object-cover opacity-45"
             sizes="100vw"
+            quality={85}
+            priority
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/95 via-emerald-950/80 to-emerald-950/40 rtl:bg-gradient-to-l" />
-          <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/40 via-transparent to-emerald-950/95" />
+          <div className="absolute inset-0 bg-gradient-to-l from-emerald-950/95 via-emerald-950/85 to-emerald-950/55" />
+          <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-transparent to-emerald-950/50" />
         </div>
 
-        {/* Content Centered Vertically inside Full Height Hero */}
-        <div className="container-custom relative z-10 w-full my-auto text-right">
-          <div className="max-w-3xl w-full">
-            
-            {/* VIP Trust Badge */}
-            <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-              <Badge className="bg-emerald-900/80 text-emerald-100 border border-emerald-400/40 px-3.5 py-1.5 backdrop-blur-md rounded-full text-xs font-semibold mb-3.5 sm:mb-5 inline-flex items-center gap-1.5 shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span>خدمة فاخرة مخصصة لسكان الكمبوندات والمدن الجديدة</span>
+        <div className="container-custom relative z-10 py-20">
+          <div className="grid items-center gap-10 lg:grid-cols-12">
+            <div className="space-y-7 lg:col-span-7">
+              <Badge className="gap-2 border-emerald-400/30 bg-emerald-900/70 px-4 py-2 text-sm text-emerald-100 backdrop-blur-md">
+                <ShieldCheck className="h-4 w-4 text-amber-400" aria-hidden="true" />
+                نقل مخصص لسكان الكمبوندات والمدن الجديدة
               </Badge>
-            </motion.div>
 
-            {/* Main Heading */}
-            <motion.h1 
-              initial="hidden" animate="visible" variants={fadeUp}
-              className="text-[1.95rem] leading-[1.25] sm:text-4xl md:text-6xl font-black text-white tracking-tight mb-3.5 sm:mb-5"
-            >
-              نقل أثاثك باحترافية، <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-emerald-400 to-amber-300">
-                وبأعلى معايير الأمان.
-              </span>
-            </motion.h1>
+              <h1 className="text-4xl font-black leading-[1.15] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[3.75rem]">
+                نقل عفشك بأمان،
+                <span className="mt-1 block bg-gradient-to-l from-emerald-300 to-amber-300 bg-clip-text text-transparent">
+                  من غير ما تلمس قطعة
+                </span>
+              </h1>
 
-            {/* Sub-headline */}
-            <motion.p 
-              initial="hidden" animate="visible" variants={fadeUp}
-              className="text-[13.5px] sm:text-base md:text-lg text-white/90 leading-relaxed mb-4 sm:mb-6 max-w-2xl font-normal"
-            >
-              منظومة نقل متكاملة تشمل الفك، التغليف الفاخر، النقل بالونش الهيدروليكي، والتركيب باحترافية تضمن لك سلامة كافة ممتلكاتك مع ضمان شامل.
-            </motion.p>
+              <p className="max-w-xl text-lg leading-relaxed text-white/80 md:text-xl">
+                فك وتغليف ونقل وونش وتركيب في خدمة واحدة متكاملة. معاينة مجانية، وسعر مكتوب واضح قبل ما نبدأ.
+              </p>
 
-            {/* Social Proof Bar */}
-            <motion.div initial="hidden" animate="visible" variants={fadeUp} className="flex flex-wrap items-center gap-2.5 mb-5 sm:mb-7">
-              <div className="flex items-center gap-1 bg-black/30 border border-white/20 px-2.5 py-1 rounded-lg backdrop-blur-sm shrink-0">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                ))}
-                <span className="text-xs font-bold text-amber-300 mr-1">4.9 / 5.0</span>
+              {showRating ? (
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-1 rounded-lg border border-white/15 bg-black/25 px-3 py-1.5 backdrop-blur-sm">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" aria-hidden="true" />
+                    ))}
+                    <span className="mr-1.5 text-sm font-bold text-amber-300">{siteConfig.ratings.value}/5</span>
+                  </div>
+                  <span className="text-sm font-medium text-white/70">
+                    {siteConfig.ratings.count}+ تقييم حقيقي على Google
+                  </span>
+                </div>
+              ) : (
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                  <div className="flex items-center gap-2 text-sm text-white/75">
+                    <Shield className="h-4 w-4 text-emerald-400" aria-hidden="true" />
+                    <span>خدمة 24/7</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/75">
+                    <PackageCheck className="h-4 w-4 text-emerald-400" aria-hidden="true" />
+                    <span>تغليف احترافي</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/75">
+                    <ShieldCheck className="h-4 w-4 text-emerald-400" aria-hidden="true" />
+                    <span>سعر مكتوب قبل البدء</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-3">
+                <Button size="lg" className="h-13 gap-2 rounded-xl bg-emerald-500 px-7 text-base font-bold text-emerald-950 shadow-xl shadow-emerald-500/25 hover:bg-emerald-400" asChild>
+                  <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("hero_main")}>
+                    <Phone className="h-5 w-5" aria-hidden="true" />
+                    اطلب معاينة مجانية
+                  </a>
+                </Button>
+                <Button size="lg" className="h-13 gap-2 rounded-xl border border-white/25 bg-white/10 px-7 text-base font-semibold text-white backdrop-blur-md hover:bg-white/20" asChild>
+                  <a href={waLink()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("hero_main")}>
+                    <MessageCircle className="h-5 w-5 text-emerald-300" aria-hidden="true" />
+                    واتساب مباشر
+                  </a>
+                </Button>
               </div>
-              <span className="text-xs sm:text-sm font-semibold text-emerald-50/90">
-                تثق بنا أكثر من 500 عائلة في القاهرة والجيزة
-              </span>
-            </motion.div>
+            </div>
 
-            {/* Action Buttons */}
-            <motion.div initial="hidden" animate="visible" variants={fadeUp} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <Button size="lg" className="w-full sm:w-auto h-12 sm:h-13 px-7 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm sm:text-base shadow-lg shadow-emerald-500/25 transition-all hover:-translate-y-0.5" asChild>
-                <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("hero_main")}>
-                  <Phone className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-                  اطلب معاينة مجانية
-                </a>
-              </Button>
-              <Button size="lg" className="w-full sm:w-auto h-12 sm:h-13 px-7 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm sm:text-base border border-white/25 backdrop-blur-md transition-all hover:-translate-y-0.5" asChild>
-                <a href={waLink()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("hero_main")}>
-                  <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 ml-2 text-emerald-300" />
-                  تواصل عبر واتساب
-                </a>
-              </Button>
-            </motion.div>
-
+            <div className="hidden lg:col-span-5 lg:block">
+              <QuickEstimateCard source="hero_estimate" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════ 2. COMPOUNDS TRUST BAR ═══════════════ */}
-      <div className="bg-emerald-950/95 border-t border-emerald-800/40 py-5 relative z-10 shadow-sm">
+      {/* Mobile: نفس أداة التقدير تحت الـ hero */}
+      <section id="quote-form" className="bg-[#FAF8F5] px-4 pb-10 pt-6 lg:hidden">
+        <div className="mx-auto max-w-lg rounded-2xl border border-stone-200 shadow-xl">
+          <QuickEstimateCard source="mobile_estimate" />
+        </div>
+      </section>
+
+      {/* ═══════════════ COMPOUNDS TRUST ═══════════════ */}
+      <div className="bg-[#FAF8F5]">
         <CompoundsTrust />
       </div>
 
-      {/* ═══════════════ 3. PREMIUM CINEMATIC SERVICES SECTION ═══════════════ */}
-      <section className="py-20 md:py-28 bg-[#FAF8F5]" aria-labelledby="services-heading">
+      {/* ═══════════════ PROOF BAND ═══════════════ */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={sectionFade}
+        className="bg-emerald-950 py-14 md:py-16"
+      >
         <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-            <span className="text-xs font-bold text-emerald-800 tracking-wider uppercase bg-emerald-100/60 px-4 py-1.5 rounded-full border border-emerald-200/50">
-              خدماتنا المتخصصة
-            </span>
-            <h2 id="services-heading" className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
-              أكثر من مجرد نقل عفش
+          <div className="grid gap-8 sm:grid-cols-3">
+            <div className="border-l border-white/10 pl-6 last:border-none sm:pl-0 sm:pr-6 sm:border-l-0 sm:border-r rtl:sm:border-r-0 rtl:sm:border-l first:pl-0 first:pr-0">
+              <AnimatedCounter target={siteConfig.yearsOfExperience} suffix="+" />
+              <div className="mt-1 text-sm text-white/60">سنة خبرة في نقل الأثاث</div>
+            </div>
+            <div>
+              <div className="text-4xl font-black text-white md:text-5xl">24/7</div>
+              <div className="mt-1 text-sm text-white/60">خدمة متاحة طول الأسبوع</div>
+            </div>
+            <div>
+              <div className="text-4xl font-black text-white md:text-5xl">{services.length}</div>
+              <div className="mt-1 text-sm text-white/60">خدمات متكاملة تحت سقف واحد</div>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* ═══════════════ SERVICES ═══════════════ */}
+      <section className="bg-white py-16 md:py-24" aria-labelledby="services-heading">
+        <div className="container-custom">
+          <div className="mb-10 max-w-2xl">
+            <h2 id="services-heading" className="text-3xl font-black leading-tight text-slate-900 md:text-4xl">
+              أكتر من مجرد نقل عفش
             </h2>
-            <p className="text-slate-600 text-base max-w-xl mx-auto">
-              تجهيزات كاملة تضمن لك الانتقال لمنزلك الجديد دون أن تلمس قطعة واحدة.
+            <p className="mt-3 text-base leading-relaxed text-slate-600">
+              كل خدمة تقدر تطلبها لوحدها، أو كباقة متكاملة توفر عليك التنسيق مع أكتر من جهة.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((service) => {
               const SIcon = serviceIcons[service.slug] || Truck;
-              const bgImage = serviceImages[service.slug] || "/herosection.webp";
-
               return (
-                <Link key={service.slug} href={`/services/${service.slug}`} className="group relative block h-[320px] sm:h-[360px] rounded-3xl overflow-hidden shadow-md hover:shadow-2xl hover:shadow-emerald-950/20 transition-all duration-500">
-                  <div className="absolute inset-0 z-0">
-                    <Image
-                      src={bgImage}
-                      alt={service.name}
-                      fill
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      quality={75}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/80 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-500" />
+                <Link
+                  key={service.slug}
+                  href={`/services/${service.slug}`}
+                  className="group flex flex-col rounded-2xl border border-stone-200 bg-[#FAF8F5] p-6 transition-all hover:border-emerald-300 hover:bg-white hover:shadow-lg"
+                >
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800 transition-colors group-hover:bg-emerald-800 group-hover:text-white">
+                    <SIcon className="h-6 w-6" aria-hidden="true" />
                   </div>
-
-                  <div className="relative z-10 flex flex-col justify-end h-full p-6 md:p-8">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-4 text-emerald-300 shadow-inner group-hover:scale-110 group-hover:bg-emerald-500 transition-all duration-300 group-hover:text-emerald-950 group-hover:border-emerald-400">
-                      <SIcon className="w-6 h-6" />
-                    </div>
-                    
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
-                      {service.name}
-                    </h3>
-                    
-                    <p className="text-emerald-50/80 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-2">
-                      {service.shortDescription}
-                    </p>
-                    
-                    <div className="flex items-center text-xs sm:text-sm font-bold text-emerald-400 group-hover:text-amber-300 transition-colors">
-                      عرض التفاصيل <ChevronLeft className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-2" />
-                    </div>
-                  </div>
+                  <h3 className="mb-2 text-lg font-bold text-slate-900 group-hover:text-emerald-900">
+                    {service.name}
+                  </h3>
+                  <p className="mb-4 flex-1 text-sm leading-relaxed text-slate-600">
+                    {service.shortDescription}
+                  </p>
+                  <span className="inline-flex items-center gap-1 text-sm font-bold text-emerald-800">
+                    تفاصيل الخدمة
+                    <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
+                  </span>
                 </Link>
               );
             })}
@@ -226,100 +433,181 @@ export default function HomeContent() {
         </div>
       </section>
 
-      {/* ═══════════════ 4. HOW IT WORKS ═══════════════ */}
-      <section className="py-20 md:py-28 bg-white border-y border-stone-200/60">
+      {/* ═══════════════ HOW IT WORKS ═══════════════ */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={sectionFade}
+        className="bg-[#FAF8F5] py-16 md:py-24"
+      >
         <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-            <span className="text-xs font-bold text-emerald-800 tracking-wider uppercase bg-emerald-100/60 px-4 py-1.5 rounded-full border border-emerald-200/50">
-              خطوات العمل
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
-              كيف نعمل لضمان أمان أثاثك؟
+          <div className="mb-12 max-w-2xl">
+            <h2 className="text-3xl font-black leading-tight text-slate-900 md:text-4xl">
+              4 خطوات لنقلة من غير وجع دماغ
             </h2>
-            <p className="text-slate-600 text-base">
-              4 خطوات مدروسة بدقة لضمان أقصى درجات الراحة والتنظيم.
-            </p>
+            <p className="mt-3 text-base leading-relaxed text-slate-600">من المعاينة لحد التسليم النهائي</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {[
-              { num: "01", title: "المعاينة والتخطيط", desc: "زيارة فنية مجانية لمعاينة المنقولات وتحديد السيارات والأوناش المناسبة." },
-              { num: "02", title: "الفك والتغليف", desc: "تفكيك احترافي وتغليف بمواد حماية عالية الجودة ومقاومة للصدمات." },
-              { num: "03", title: "النقل والرفع", desc: "سيارات مغلقة ومجهزة لنقل العفش بأمان مع استخدام الأوناش الحديثة." },
-              { num: "04", title: "التركيب والتسليم", desc: "إعادة تركيب الأثاث والتكييفات في المنزل الجديد ليكون جاهزاً فوراً." }
-            ].map((step) => (
-              <div key={step.num} className="p-6 md:p-7 rounded-3xl bg-[#FAF8F5] border border-stone-200/80 hover:border-emerald-300 transition-colors">
-                <span className="text-3xl font-black text-emerald-800/25 mb-3 block">{step.num}</span>
-                <h3 className="text-lg font-bold text-slate-900 mb-2">{step.title}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">{step.desc}</p>
+          <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+            {steps.map((step, i) => (
+              <div key={step.title} className="relative border-t-2 border-emerald-700 pt-4">
+                <span className="text-sm font-black text-emerald-700">{`0${i + 1}`}</span>
+                <h3 className="mt-2 font-bold text-slate-900">{step.title}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-slate-600">{step.desc}</p>
               </div>
             ))}
           </div>
         </div>
+      </motion.section>
+
+      {/* ═══════════════ WHY US ═══════════════ */}
+      <section className="bg-white py-16 md:py-24" aria-labelledby="why-heading">
+        <div className="container-custom">
+          <div className="mb-10 max-w-2xl">
+            <h2 id="why-heading" className="text-3xl font-black leading-tight text-slate-900 md:text-4xl">
+              4 وعود بنلتزم بيها فعلياً
+            </h2>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {trustPillars.map((item) => {
+              const ItemIcon = item.icon;
+              return (
+                <div key={item.title} className="rounded-2xl border border-stone-100 p-6">
+                  <ItemIcon className="mb-3 h-6 w-6 text-emerald-700" aria-hidden="true" />
+                  <h3 className="mb-1 font-bold text-slate-900">{item.title}</h3>
+                  <p className="text-sm leading-relaxed text-slate-600">{item.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </section>
 
-      {/* ═══════════════ 5. TESTIMONIALS & GALLERY ═══════════════ */}
+      {/* ═══════════════ TESTIMONIALS — SSR افتراضي، من غير ssr:false ═══════════════ */}
       <TestimonialsSection />
+
+      {/* ═══════════════ GALLERY ═══════════════ */}
       <GallerySection />
+
+      {/* ═══════════════ LIVE ORDERS ═══════════════
+          لو الطلبات دي مش حقيقية، امسح السطر ده — سياسة جوجل بتمنع الادعاءات المضللة. */}
       <LiveOrdersFeed />
 
-      {/* ═══════════════ 6. FEATURED AREAS ═══════════════ */}
-      <section className="py-20 md:py-28 bg-white border-t border-stone-200/60" aria-labelledby="areas-heading">
+      {/* ═══════════════ AREAS ═══════════════ */}
+      <section className="bg-[#FAF8F5] py-16 md:py-24" aria-labelledby="areas-heading">
         <div className="container-custom">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-10 md:mb-12">
+          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <h2 id="areas-heading" className="text-2xl md:text-3xl font-black text-slate-900 mb-2 md:mb-3">
-                نغطي أرقى المناطق والمدن الجديدة
+              <h2 id="areas-heading" className="text-3xl font-black leading-tight text-slate-900 md:text-4xl">
+                بنوصلك أينما كنت
               </h2>
-              <p className="text-slate-600 text-sm md:text-base">
-                أسطولنا متواجد بصفة مستمرة لخدمة سكان التجمع، الشيخ زايد، مدينتي وجميع المناطق.
+              <p className="mt-3 text-base leading-relaxed text-slate-600">
+                تغطية مستمرة للتجمع والشيخ زايد ومدينتي وباقي المدن الجديدة والقاهرة الكبرى
               </p>
             </div>
-            <Link href="/areas" className="hidden md:inline-flex items-center text-emerald-800 font-bold hover:text-emerald-950 text-sm md:text-base">
-              جميع المناطق <ArrowLeft className="w-4 h-4 mr-1.5" />
+            <Link href="/areas" className="inline-flex items-center gap-2 text-sm font-bold text-emerald-800 hover:text-emerald-900">
+              كل المناطق
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {featuredAreas.slice(0, 8).map((area) => (
-              <Link key={area.slug} href={`/areas/${area.slug}`} className="flex items-center gap-3.5 p-4 rounded-2xl border border-stone-200/70 bg-[#FAF8F5] hover:bg-white hover:border-emerald-300 hover:shadow-md transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-emerald-100/70 flex items-center justify-center shrink-0 text-emerald-800 group-hover:bg-emerald-800 group-hover:text-white transition-colors">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <span className="font-bold text-slate-800 text-sm">{area.name}</span>
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-stone-200 bg-stone-200 sm:grid-cols-3 lg:grid-cols-6">
+            {featuredAreas.map((area) => (
+              <Link
+                key={area.slug}
+                href={`/areas/${area.slug}`}
+                className="group flex items-center gap-2.5 bg-[#FAF8F4] p-4 transition-colors hover:bg-white"
+              >
+                <MapPin className="h-4 w-4 shrink-0 text-emerald-700" aria-hidden="true" />
+                <span className="truncate text-sm font-semibold text-slate-900 group-hover:text-emerald-800">
+                  {area.name}
+                </span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════ 7. QUOTE FORM ═══════════════ */}
+      {/* ═══════════════ FAQ TEASER ═══════════════ */}
+      <section className="bg-white py-10">
+        <div className="container-custom">
+          <Link
+            href="/faq"
+            className="flex items-center justify-between gap-4 rounded-2xl border border-stone-200 bg-[#FAF8F5] p-6 transition-colors hover:border-emerald-300"
+          >
+            <div className="flex items-center gap-4">
+              <HelpCircle className="h-8 w-8 shrink-0 text-emerald-700" aria-hidden="true" />
+              <div>
+                <div className="font-bold text-slate-900">عندك سؤال قبل ما تحجز؟</div>
+                <div className="text-sm text-slate-600">الأسعار، الضمان، مواعيد العمل — كل الإجابات في صفحة الأسئلة الشائعة</div>
+              </div>
+            </div>
+            <ArrowLeft className="h-5 w-5 shrink-0 text-emerald-700" aria-hidden="true" />
+          </Link>
+        </div>
+      </section>
+
+      {/* ═══════════════ QUOTE FORM ═══════════════ */}
       <InlineQuoteForm />
 
-      {/* ═══════════════ 8. FINAL CTA ═══════════════ */}
-      <section className="relative py-24 md:py-32 bg-emerald-950 text-center overflow-hidden">
-        <div className="container-custom relative z-10 max-w-3xl mx-auto space-y-6">
-          <Award className="w-12 h-12 text-emerald-400 mx-auto opacity-90" />
-          <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">
-            مستعد لنقل منزلك <span className="text-emerald-400">بكل سهولة وأمان؟</span>
-          </h2>
-          <p className="text-base md:text-lg text-emerald-100/80 max-w-xl mx-auto">
-            تواصل معنا اليوم للحصول على معاينة مجانية وعرض سعر شفاف ومحدد بدون أي رسوم خفية.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-            <Button size="lg" className="h-14 px-8 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base shadow-xl" asChild>
-              <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("final_cta")}>
-                <Phone className="w-5 h-5 ml-2" /> اتصل الآن
-              </a>
-            </Button>
-            <Button size="lg" className="h-14 px-8 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-base backdrop-blur-md" asChild>
-              <a href={waLink()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("final_cta")}>
-                <MessageCircle className="w-5 h-5 ml-2 text-emerald-400" /> تواصل عبر واتساب
-              </a>
-            </Button>
+      {/* ═══════════════ FINAL CTA ═══════════════ */}
+      <section className="relative overflow-hidden bg-emerald-950 py-16 md:py-24" aria-labelledby="cta-heading">
+        <div className="container-custom relative">
+          <div className="mx-auto max-w-3xl space-y-8 text-center">
+            <h2 id="cta-heading" className="text-4xl font-black leading-[1.2] tracking-tight text-white md:text-5xl">
+              جاهز تنقل بيتك
+              <span className="mt-2 block text-emerald-400">من غير قلق على أثاثك؟</span>
+            </h2>
+            <p className="mx-auto max-w-xl text-lg text-white/70">
+              كلمنا دلوقتي للمعاينة المجانية، وهترجع بسعر مكتوب واضح قبل ما تقرر.
+            </p>
+            <div className="flex flex-col justify-center gap-4 pt-2 sm:flex-row">
+              <Button size="lg" className="h-14 gap-2 rounded-xl bg-white px-8 text-base font-bold text-slate-900 shadow-xl hover:bg-stone-100" asChild>
+                <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("final_cta")}>
+                  <Phone className="h-5 w-5 text-emerald-700" aria-hidden="true" />
+                  اتصل دلوقتي
+                </a>
+              </Button>
+              <Button size="lg" className="h-14 gap-2 rounded-xl border border-white/10 bg-emerald-600 px-8 text-base font-bold text-white shadow-xl shadow-emerald-600/20 hover:bg-emerald-500" asChild>
+                <a href={waLink()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("final_cta")}>
+                  <MessageCircle className="h-5 w-5" aria-hidden="true" />
+                  تواصل واتساب
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
-    </div>
+
+      {/* مساحة عشان الشريط الثابت ميغطيش آخر الصفحة على الموبايل */}
+      <div className="h-20 md:hidden" aria-hidden="true" />
+
+      {/* ═══════════════ STICKY MOBILE CTA ═══════════════ */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-50 flex gap-2 border-t border-stone-200 bg-white/95 px-3 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur md:hidden"
+        role="region"
+        aria-label="تواصل سريع"
+      >
+        <a
+          href={`tel:${siteConfig.phone}`}
+          onClick={() => trackPhoneCall("sticky_bar")}
+          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-700 text-base font-bold text-white"
+        >
+          <Phone className="h-5 w-5" aria-hidden="true" />
+          اتصل
+        </a>
+        <a
+          href={waLink()}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => trackWhatsApp("sticky_bar")}
+          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-lg border-2 border-emerald-700 bg-white text-base font-bold text-emerald-800"
+        >
+          <MessageCircle className="h-5 w-5" aria-hidden="true" />
+          واتساب
+        </a>
+      </div>
+    </>
   );
 }
