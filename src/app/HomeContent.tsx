@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import type { Variants } from "framer-motion";
 import { motion } from "framer-motion";
 import {
   Phone, MessageCircle, Shield, ArrowLeft, MapPin, Truck, Star,
@@ -69,9 +70,9 @@ const serviceImages: Record<string, string> = {
 };
 
 /* ───────────────────────── Animations ───────────────────────── */
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
 /* ───────────────────────── Page Component ───────────────────────── */
@@ -136,7 +137,7 @@ export default function HomeContent() {
             </motion.div>
 
             <motion.div initial="hidden" animate="visible" variants={fadeUp} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto h-14 px-8 rounded-xl bg-emerald-400 hover:bg-emerald-400 text-slate-950 font-black text-base shadow-xl shadow-emerald-500/20 transition-all hover:-translate-y-1" asChild>
+              <Button size="lg" className="w-full sm:w-auto h-14 px-8 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base shadow-xl shadow-emerald-500/20 transition-all hover:-translate-y-1" asChild>
                 <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("hero_main")}>
                   <Phone className="w-5 h-5 ml-2" />
                   اطلب معاينة مجانية
@@ -180,8 +181,6 @@ export default function HomeContent() {
 
               return (
                 <Link key={service.slug} href={`/services/${service.slug}`} className="group relative block h-[340px] md:h-[380px] rounded-3xl overflow-hidden shadow-md hover:shadow-2xl hover:shadow-emerald-950/20 transition-all duration-500">
-                  
-                  {/* Card Background Image */}
                   <div className="absolute inset-0 z-0">
                     <Image
                       src={bgImage}
@@ -191,11 +190,9 @@ export default function HomeContent() {
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       quality={75}
                     />
-                    {/* Cinematic Dark Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/80 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-500" />
                   </div>
 
-                  {/* Card Content */}
                   <div className="relative z-10 flex flex-col justify-end h-full p-6 md:p-8">
                     <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-5 text-emerald-300 shadow-inner group-hover:scale-110 group-hover:bg-emerald-500 transition-all duration-300 group-hover:text-emerald-950 group-hover:border-emerald-400">
                       <SIcon className="w-6 h-6" />
@@ -213,7 +210,6 @@ export default function HomeContent() {
                       عرض التفاصيل <ChevronLeft className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-2" />
                     </div>
                   </div>
-
                 </Link>
               );
             })}
