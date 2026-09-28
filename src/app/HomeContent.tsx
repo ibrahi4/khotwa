@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import type { Variants } from "framer-motion";
 import { motion } from "framer-motion";
 import {
-  Phone, MessageCircle, Shield, ArrowLeft, MapPin, Truck, Star,
+  Phone, MessageCircle, ArrowLeft, MapPin, Truck, Star,
   Wrench, Wind, Box, ArrowUpToLine, Gem, ChevronLeft, Award, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -69,10 +69,9 @@ const serviceImages: Record<string, string> = {
   "naql-moqtaniat-hassasa": "/images/services/bg-moqtaniat.webp",
 };
 
-/* ───────────────────────── Animations ───────────────────────── */
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
 /* ───────────────────────── Page Component ───────────────────────── */
@@ -82,14 +81,16 @@ export default function HomeContent() {
   return (
     <div className="bg-[#FAF8F5] text-slate-900 overflow-hidden antialiased selection:bg-emerald-800 selection:text-white">
       
-      {/* ═══════════════ 1. HERO SECTION ═══════════════ */}
-      <section className="relative flex flex-col justify-center pt-28 pb-16 sm:pt-32 sm:pb-24 md:pt-36 md:pb-28 bg-emerald-950 overflow-hidden min-h-[85svh] md:min-h-[90vh]">
+      {/* ═══════════════ 1. FULL-HEIGHT PREMIUM HERO SECTION ═══════════════ */}
+      <section className="relative flex flex-col justify-center min-h-[82svh] sm:min-h-[85vh] md:min-h-[90vh] pt-20 pb-10 sm:pt-24 sm:pb-14 md:pt-28 md:pb-16 bg-emerald-950 overflow-hidden">
+        
+        {/* Background Image & Dual Overlay */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/herosection.webp"
             alt="خطوة لنقل الأثاث الراقية"
             fill
-            className="object-cover object-center opacity-55 scale-100"
+            className="object-cover object-center opacity-50 scale-100"
             priority
             quality={90}
             sizes="100vw"
@@ -98,18 +99,22 @@ export default function HomeContent() {
           <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/40 via-transparent to-emerald-950/95" />
         </div>
 
-        <div className="container-custom relative z-10 w-full flex flex-col items-start text-right">
+        {/* Content Centered Vertically inside Full Height Hero */}
+        <div className="container-custom relative z-10 w-full my-auto text-right">
           <div className="max-w-3xl w-full">
+            
+            {/* VIP Trust Badge */}
             <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-              <Badge className="bg-emerald-900/70 text-emerald-100 border border-emerald-400/40 px-4 py-2 backdrop-blur-md rounded-full text-xs sm:text-sm font-semibold mb-6 md:mb-8 inline-flex items-center gap-2 shadow-sm">
-                <Sparkles className="w-4 h-4 text-amber-400" />
+              <Badge className="bg-emerald-900/80 text-emerald-100 border border-emerald-400/40 px-3.5 py-1.5 backdrop-blur-md rounded-full text-xs font-semibold mb-3.5 sm:mb-5 inline-flex items-center gap-1.5 shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                 <span>خدمة فاخرة مخصصة لسكان الكمبوندات والمدن الجديدة</span>
               </Badge>
             </motion.div>
 
+            {/* Main Heading */}
             <motion.h1 
               initial="hidden" animate="visible" variants={fadeUp}
-              className="text-[2.25rem] leading-[1.3] sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight mb-6 md:mb-8"
+              className="text-[1.95rem] leading-[1.25] sm:text-4xl md:text-6xl font-black text-white tracking-tight mb-3.5 sm:mb-5"
             >
               نقل أثاثك باحترافية، <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-emerald-400 to-amber-300">
@@ -117,39 +122,43 @@ export default function HomeContent() {
               </span>
             </motion.h1>
 
+            {/* Sub-headline */}
             <motion.p 
               initial="hidden" animate="visible" variants={fadeUp}
-              className="text-[15px] leading-[1.8] sm:text-lg md:text-xl text-white/90 mb-8 md:mb-10 max-w-2xl font-medium"
+              className="text-[13.5px] sm:text-base md:text-lg text-white/90 leading-relaxed mb-4 sm:mb-6 max-w-2xl font-normal"
             >
               منظومة نقل متكاملة تشمل الفك، التغليف الفاخر، النقل بالونش الهيدروليكي، والتركيب باحترافية تضمن لك سلامة كافة ممتلكاتك مع ضمان شامل.
             </motion.p>
 
-            <motion.div initial="hidden" animate="visible" variants={fadeUp} className="flex flex-wrap items-center gap-3 mb-10 md:mb-12">
-              <div className="flex gap-1 bg-black/30 border border-white/20 px-3 py-1.5 rounded-xl backdrop-blur-sm shrink-0 shadow-inner">
+            {/* Social Proof Bar */}
+            <motion.div initial="hidden" animate="visible" variants={fadeUp} className="flex flex-wrap items-center gap-2.5 mb-5 sm:mb-7">
+              <div className="flex items-center gap-1 bg-black/30 border border-white/20 px-2.5 py-1 rounded-lg backdrop-blur-sm shrink-0">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                 ))}
-                <span className="text-xs sm:text-sm font-bold text-amber-300 mr-1.5">4.9/5.0</span>
+                <span className="text-xs font-bold text-amber-300 mr-1">4.9 / 5.0</span>
               </div>
               <span className="text-xs sm:text-sm font-semibold text-emerald-50/90">
                 تثق بنا أكثر من 500 عائلة في القاهرة والجيزة
               </span>
             </motion.div>
 
-            <motion.div initial="hidden" animate="visible" variants={fadeUp} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto h-14 px-8 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base shadow-xl shadow-emerald-500/20 transition-all hover:-translate-y-1" asChild>
+            {/* Action Buttons */}
+            <motion.div initial="hidden" animate="visible" variants={fadeUp} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <Button size="lg" className="w-full sm:w-auto h-12 sm:h-13 px-7 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm sm:text-base shadow-lg shadow-emerald-500/25 transition-all hover:-translate-y-0.5" asChild>
                 <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("hero_main")}>
-                  <Phone className="w-5 h-5 ml-2" />
+                  <Phone className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                   اطلب معاينة مجانية
                 </a>
               </Button>
-              <Button size="lg" className="w-full sm:w-auto h-14 px-8 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-base border border-white/30 backdrop-blur-md transition-all hover:-translate-y-1" asChild>
+              <Button size="lg" className="w-full sm:w-auto h-12 sm:h-13 px-7 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm sm:text-base border border-white/25 backdrop-blur-md transition-all hover:-translate-y-0.5" asChild>
                 <a href={waLink()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("hero_main")}>
-                  <MessageCircle className="w-5 h-5 ml-2 text-emerald-300" />
+                  <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 ml-2 text-emerald-300" />
                   تواصل عبر واتساب
                 </a>
               </Button>
             </motion.div>
+
           </div>
         </div>
       </section>
@@ -180,7 +189,7 @@ export default function HomeContent() {
               const bgImage = serviceImages[service.slug] || "/herosection.webp";
 
               return (
-                <Link key={service.slug} href={`/services/${service.slug}`} className="group relative block h-[340px] md:h-[380px] rounded-3xl overflow-hidden shadow-md hover:shadow-2xl hover:shadow-emerald-950/20 transition-all duration-500">
+                <Link key={service.slug} href={`/services/${service.slug}`} className="group relative block h-[320px] sm:h-[360px] rounded-3xl overflow-hidden shadow-md hover:shadow-2xl hover:shadow-emerald-950/20 transition-all duration-500">
                   <div className="absolute inset-0 z-0">
                     <Image
                       src={bgImage}
@@ -194,19 +203,19 @@ export default function HomeContent() {
                   </div>
 
                   <div className="relative z-10 flex flex-col justify-end h-full p-6 md:p-8">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-5 text-emerald-300 shadow-inner group-hover:scale-110 group-hover:bg-emerald-500 transition-all duration-300 group-hover:text-emerald-950 group-hover:border-emerald-400">
+                    <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-4 text-emerald-300 shadow-inner group-hover:scale-110 group-hover:bg-emerald-500 transition-all duration-300 group-hover:text-emerald-950 group-hover:border-emerald-400">
                       <SIcon className="w-6 h-6" />
                     </div>
                     
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
                       {service.name}
                     </h3>
                     
-                    <p className="text-emerald-50/80 text-sm leading-relaxed mb-5 line-clamp-2">
+                    <p className="text-emerald-50/80 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-2">
                       {service.shortDescription}
                     </p>
                     
-                    <div className="flex items-center text-sm font-bold text-emerald-400 group-hover:text-amber-300 transition-colors">
+                    <div className="flex items-center text-xs sm:text-sm font-bold text-emerald-400 group-hover:text-amber-300 transition-colors">
                       عرض التفاصيل <ChevronLeft className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-2" />
                     </div>
                   </div>
