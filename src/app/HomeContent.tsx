@@ -81,10 +81,8 @@ export default function HomeContent() {
   return (
     <div className="bg-[#FAF8F5] text-slate-900 overflow-hidden antialiased selection:bg-emerald-800 selection:text-white">
       
-      {/* ═══════════════ 1. FULL-HEIGHT PREMIUM HERO SECTION ═══════════════ */}
+      {/* ═══════════════ 1. HERO SECTION ═══════════════ */}
       <section className="relative flex flex-col justify-center min-h-[82svh] sm:min-h-[85vh] md:min-h-[90vh] pt-20 pb-10 sm:pt-24 sm:pb-14 md:pt-28 md:pb-16 bg-emerald-950 overflow-hidden">
-        
-        {/* Background Image & Dual Overlay */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/herosection.webp"
@@ -92,18 +90,15 @@ export default function HomeContent() {
             fill
             className="object-cover object-center opacity-50 scale-100"
             priority
-            quality={90}
+            quality={85}
             sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/95 via-emerald-950/80 to-emerald-950/40 rtl:bg-gradient-to-l" />
           <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/40 via-transparent to-emerald-950/95" />
         </div>
 
-        {/* Content Centered Vertically inside Full Height Hero */}
         <div className="container-custom relative z-10 w-full my-auto text-right">
           <div className="max-w-3xl w-full">
-            
-            {/* VIP Trust Badge */}
             <motion.div initial="hidden" animate="visible" variants={fadeUp}>
               <Badge className="bg-emerald-900/80 text-emerald-100 border border-emerald-400/40 px-3.5 py-1.5 backdrop-blur-md rounded-full text-xs font-semibold mb-3.5 sm:mb-5 inline-flex items-center gap-1.5 shadow-sm">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
@@ -111,7 +106,6 @@ export default function HomeContent() {
               </Badge>
             </motion.div>
 
-            {/* Main Heading */}
             <motion.h1 
               initial="hidden" animate="visible" variants={fadeUp}
               className="text-[1.95rem] leading-[1.25] sm:text-4xl md:text-6xl font-black text-white tracking-tight mb-3.5 sm:mb-5"
@@ -122,7 +116,6 @@ export default function HomeContent() {
               </span>
             </motion.h1>
 
-            {/* Sub-headline */}
             <motion.p 
               initial="hidden" animate="visible" variants={fadeUp}
               className="text-[13.5px] sm:text-base md:text-lg text-white/90 leading-relaxed mb-4 sm:mb-6 max-w-2xl font-normal"
@@ -130,7 +123,6 @@ export default function HomeContent() {
               منظومة نقل متكاملة تشمل الفك، التغليف الفاخر، النقل بالونش الهيدروليكي، والتركيب باحترافية تضمن لك سلامة كافة ممتلكاتك مع ضمان شامل.
             </motion.p>
 
-            {/* Social Proof Bar */}
             <motion.div initial="hidden" animate="visible" variants={fadeUp} className="flex flex-wrap items-center gap-2.5 mb-5 sm:mb-7">
               <div className="flex items-center gap-1 bg-black/30 border border-white/20 px-2.5 py-1 rounded-lg backdrop-blur-sm shrink-0">
                 {[1, 2, 3, 4, 5].map((i) => (
@@ -143,7 +135,6 @@ export default function HomeContent() {
               </span>
             </motion.div>
 
-            {/* Action Buttons */}
             <motion.div initial="hidden" animate="visible" variants={fadeUp} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <Button size="lg" className="w-full sm:w-auto h-12 sm:h-13 px-7 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm sm:text-base shadow-lg shadow-emerald-500/25 transition-all hover:-translate-y-0.5" asChild>
                 <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("hero_main")}>
@@ -158,7 +149,6 @@ export default function HomeContent() {
                 </a>
               </Button>
             </motion.div>
-
           </div>
         </div>
       </section>
@@ -168,7 +158,7 @@ export default function HomeContent() {
         <CompoundsTrust />
       </div>
 
-      {/* ═══════════════ 3. PREMIUM CINEMATIC SERVICES SECTION ═══════════════ */}
+      {/* ═══════════════ 3. SERVICES SECTION (Senior Clean UI/UX) ═══════════════ */}
       <section className="py-20 md:py-28 bg-[#FAF8F5]" aria-labelledby="services-heading">
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
@@ -183,40 +173,49 @@ export default function HomeContent() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {services.map((service) => {
               const SIcon = serviceIcons[service.slug] || Truck;
               const bgImage = serviceImages[service.slug] || "/herosection.webp";
 
               return (
-                <Link key={service.slug} href={`/services/${service.slug}`} className="group relative block h-[320px] sm:h-[360px] rounded-3xl overflow-hidden shadow-md hover:shadow-2xl hover:shadow-emerald-950/20 transition-all duration-500">
-                  <div className="absolute inset-0 z-0">
+                <Link 
+                  key={service.slug} 
+                  href={`/services/${service.slug}`} 
+                  className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-stone-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-950/5 transition-all duration-300"
+                >
+                  {/* Top: Image Section (Fixed Height for Performance & CLS) */}
+                  <div className="relative h-48 sm:h-52 w-full bg-stone-100 overflow-hidden">
                     <Image
                       src={bgImage}
                       alt={service.name}
                       fill
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      quality={75}
+                      loading="lazy"
+                      quality={70}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/80 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-500" />
+                    {/* Very subtle gradient just to blend the image edges */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   </div>
 
-                  <div className="relative z-10 flex flex-col justify-end h-full p-6 md:p-8">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-4 text-emerald-300 shadow-inner group-hover:scale-110 group-hover:bg-emerald-500 transition-all duration-300 group-hover:text-emerald-950 group-hover:border-emerald-400">
-                      <SIcon className="w-6 h-6" />
+                  {/* Bottom: Clean White Content Section */}
+                  <div className="p-6 sm:p-7 flex flex-col flex-1">
+                    <div className="flex items-center gap-3.5 mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700 shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
+                        <SIcon className="w-5 h-5" />
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-emerald-800 transition-colors">
+                        {service.name}
+                      </h3>
                     </div>
                     
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
-                      {service.name}
-                    </h3>
-                    
-                    <p className="text-emerald-50/80 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-2">
+                    <p className="text-slate-600 text-sm leading-relaxed mb-5 flex-1 line-clamp-3">
                       {service.shortDescription}
                     </p>
                     
-                    <div className="flex items-center text-xs sm:text-sm font-bold text-emerald-400 group-hover:text-amber-300 transition-colors">
-                      عرض التفاصيل <ChevronLeft className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-2" />
+                    <div className="pt-4 border-t border-stone-50 flex items-center text-sm font-bold text-emerald-700 group-hover:text-emerald-800 transition-colors">
+                      عرض التفاصيل <ChevronLeft className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-1.5" />
                     </div>
                   </div>
                 </Link>
