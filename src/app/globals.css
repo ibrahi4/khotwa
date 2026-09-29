@@ -23,7 +23,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-orange: #0F766E;
+  --color-orange: #F97316;
   --color-orange-dark: #C94A00;
   --color-orange-light: #F97316;
 
@@ -45,6 +45,8 @@
 }
 
 :root {
+  color-scheme: light only;
+  supported-color-schemes: light;
   --radius: 0.75rem;
   --background: #FFFFFF;
   --foreground: #1C1C1C;
@@ -66,6 +68,67 @@
   --ring: #0F766E;
 }
 
+/* ═══════════════════════════════════════════════════
+   FORCE LIGHT MODE — يمنع Android Chrome Auto-Dark
+   ═══════════════════════════════════════════════════ */
+
+html {
+  color-scheme: light only !important;
+  supported-color-schemes: light !important;
+  background-color: #FAF8F5 !important;
+}
+
+html, body {
+  background-color: #FAF8F5 !important;
+  color: #1C1C1C !important;
+}
+
+/* إلغاء أي dark mode من Tailwind أو next-themes */
+.dark,
+html.dark,
+body.dark,
+[data-theme="dark"],
+[data-mode="dark"] {
+  color-scheme: light only !important;
+  background-color: #FAF8F5 !important;
+  color: #1C1C1C !important;
+}
+
+/* Android Chrome Auto-Dark Override */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light only !important;
+    supported-color-schemes: light !important;
+  }
+
+  html, body {
+    color-scheme: light only !important;
+    background-color: #FAF8F5 !important;
+    color: #1C1C1C !important;
+  }
+
+  /* منع Chrome من قلب ألوان الصور والأيقونات */
+  img, svg, video, canvas, picture, iframe {
+    filter: none !important;
+  }
+
+  /* تثبيت ألوان الخلفيات الأساسية */
+  .bg-white,
+  .bg-\[\#FAF8F5\],
+  .bg-\[\#FAF5EE\] {
+    background-color: #FAF8F5 !important;
+  }
+}
+
+/* Windows High Contrast / Forced Colors */
+* {
+  forced-color-adjust: none !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════════════ */
+
 * {
   border-color: var(--border);
 }
@@ -75,8 +138,8 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #FAF8F5;
+  color: #1C1C1C;
   font-family: var(--font-sans);
   direction: rtl;
   -webkit-font-smoothing: antialiased;
@@ -97,7 +160,7 @@ button {
 }
 
 ::selection {
-  background: var(--primary);
+  background: #0F766E;
   color: white;
 }
 
@@ -180,28 +243,4 @@ button {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* ── Senior Force-Light Fix for Mobile Browsers ── */
-:root, html, body {
-  color-scheme: light only !important;
-  supported-color-schemes: light !important;
-}
-
-/* Override Android Chrome Auto-Dark Engine */
-@media (prefers-color-scheme: dark) {
-  :root, html, body {
-    color-scheme: light only !important;
-    background-color: #F8FBFF !important;
-    color: #1E293B !important;
-  }
-  
-  img, svg, video, canvas {
-    filter: none !important;
-  }
-}
-
-/* Disable Forced Colors in Windows/Android High Contrast */
-* {
-  forced-color-adjust: none !important;
 }
