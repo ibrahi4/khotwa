@@ -6,7 +6,7 @@ export const siteConfig = {
   url: "https://khatwamoving.com",
   phone: "01205800817",
   phoneIntl: "+201205800817",
-  whatsapp: "01205800817",
+  whatsapp: "+201205800817",
   email: "koutwaa722@gmail.com",
   // TODO: مصلحة عندك إيميل رسمي على دومين khatwamoving.com بدل جيميل؟
   // بيدي إشارة مصداقية أقوى (E-E-A-T) لجوجل وللزوار.
