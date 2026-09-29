@@ -5,56 +5,67 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Shield, Star, Clock, Award, PackageCheck, Phone, Sparkles } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
-const messages = [
-  {
-    icon: Shield,
-    text: "ضمان شامل على جميع مقتنياتك أثناء النقل",
-  },
-  {
-    icon: Star,
-    text: "تقييم 4.9 من 5 - أكثر من 500 عميل يثقون بنا",
-  },
-  {
-    icon: Clock,
-    text: "خدمة متاحة على مدار الساعة - 24 ساعة / 7 أيام",
-  },
-  {
-    icon: PackageCheck,
-    text: "تغليف احترافي بمواد عالمية لحماية كاملة",
-  },
-  {
-    icon: Award,
-    text: "خبرة أكثر من 10 سنوات في نقل الأثاث الفاخر",
-  },
-  {
-    icon: Sparkles,
-    text: "معاينة مجانية وعرض سعر شفاف بدون أي التزام",
-  },
-];
+/**
+ * رسالة التقييم بتظهر بس لما عدد التقييمات الحقيقية على Google Business Profile
+ * (اللي بيتحدّث يدوي في siteConfig.ratings) يوصل لعدد يستاهل يتقال. لحد ما
+ * توصل للرقم ده، الرسالة مش بتظهر خالص بدل ما تعرض "4.5 من 8 تقييمات"
+ * وتضعف الثقة بدل ما تبنيها، أو ترجع لرقم مصطنع تاني.
+ * (الرقم 25 قرار مبدئي مني، عدّله زي ما تشوف.)
+ */
+const MIN_REVIEWS_TO_SHOW_RATING = 25;
 
+type Message = { icon: React.ElementType; text: string };
+
+function buildMessages(): Message[] {
+  const messages: Message[] = [
+    {
+      icon: Shield,
+      text: "ضمان شامل على جميع مقتنياتك أثناء النقل",
+    },
+    {
+      icon: Clock,
+      text: "خدمة متاحة على مدار الساعة - 24 ساعة / 7 أيام",
+    },
+    {
+      icon: PackageCheck,
+      text: "تغليف احترافي بمواد عالمية لحماية كاملة",
+    },
+    {
+      icon: Award,
+      // كان "أكثر من 10 سنوات" ثابتة. دلوقتي بتتحسب من سنة التأسيس في site.ts.
+      text: `خبرة أكثر من ${siteConfig.yearsOfExperience} سنة في نقل الأثاث`,
+    },
+    {
+      icon: Sparkles,
+      text: "معاينة مجانية وعرض سعر شفاف بدون أي التزام",
+    },
+  ];
+
+  if (siteConfig.ratings.count >= MIN_REVIEWS_TO_SHOW_RATING) {
+    messages.splice(1, 0, {
+      icon: Star,
+      text: `تقييم ${siteConfig.ratings.value} من 5 على Google - ${siteConfig.ratings.count} تقييم`,
+    });
+  }
+
+  return messages;
+}
+
+const messages = buildMessages();
 const ROTATION_MS = 4500;
 
 export function AnnouncementBar() {
-  const [mounted, setMounted] = useState(false);
   const [index, setIndex] = useState(0);
 
+  // شلت الـ mounted gate: أول رسالة والرقم بيتحطوا في HTML من السيرفر
+  // بدل ما يظهر شريط فاضي لحد ما الجافاسكريبت يشتغل. التدوير نفسه
+  // (setInterval) لسه بيبدأ بعد التحميل زي الأول.
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % messages.length);
     }, ROTATION_MS);
     return () => clearInterval(timer);
-  }, [mounted]);
-
-  if (!mounted) {
-    return (
-      <div className="h-10 bg-green-950 border-b border-green-800/40" aria-hidden="true" />
-    );
-  }
+  }, []);
 
   const current = messages[index];
   const Icon = current.icon;
@@ -73,9 +84,11 @@ export function AnnouncementBar() {
 
       <div className="container-custom">
         <div className="flex items-center justify-between gap-4 h-10">
-          {/* Left: Rotating Messages */}
+          {/* Rotating Messages */}
           <div className="flex-1 min-w-0 overflow-hidden">
-            <AnimatePresence mode="wait">
+            {/* initial={false}: أول رسالة تتعرض فوراً من غير أنيميشن دخول،
+                عشان تفضل ظاهرة في الـ HTML اللي جاي من السيرفر. */}
+            <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 8 }}
@@ -94,7 +107,7 @@ export function AnnouncementBar() {
             </AnimatePresence>
           </div>
 
-          {/* Right: Phone Number (always visible) */}
+          {/* Phone Number (always visible) */}
           <a
             href={`tel:${siteConfig.phone}`}
             className="shrink-0 flex items-center gap-2 text-white hover:text-green-300 transition-colors group"
