@@ -18,17 +18,21 @@ import { siteConfig } from "@/config/site";
 import { CompoundsTrust } from "@/components/shared/CompoundsTrust";
 import { InlineQuoteForm } from "@/components/shared/InlineQuoteForm";
 import { GallerySection } from "@/components/features/GallerySection";
+// التستيمونيالز بقت import ثابت مباشر، مش dynamic(..., {ssr:false}).
+// المكوّن اتصلح قبل كده (اتشال منه الـ mounted gate الداخلي)، فبقى آمن
+// يترندر من السيرفر زي أي قسم تاني. ده أهم سطر في الباتش ده: هو اللي
+// كان بيمنع القسم من الظهور في أول HTML وبيسبب قفزة التخطيط الكبيرة
+// (CLS = 0.84) لما يظهر فجأة بعد التحميل.
+import { TestimonialsSection } from "@/components/features/TestimonialsSection";
 import { trackPhoneCall, trackWhatsApp } from "@/lib/analytics/events";
 
 /* ───────────────────────── Dynamic Imports ───────────────────────── */
+// ده لسه ssr:false عن قصد (محتوى حي فعلاً، مش أساسي لمحركات البحث)،
+// لكن ضفنا placeholder بارتفاع ثابت بدل "مفيش حاجة خالص"، عشان يقلل
+// أي قفزة تخطيط لما يتحمّل، حتى لو أصغر بكتير من مشكلة التستيمونيالز.
 const LiveOrdersFeed = dynamic(
   () => import("@/components/shared/LiveOrdersFeed").then((m) => ({ default: m.LiveOrdersFeed })),
-  { ssr: false }
-);
-
-const TestimonialsSection = dynamic(
-  () => import("@/components/features/TestimonialsSection").then((m) => ({ default: m.TestimonialsSection })),
-  { ssr: false }
+  { ssr: false, loading: () => <div className="h-24 bg-white" aria-hidden="true" /> }
 );
 
 /* ───────────────────────── Helpers ───────────────────────── */
@@ -158,7 +162,7 @@ export default function HomeContent() {
         <CompoundsTrust />
       </div>
 
-      {/* ═══════════════ 3. SERVICES SECTION (Senior Clean UI/UX) ═══════════════ */}
+      {/* ═══════════════ 3. SERVICES SECTION ═══════════════ */}
       <section className="py-20 md:py-28 bg-[#FAF8F5]" aria-labelledby="services-heading">
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
@@ -184,7 +188,6 @@ export default function HomeContent() {
                   href={`/services/${service.slug}`} 
                   className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-stone-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-950/5 transition-all duration-300"
                 >
-                  {/* Top: Image Section (Fixed Height for Performance & CLS) */}
                   <div className="relative h-48 sm:h-52 w-full bg-stone-100 overflow-hidden">
                     <Image
                       src={bgImage}
@@ -195,11 +198,9 @@ export default function HomeContent() {
                       loading="lazy"
                       quality={70}
                     />
-                    {/* Very subtle gradient just to blend the image edges */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   </div>
 
-                  {/* Bottom: Clean White Content Section */}
                   <div className="p-6 sm:p-7 flex flex-col flex-1">
                     <div className="flex items-center gap-3.5 mb-3">
                       <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700 shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
