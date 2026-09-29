@@ -77,7 +77,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#15803D",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
+    { media: "(prefers-color-scheme: dark)", color: "#FAF8F5" },
+  ],
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
 };
@@ -91,8 +95,15 @@ export default function RootLayout({
   const websiteSchema = generateWebsiteSchema();
 
   return (
-    <html lang="ar" dir="rtl" className={cairo.variable}>
+    <html
+      lang="ar"
+      dir="rtl"
+      className={cairo.variable}
+      style={{ colorScheme: "light" }}
+    >
       <head>
+        <meta name="color-scheme" content="light only" />
+        <meta name="supported-color-schemes" content="light" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -117,7 +128,7 @@ export default function RootLayout({
       </head>
       <body className={cairo.className} suppressHydrationWarning>
         <Header />
-        <main className="min-h-screen">{children}</main>
+        <main className="min-h-screen bg-[#FAF8F5]">{children}</main>
         <Footer />
         <FloatingActions />
         <Toaster
