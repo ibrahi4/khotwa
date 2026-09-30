@@ -10,15 +10,13 @@ import {
   GoogleTagManager,
   GoogleTagManagerNoScript,
 } from "@/components/analytics/GoogleAnalytics";
-import { ClickTracker } from "@/components/analytics/ClickTracker";
 import "./globals.css";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
   display: "swap",
   preload: true,
-  // راجع استخدامك للأوزان؛ كل وزن زيادة = ملف خط زيادة على الموبايل
-  weight: ["400", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   variable: "--font-cairo",
   fallback: ["system-ui", "Arial", "sans-serif"],
   adjustFontFallback: true,
@@ -31,28 +29,25 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.shortName}`,
   },
   description: siteConfig.description,
-  // "./" يخلي كل صفحة canonical لنفسها بدل ما كلها تشاور على الرئيسية
-  alternates: { canonical: "./" },
+  alternates: { canonical: siteConfig.url },
   robots: { index: true, follow: true },
-  verification: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION
-    ? { google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION }
-    : undefined,
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FAF8F5",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
+    { media: "(prefers-color-scheme: dark)", color: "#FAF8F5" },
+  ],
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,
 };
 
-// يمنع كسر الـ script لو فيه "</script>" جوه أي قيمة
-const jsonLd = (data: unknown) =>
-  JSON.stringify(data).replace(/</g, "\\u003c");
-
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   const businessSchema = generateLocalBusinessSchema();
   const websiteSchema = generateWebsiteSchema();
 
@@ -61,19 +56,12 @@ export default function RootLayout({
       <head>
         <meta name="color-scheme" content="light only" />
         <meta name="supported-color-schemes" content="light" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLd(businessSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLd(websiteSchema) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(businessSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
+        <GoogleTagManager />
       </head>
       <body className={cairo.className} suppressHydrationWarning>
         <GoogleTagManagerNoScript />
-        <GoogleTagManager />
-        <ClickTracker />
         <Header />
         <main className="min-h-screen bg-[#FAF8F5]">{children}</main>
         <Footer />
