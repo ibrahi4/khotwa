@@ -1,68 +1,47 @@
 declare global {
   interface Window {
     dataLayer: any[];
-    gtag?: (...args: any[]) => void;
   }
 }
 
+// دالة تسجيل المكالمات
 export const trackPhoneCall = (location: string) => {
   if (typeof window === "undefined") return;
 
-  // 1. DataLayer for GTM
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
-    event: "phone_call",
+    event: "phone_call_click",
     click_location: location,
-    event_category: "Conversion",
-    event_label: `Phone Call - ${location}`,
+    conversion_type: "Lead - Phone",
   });
-
-  // 2. GA4 Direct Event
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "generate_lead", {
-      event_category: "Contact",
-      event_label: location,
-      method: "phone",
-    });
-  }
+  
+  console.log(`[Tracking] Phone Call Triggered from: ${location}`);
 };
 
+// دالة تسجيل الواتساب
 export const trackWhatsApp = (location: string) => {
   if (typeof window === "undefined") return;
 
-  // 1. DataLayer for GTM
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
     event: "whatsapp_click",
     click_location: location,
-    event_category: "Conversion",
-    event_label: `WhatsApp - ${location}`,
+    conversion_type: "Lead - WhatsApp",
   });
 
-  // 2. GA4 Direct Event
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "generate_lead", {
-      event_category: "Contact",
-      event_label: location,
-      method: "whatsapp",
-    });
-  }
+  console.log(`[Tracking] WhatsApp Triggered from: ${location}`);
 };
 
+// دالة تسجيل الفورم (إذا كان لديك فورم مستقبلاً)
 export const trackFormSubmission = (formName: string) => {
   if (typeof window === "undefined") return;
 
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
-    event: "form_submission",
+    event: "form_submit_success",
     form_name: formName,
-    event_category: "Conversion",
+    conversion_type: "Lead - Form",
   });
-
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "lead", {
-      event_category: "Form",
-      event_label: formName,
-    });
-  }
+  
+  console.log(`[Tracking] Form Submitted: ${formName}`);
 };
