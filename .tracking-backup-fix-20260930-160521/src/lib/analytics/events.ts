@@ -130,7 +130,7 @@ export const trackGoogleAdsConversion = (
 // ========== Event Trackers ==========
 
 export const trackPhoneCall = (source: TrackingSource | string = "unknown") => {
-  if (isDuplicate("phone")) return;
+  if (isDuplicate(`phone:${source}`)) return;
 
   sendGtagEvent("phone_call", {
     event_category: "engagement",
@@ -144,7 +144,7 @@ export const trackPhoneCall = (source: TrackingSource | string = "unknown") => {
 };
 
 export const trackWhatsApp = (source: TrackingSource | string = "unknown") => {
-  if (isDuplicate("whatsapp")) return;
+  if (isDuplicate(`whatsapp:${source}`)) return;
 
   sendGtagEvent("whatsapp_click", {
     event_category: "engagement",

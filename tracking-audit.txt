@@ -1,0 +1,82 @@
+src\app\about\page.tsx:314  href={`tel:${siteConfig.phone}`}
+src\app\about\page.tsx:327  href={`https://wa.me/${siteConfig.whatsapp}`}
+src\app\areas\[slug]\page.tsx:158  <a href={`tel:${siteConfig.phone}`}>
+src\app\areas\[slug]\page.tsx:169  href={`https://wa.me/${siteConfig.whatsapp}?text=${waMessage}`}
+src\app\areas\[slug]\page.tsx:252  <a href={`tel:${siteConfig.phone}`}>
+src\app\areas\[slug]\page.tsx:262  href={`https://wa.me/${siteConfig.whatsapp}?text=${waMessage}`}
+src\app\areas\[slug]\page.tsx:600  <a href={`tel:${siteConfig.phone}`}>
+src\app\areas\[slug]\page.tsx:611  href={`https://wa.me/${siteConfig.whatsapp}?text=${waMessage}`}
+src\app\areas\page.tsx:104  <a href={`tel:${siteConfig.phone}`}>
+src\app\areas\page.tsx:115  href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(
+src\app\areas\page.tsx:318  <a href={`tel:${siteConfig.phone}`}>
+src\app\areas\page.tsx:329  href={`https://wa.me/${siteConfig.whatsapp}`}
+src\app\blog\[slug]\page.tsx:244  <a href={`tel:${siteConfig.phone}`} className="inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-black h-12 px-8 rounded-xl transition-colors">
+src\app\blog\[slug]\page.tsx:248  <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold h-12 px-8 rounded-xl backdrop-blur-md transition-colors">
+src\app\blog\page.tsx:219  href={`tel:${siteConfig.phone}`}
+src\app\blog\page.tsx:226  href={`https://wa.me/${siteConfig.whatsapp}`}
+src\app\contact\Content.tsx:43  window.open(`https://wa.me/${siteConfig.whatsapp}?text=${waMessage}`, '_blank');
+src\app\contact\Content.tsx:128  <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("contact_page_info")} className="group block">
+src\app\contact\Content.tsx:138  <a href={`https://wa.me/${siteConfig.whatsapp}`} onClick={() => trackWhatsApp("contact_page_info")} target="_blank" rel="noopener noreferrer" className="group block">
+src\app\faq\page.tsx:382  href={`tel:${siteConfig.phone}`}
+src\app\faq\page.tsx:393  href={`https://wa.me/${siteConfig.whatsapp}`}
+src\app\privacy\page.tsx:185  <a href={`tel:${siteConfig.phone}`}>
+src\app\services\[slug]\page.tsx:186  <a href={`tel:${siteConfig.phone}`} aria-label={`اتصل بنا على ${siteConfig.phone}`}>
+src\app\services\[slug]\page.tsx:197  href={`https://wa.me/${siteConfig.whatsapp}?text=${waMessage}`}
+src\app\services\[slug]\page.tsx:344  <a href={`tel:${siteConfig.phone}`}>
+src\app\services\[slug]\page.tsx:354  href={`https://wa.me/${siteConfig.whatsapp}?text=${waMessage}`}
+src\app\services\[slug]\page.tsx:658  href={`tel:${siteConfig.phone}`}
+src\app\services\[slug]\page.tsx:671  href={`https://wa.me/${siteConfig.whatsapp}?text=${waMessage}`}
+src\app\services\page.tsx:77  <a href={`tel:${siteConfig.phone}`}>
+src\app\services\page.tsx:88  href={`https://wa.me/${siteConfig.whatsapp}`}
+src\app\services\page.tsx:386  <a href={`tel:${siteConfig.phone}`}>
+src\app\services\page.tsx:397  href={`https://wa.me/${siteConfig.whatsapp}`}
+src\app\terms\page.tsx:220  <a href={`tel:${siteConfig.phone}`}>
+src\app\terms\page.tsx:232  href={`https://wa.me/${siteConfig.whatsapp}`}
+src\app\thank-you\page.tsx:61  <a href={`tel:${siteConfig.phone}`} dir="ltr">
+src\app\thank-you\page.tsx:68  href={`https://wa.me/${siteConfig.whatsapp}`}
+src\app\HomeContent.tsx:38  return `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(text)}`;
+src\app\HomeContent.tsx:43  const params = new URLSearchParams(window.location.search);
+src\app\HomeContent.tsx:51  localStorage.setItem("ad_params", JSON.stringify({ ...found, landing: window.location.pathname, ts: Date.now() }));
+src\app\HomeContent.tsx:128  <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("hero_main")}>
+src\app\HomeContent.tsx:293  <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("final_cta")}>
+src\app\not-found.tsx:81  <a href={`tel:${siteConfig.phone}`} className="flex items-center gap-2 text-white/60 hover:text-[#0F766E] transition-colors">
+src\app\not-found.tsx:86  <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white/60 hover:text-[#0F766E] transition-colors">
+src\components\analytics\ClickTracker.tsx:6  const WA_RE = /^(https?:\/\/(wa\.me|api\.whatsapp\.com|web\.whatsapp\.com)\b|whatsapp:)/i;
+src\components\analytics\ClickTracker.tsx:18  if (href.startsWith("tel:")) event = "click_call";
+src\components\analytics\ClickTracker.tsx:26  page_path: window.location.pathname,
+src\components\analytics\GoogleAnalytics.tsx:12  window.dataLayer = window.dataLayer || [];
+src\components\analytics\GoogleAnalytics.tsx:15  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+src\components\analytics\GoogleAnalytics.tsx:17  })(window,document,'script','dataLayer','${GTM_ID}');
+src\components\analytics\GoogleTagManager.tsx:16  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+src\components\analytics\GoogleTagManager.tsx:18  })(window,document,'script','dataLayer','${GTM_ID}');
+src\components\layout\AnnouncementBar.tsx:112  href={`tel:${siteConfig.phone}`}
+src\components\layout\FloatingActions.tsx:42  <a href={`tel:${siteConfig.phone}`} onClick={() => trackPhoneCall("floating_btn")}
+src\components\layout\Footer.tsx:109  href={`tel:${siteConfig.phone}`}
+src\components\layout\Footer.tsx:159  href={`https://wa.me/${siteConfig.whatsapp}`}
+src\components\layout\Header.tsx:297  href={`tel:${siteConfig.phone}`}
+src\components\layout\Header.tsx:306  href={`https://wa.me/${siteConfig.whatsapp}`}
+src\components\layout\Header.tsx:369  href={`tel:${siteConfig.phone}`}
+src\components\layout\Header.tsx:378  href={`https://wa.me/${siteConfig.whatsapp}`}
+src\components\shared\InlineQuoteForm.tsx:56  window.open(
+src\components\shared\InlineQuoteForm.tsx:57  `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(message)}`,
+src\components\shared\QuoteDialog.tsx:83  const whatsappUrl = `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(whatsappMessage)}`;
+src\components\shared\QuoteDialog.tsx:86  window.open(whatsappUrl, "_blank");
+src\components\shared\QuoteDialog.tsx:283  href={`tel:${siteConfig.phone}`}
+src\components\shared\WhatsAppWidget.tsx:89  window.open(`https://wa.me/${siteConfig.whatsapp}?text=${encoded}`, "_blank");
+src\components\shared\WhatsAppWidget.tsx:263  href={`tel:${siteConfig.phone}`}
+src\config\site.ts:9  whatsapp: "+201205800817",
+src\lib\analytics\events.ts:48  type GtagWindow = Window & { gtag?: GtagFn; dataLayer?: unknown[] };
+src\lib\analytics\events.ts:50  // بيضمن وجود dataLayer وgtag. لو الـ Google tag لسه ماتحملش (ضغطة سريعة)،
+src\lib\analytics\events.ts:55  w.dataLayer = w.dataLayer || [];
+src\lib\analytics\events.ts:58  // gtag لازم يبعت كائن arguments نفسه للـ dataLayer
+src\lib\analytics\events.ts:60  (w.dataLayer as unknown[]).push(arguments);
+src\lib\analytics\events.ts:67  const gtag = ensureGtag();
+src\lib\analytics\events.ts:69  gtag("event", eventName, params);
+src\lib\analytics\events.ts:135  sendGtagEvent("phone_call", {
+src\lib\analytics\events.ts:147  if (isDuplicate(`whatsapp:${source}`)) return;
+src\lib\analytics\events.ts:149  sendGtagEvent("whatsapp_click", {
+src\lib\analytics\gtm.ts:1  export type DataLayerEvent = { event: string; [key: string]: unknown };
+src\lib\analytics\gtm.ts:5  dataLayer?: DataLayerEvent[];
+src\lib\analytics\gtm.ts:9  export function pushEvent(payload: DataLayerEvent) {
+src\lib\analytics\gtm.ts:11  (window.dataLayer = window.dataLayer || []).push(payload);
+src\lib\analytics\gtm.ts:19  page_path: typeof window !== "undefined" ? window.location.pathname : "",
