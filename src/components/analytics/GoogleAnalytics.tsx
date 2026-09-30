@@ -3,23 +3,25 @@
 import Script from "next/script";
 
 export function GoogleAnalytics() {
-  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";
+  const GA_ID = process.env.NEXT_PUBLIC_GA_ID || process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";
 
-  if (!GA_MEASUREMENT_ID) return null;
+  if (!GA_ID) return null;
 
   return (
     <>
       <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-        strategy="lazyOnload"
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+        strategy="afterInteractive"
       />
-      <Script id="google-analytics" strategy="lazyOnload">
+      <Script id="google-analytics" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
+          window.gtag = gtag;
           gtag('js', new Date());
-          gtag('config', '${GA_MEASUREMENT_ID}', {
+          gtag('config', '${GA_ID}', {
             page_path: window.location.pathname,
+            send_page_view: true
           });
         `}
       </Script>
@@ -33,7 +35,7 @@ export function GoogleTagManager() {
   if (!GTM_ID) return null;
 
   return (
-    <Script id="google-tag-manager" strategy="lazyOnload">
+    <Script id="google-tag-manager" strategy="afterInteractive">
       {`
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -42,5 +44,23 @@ export function GoogleTagManager() {
         })(window,document,'script','dataLayer','${GTM_ID}');
       `}
     </Script>
+  );
+}
+
+export function GoogleTagManagerNoScript() {
+  const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "";
+
+  if (!GTM_ID) return null;
+
+  return (
+    <noscript>
+      <iframe
+        src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+        height="0"
+        width="0"
+        style={{ display: "none", visibility: "hidden" }}
+        title="Google Tag Manager"
+      />
+    </noscript>
   );
 }

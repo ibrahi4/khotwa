@@ -6,6 +6,11 @@ import { FloatingActions } from "@/components/layout/FloatingActions";
 import { Header } from "@/components/layout/Header";
 import { siteConfig } from "@/config/site";
 import { generateLocalBusinessSchema, generateWebsiteSchema } from "@/lib/seo/schema";
+import {
+  GoogleAnalytics,
+  GoogleTagManager,
+  GoogleTagManagerNoScript,
+} from "@/components/analytics/GoogleAnalytics";
 import "./globals.css";
 
 const cairo = Cairo({
@@ -123,10 +128,11 @@ export default function RootLayout({
           fetchPriority="high"
           type="image/webp"
         />
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        <GoogleTagManager />
       </head>
       <body className={cairo.className} suppressHydrationWarning>
+        <GoogleTagManagerNoScript />
+        <GoogleAnalytics />
         <Header />
         <main className="min-h-screen bg-[#FAF8F5]">{children}</main>
         <Footer />
