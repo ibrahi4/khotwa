@@ -11,13 +11,13 @@ import {
   GoogleTagManagerNoScript,
 } from "@/components/analytics/GoogleAnalytics";
 import { ClickTracker } from "@/components/analytics/ClickTracker";
+import { OpenAIPixel } from "@/components/analytics/OpenAIPixel";
 import "./globals.css";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
   display: "swap",
   preload: true,
-  // راجع استخدامك للأوزان؛ كل وزن زيادة = ملف خط زيادة على الموبايل
   weight: ["400", "600", "700", "800"],
   variable: "--font-cairo",
   fallback: ["system-ui", "Arial", "sans-serif"],
@@ -31,7 +31,6 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.shortName}`,
   },
   description: siteConfig.description,
-  // "./" يخلي كل صفحة canonical لنفسها بدل ما كلها تشاور على الرئيسية
   alternates: { canonical: "./" },
   robots: { index: true, follow: true },
   verification: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION
@@ -46,7 +45,6 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-// يمنع كسر الـ script لو فيه "</script>" جوه أي قيمة
 const jsonLd = (data: unknown) =>
   JSON.stringify(data).replace(/</g, "\\u003c");
 
@@ -59,6 +57,28 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={cairo.variable} style={{ colorScheme: "light" }}>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function (w, d, s, u) {
+                if (w.oaiq) return;
+                var q = function () {
+                  q.q.push(arguments);
+                };
+                q.q = [];
+                w.oaiq = q;
+                var js = d.createElement(s);
+                js.async = true;
+                js.src = u;
+                var f = d.getElementsByTagName(s)[0];
+                f.parentNode.insertBefore(js, f);
+              })(window, document, "script", "https://bzrcdn.openai.com/sdk/oaiq.min.js");
+              oaiq("init", {
+                pixelId: "E23vMbRKepYdKGE2AfBYBC",
+              });
+            `,
+          }}
+        />
         <meta name="color-scheme" content="light only" />
         <meta name="supported-color-schemes" content="light" />
         <script
@@ -73,6 +93,7 @@ export default function RootLayout({
       <body className={cairo.className} suppressHydrationWarning>
         <GoogleTagManagerNoScript />
         <GoogleTagManager />
+        <OpenAIPixel />
         <ClickTracker />
         <Header />
         <main className="min-h-screen bg-[#FAF8F5]">{children}</main>
